@@ -19,8 +19,7 @@ pipeline {
 				sh 'mvn test'
 			}
 		}
-		stage('Deploy') {	
-			when { branch 'master' }
+		stage('Deploy') {
 			steps {
 				checkout scm
 				echo 'Deploying...'
