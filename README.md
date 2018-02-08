@@ -9,16 +9,16 @@ The description directory holds the project description (as of 1/26/18) and the 
 [Jenkins](http://jenkins.codersunltd.me/)
 
 ## Deployed app hello world endpoints ##
-[Link to the index page](http://app.codersunltd.me/)
+[Link to the index page](http://app.codersunltd.me:8080/)
 
-[Link to the string REST endpoint](http://app.codersunltd.me/api/hello/string)
+[Link to the string REST endpoint](http://app.codersunltd.me:8080/api/hello/string)
 
-[Link to the object REST endpoint](http://app.codersunltd.me/api/hello/object)
+[Link to the object REST endpoint](http://app.codersunltd.me:8080/api/hello/object)
 
 ## Deployed app MySQL endpoints ##
-[Insert a static hello message](http://app.codersunltd.me/api/hello/insert)
+[Insert a static hello message](http://app.codersunltd.me:8080/api/hello/insert)
 
-[Insert a parameterized hello message](http://app.codersunltd.me/api/hello/insert/Some%20parameterized%20message)
+[Insert a parameterized hello message](http://app.codersunltd.me:8080/api/hello/insert/Some%20parameterized%20message)
 
-[Retrieve all hello messages](http://app.codersunltd.me/api/hello/select/all)
+[Retrieve all hello messages](http://app.codersunltd.me:8080/api/hello/select/all)
 
