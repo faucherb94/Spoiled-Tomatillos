@@ -9,14 +9,14 @@ pipeline {
 		stage('Build') {
 			steps {
 				echo "Building"
-				sh 'mvn -f project/pom.xml compile'
-				sh 'mvn -f project/pom.xml package'
+				sh 'mvn compile'
+				sh 'mvn package'
 			}
 		}
 		stage('Test') {
 			steps {
 				echo "Testing"
-				sh 'mvn -f project/pom.xml test'
+				sh 'mvn test'
 			}
 		}
 		stage('Deploy') {	
@@ -28,7 +28,7 @@ pipeline {
 					sh 'apk add -U --no-cache openssh'
 					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me pkill java > /dev/null 2>&1 &'
 					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me mkdir -p app > /dev/null 2>&1 &'
-					sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/project/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
+					sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
 					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &'
 				}
 			}
