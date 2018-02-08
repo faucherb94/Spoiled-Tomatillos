@@ -34,12 +34,12 @@ public class HelloController {
 	
 	@RequestMapping("/api/hello/string")
 	public String sayHello() {
-		return "Hello Ben Faucher!";
+		return "Hello Coders Unlimited!";
 	}
 	
 	@RequestMapping("/api/hello/object")
 	public HelloObject sayHelloObject() {
-		HelloObject obj = new HelloObject("Hello Ben Faucher!");
+		HelloObject obj = new HelloObject("Hello Coders Unlimited!");
 		return obj;
 	}
 }
