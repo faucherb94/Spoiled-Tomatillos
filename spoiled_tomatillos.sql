@@ -58,7 +58,7 @@ DROP PROCEDURE IF EXISTS create_user;
 CREATE PROCEDURE create_user(account VARCHAR(50), username VARCHAR(50), firstname VARCHAR(50), lastname VARCHAR(50))
 	INSERT INTO UserAccount (Account, Username, FirstName, LastName, Role, CreatedAt) VALUES (account, username, firstname, lastname, 'default', CURDATE());
 
-DROP PROCEDURE IF EXISTS edit_user_name;
+DROP PROCEDURE IF EXISTS edit_names;
 CREATE PROCEDURE edit_names(fname VARCHAR(50), lname VARCHAR(50), username VARCHAR(50))
 	UPDATE UserAccount SET FirstName = fname, LastName = lname, UpdatedAt = CURDATE() WHERE Username = username;
 
@@ -66,7 +66,7 @@ DROP PROCEDURE IF EXISTS edit_username;
 CREATE PROCEDURE edit_username(username VARCHAR(50), userid INT)
 	UPDATE UserAccount SET Username = name, UpdatedAt = CURDATE() WHERE UserID = userid;
 
-DROP PROCEDURE IF EXISTS edit_user_pic;
+DROP PROCEDURE IF EXISTS edit_pic;
 CREATE PROCEDURE edit_pic(username VARCHAR(50), pic LONGBLOB)
 	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = CURDATE() WHERE Username = username;
 
