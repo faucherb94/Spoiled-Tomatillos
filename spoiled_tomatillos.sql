@@ -51,13 +51,22 @@ CREATE TABLE MovieReview (
 		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		);
 
+
+DROP PROCEDURE IF EXISTS create_user;
+CREATE PROCEDURE create_user(account VARCHAR(50), username VARCHAR(50), firstname VARCHAR(50), lastname VARCHAR(50))
+	INSERT INTO UserAccount (Account, Username, FirstName, LastName, Role) VALUES (account, username, firstname, lastname, 'default');
+
+DROP PROCEDURE IF EXISTS rate_movie;
+CREATE PROCEDURE rate_movie(user INT, title VARCHAR(255), rating Enum('1', '2', '3', '4', '5'))
+		INSERT INTO MovieReview (UserID, MovieTitle, StarRating) VALUES (user, title, rating);
+
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (user INT)
 		SELECT Account_ID FROM Relationships WHERE UserID = user;
 
 DROP PROCEDURE IF EXISTS add_friend;
 CREATE PROCEDURE add_friend (adder INT, username VARCHAR(50))
-	INSERT INTO Relationships VALUES (adder, username);
+	INSERT INTO Relationships (UserID, Account) VALUES (adder, username);
 
 DROP PROCEDURE IF EXISTS unfriend;
 CREATE PROCEDURE unfriend (remover INT, username VARCHAR(50))
@@ -65,11 +74,11 @@ CREATE PROCEDURE unfriend (remover INT, username VARCHAR(50))
 
 DROP PROCEDURE IF EXISTS create_group;
 CREATE PROCEDURE create_group (owner INT, groupName VARCHAR(75), description VARCHAR(500))
-	INSERT INTO Groups VALUES (owner, groupName, description);
+	INSERT INTO Groups (Owner, GroupName, Description) VALUES (owner, groupName, description);
 	
 DROP PROCEDURE IF EXISTS add_to_group;
 CREATE PROCEDURE add_to_group (owner INT, groupName VARCHAR(75), addee INT)
-	INSERT INTO GroupMemberships VALUES (owner, groupName, addee);
+	INSERT INTO GroupMemberships (Owner, GroupName, Member) VALUES (owner, groupName, addee);
 
 DROP PROCEDURE IF EXISTS list_group_members;
 CREATE PROCEDURE list_group_members (owner INT, groupid VARCHAR(75))
