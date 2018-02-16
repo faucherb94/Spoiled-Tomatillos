@@ -9,6 +9,8 @@ CREATE TABLE UserAccount (
 		Username VARCHAR(50) UNIQUE, 
 		FirstName VARCHAR(50),
 		LastName VARCHAR(50),
+		CreatedAt DATE,
+		UpdatedAt DATE,
 		Role ENUM('default', 'group admin', 'admin', 'moderator'),
 		DisplayPicture LONGBLOB,
 		PRIMARY KEY(UserID)
@@ -17,10 +19,10 @@ CREATE TABLE UserAccount (
 DROP TABLE IF EXISTS Relationships;
 CREATE TABLE Relationships (
 		UserID INT,
-		Account VARCHAR(50),
-		PRIMARY KEY (UserID, Account),
+		Friend INT,
+		PRIMARY KEY (UserID, Friend),
 		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) ON DELETE CASCADE,
-		FOREIGN KEY (Account) REFERENCES UserAccount(Account) ON DELETE CASCADE
+		FOREIGN KEY (Friend) REFERENCES UserAccount(UserID) ON DELETE CASCADE
 		);
 
 DROP TABLE IF EXISTS Groups;
@@ -54,19 +56,31 @@ CREATE TABLE MovieReview (
 
 DROP PROCEDURE IF EXISTS create_user;
 CREATE PROCEDURE create_user(account VARCHAR(50), username VARCHAR(50), firstname VARCHAR(50), lastname VARCHAR(50))
-	INSERT INTO UserAccount (Account, Username, FirstName, LastName, Role) VALUES (account, username, firstname, lastname, 'default');
+	INSERT INTO UserAccount (Account, Username, FirstName, LastName, Role, CreatedAt) VALUES (account, username, firstname, lastname, 'default', CURDATE());
+
+DROP PROCEDURE IF EXISTS edit_user_name;
+CREATE PROCEDURE edit_names(fname VARCHAR(50), lname VARCHAR(50), username VARCHAR(50))
+	UPDATE UserAccount SET FirstName = fname, LastName = lname, UpdatedAt = CURDATE() WHERE Username = username;
+
+DROP PROCEDURE IF EXISTS edit_username;
+CREATE PROCEDURE edit_username(username VARCHAR(50), userid INT)
+	UPDATE UserAccount SET Username = name, UpdatedAt = CURDATE() WHERE UserID = userid;
+
+DROP PROCEDURE IF EXISTS edit_user_pic;
+CREATE PROCEDURE edit_pic(username VARCHAR(50), pic LONGBLOB)
+	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = CURDATE() WHERE Username = username;
 
 DROP PROCEDURE IF EXISTS rate_movie;
 CREATE PROCEDURE rate_movie(user INT, title VARCHAR(255), rating Enum('1', '2', '3', '4', '5'))
-		INSERT INTO MovieReview (UserID, MovieTitle, StarRating) VALUES (user, title, rating);
+	INSERT INTO MovieReview (UserID, MovieTitle, StarRating) VALUES (user, title, rating);
 
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (user INT)
-		SELECT Account_ID FROM Relationships WHERE UserID = user;
+	SELECT Account_ID FROM Relationships WHERE UserID = user;
 
 DROP PROCEDURE IF EXISTS add_friend;
-CREATE PROCEDURE add_friend (adder INT, username VARCHAR(50))
-	INSERT INTO Relationships (UserID, Account) VALUES (adder, username);
+CREATE PROCEDURE add_friend (adder INT, addee INT)
+	INSERT INTO Relationships (UserID, Account) VALUES (adder, addee);
 
 DROP PROCEDURE IF EXISTS unfriend;
 CREATE PROCEDURE unfriend (remover INT, username VARCHAR(50))
