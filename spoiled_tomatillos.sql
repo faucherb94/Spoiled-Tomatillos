@@ -59,16 +59,16 @@ CREATE PROCEDURE create_user(account VARCHAR(50), username VARCHAR(50), firstnam
 	INSERT INTO UserAccount (Account, Username, FirstName, LastName, Role, CreatedAt) VALUES (account, username, firstname, lastname, 'default', CURDATE());
 
 DROP PROCEDURE IF EXISTS edit_names;
-CREATE PROCEDURE edit_names(fname VARCHAR(50), lname VARCHAR(50), username VARCHAR(50))
-	UPDATE UserAccount SET FirstName = fname, LastName = lname, UpdatedAt = CURDATE() WHERE Username = username;
+CREATE PROCEDURE edit_names(account VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
+	UPDATE UserAccount SET FirstName = fname, LastName = lname, UpdatedAt = CURDATE() WHERE Account = account;
 
 DROP PROCEDURE IF EXISTS edit_username;
-CREATE PROCEDURE edit_username(username VARCHAR(50), userid INT)
-	UPDATE UserAccount SET Username = name, UpdatedAt = CURDATE() WHERE UserID = userid;
+CREATE PROCEDURE edit_username(account VARCHAR(50), username VARCHAR(50))
+	UPDATE UserAccount SET Username = username, UpdatedAt = CURDATE() WHERE Account = account;
 
 DROP PROCEDURE IF EXISTS edit_pic;
-CREATE PROCEDURE edit_pic(username VARCHAR(50), pic LONGBLOB)
-	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = CURDATE() WHERE Username = username;
+CREATE PROCEDURE edit_pic(account VARCHAR(50), pic LONGBLOB)
+	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = CURDATE() WHERE Account = account;
 
 DROP PROCEDURE IF EXISTS rate_movie;
 CREATE PROCEDURE rate_movie(user INT, title VARCHAR(255), rating Enum('1', '2', '3', '4', '5'))
