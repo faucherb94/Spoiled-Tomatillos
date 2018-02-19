@@ -20,7 +20,7 @@ DROP TABLE IF EXISTS Relationships;
 CREATE TABLE Relationships (
 		Owner VARCHAR(50),
 		FriendAccount VARCHAR(50),
-		PRIMARY KEY (UserID, Friend),
+		PRIMARY KEY (Owner, FriendAccount),
 		FOREIGN KEY (Owner) REFERENCES UserAccount(Account) ON DELETE CASCADE,
 		FOREIGN KEY (FriendAccount) REFERENCES UserAccount(Account) ON DELETE CASCADE
 		);
