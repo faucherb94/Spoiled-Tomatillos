@@ -2,7 +2,6 @@ package edu.northeastern.cs4500.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,7 +12,8 @@ import javax.persistence.*;
 /**
  * Represents a UserAccount in the DB
  */
-@Entity(name="UserAccount")
+@Entity
+@Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"})
 public class User {
@@ -23,8 +23,6 @@ public class User {
     @Column(name = "UserID")
     private int id;
 
-    @NotBlank
-    @Column(unique = true)
     private String username;
 
     public void setUsername(String username) {
@@ -35,7 +33,6 @@ public class User {
         return this.username;
     }
 
-    @NotBlank
     private String firstName;
 
     public void setFirstName(String firstName) {
@@ -46,7 +43,6 @@ public class User {
         return this.firstName;
     }
 
-    @NotBlank
     private String lastName;
 
     public void setLastName(String lastName) {
@@ -57,8 +53,6 @@ public class User {
         return this.lastName;
     }
 
-    @NotBlank
-    @Column(unique = true)
     private String email;
 
     public void setEmail(String email) {
@@ -69,7 +63,6 @@ public class User {
         return this.email;
     }
 
-    @NotBlank
     private String role;
 
     public void setRole(String role) {
@@ -80,16 +73,13 @@ public class User {
         return this.role;
     }
 
-    @Lob
     @Column(name = "DisplayPicture")
     private byte[] picture;
 
-    @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdAt;
 
-    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
