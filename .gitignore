@@ -15,6 +15,7 @@ mvnw.cmd
 .project
 .settings
 .springBeans
+.sonarlint
 
 ### IntelliJ IDEA ###
 .idea
