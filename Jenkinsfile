@@ -1,37 +1,77 @@
 pipeline {
-	agent {
-		docker {
-			image 'maven:3-alpine'
-			args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
-		}
-	}
-	stages {
-		stage('Build') {
-			steps {
-				echo "Building"
-				sh 'mvn compile'
-				sh 'mvn package'
+	try {
+		notifyBuild('STARTED')
+
+		agent {
+			docker {
+				image 'maven:3-alpine'
+				args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
 			}
 		}
-		stage('Test') {
-			steps {
-				echo "Testing"
-				sh 'mvn test'
+
+		stages {
+			stage('Build') {
+				steps {
+					echo "Building"
+					sh 'mvn compile'
+				}
 			}
-		}
-		stage('Deploy') {
-			when { branch 'master'}
-			steps {
-				checkout scm
-				echo 'Deploying...'
-				withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
-					sh 'apk add -U --no-cache openssh'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-					sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
+
+			stage('Test') {
+				steps {
+					echo "Testing"
+					sh 'mvn test'
+				}
+			}
+
+			stage('Deploy') {
+				when { branch 'master'}
+				steps {
+					sh 'mvn package -Dmaven.test.skip=true'
+					checkout scm
+					echo 'Deploying...'
+					withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
+						sh 'apk add -U --no-cache openssh'
+						sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
+						sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
+						sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
+						sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
+					}
 				}
 			}
 		}
+	} catch (e) {
+		// If there was an exception thrown, the build failed
+		currentBuild.result = "FAILED"
+		throw e
+	} finally {
+		// Success or failure, always send notifications
+		notifyBuild(currentBUild.result)
 	}
+}
+
+def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESSFUL') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
 }
