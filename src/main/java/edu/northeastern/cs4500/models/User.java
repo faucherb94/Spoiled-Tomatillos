@@ -23,6 +23,10 @@ public class User {
     @Column(name = "UserID")
     private int id;
 
+    public int getID() {
+        return this.id;
+    }
+
     private String username;
 
     public void setUsername(String username) {
