@@ -7,4 +7,7 @@ import edu.northeastern.cs4500.models.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Integer> {
+
+    User findByUsername(String username);
+
 }

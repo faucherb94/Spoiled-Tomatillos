@@ -1,0 +1,12 @@
+.btnpadding {
+    margin: 10px;
+}
+
+.card-img-left {
+    margin-right: 10px;
+    width:250px;
+}
+
+.card-float-left {
+    float: left;
+}
