@@ -41,5 +41,4 @@ function createUser() {
     }).fail(function(jqxhr, status, err) {
         $("#error").html("User already exists - try a different username or email");
     });
-
 }
