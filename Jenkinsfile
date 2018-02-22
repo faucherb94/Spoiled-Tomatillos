@@ -12,6 +12,7 @@ pipeline {
 				notifyBuild('STARTED')
 				echo "Building"
 				sh 'mvn compile'
+				sh 'mvn package -Dmaven.test.skip=true'
 			}
 		}
 
@@ -47,7 +48,6 @@ pipeline {
 		stage('Deploy') {
 			when { branch 'master'}
 			steps {
-				sh 'mvn package -Dmaven.test.skip=true'
 				checkout scm
 				echo 'Deploying...'
 				withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
