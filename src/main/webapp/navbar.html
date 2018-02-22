@@ -12,6 +12,23 @@
                     <a class="nav-item nav-link disabled" href="">Groups</a>
                 </div>
             </div>
+            <div class=”collapse navbar-collapse justify-content-end”>
+                <div class="navbar-nav">
+                    <span id="loggedin"><a class="nav-item nav-link" href="login.html">Log In</a></span>
+                </div>
+            </div>
         </nav>
     </div>
 </div>
+
+<script>
+    function() {
+        if ($.cookie("username")) {
+            $("#loggedin").html("Logged in as" + $.cookie("username") +
+                "<a class='nav-item nav-link' href='#' onclick="logoutClick(); return false;">Log Out</a>"
+            );
+        }
+    } ();
+
+    function logoutClick() { $.removeCookie("username"); }
+</script>
