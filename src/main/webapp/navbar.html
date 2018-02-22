@@ -12,6 +12,21 @@
                     <a class="nav-item nav-link disabled" href="">Groups</a>
                 </div>
             </div>
+            <div class=”collapse navbar-collapse justify-content-end”>
+                <div class="navbar-nav">
+                    <span id="loggedin" class="nav-item nav-link"><a class="nav-item nav-link" href="login.html">Log In</a></span>
+                </div>
+            </div>
         </nav>
     </div>
 </div>
+<script>
+    var loggedinuname = Cookies.get("username");
+    if (loggedinuname != null) {
+        $("#loggedin").html("Logged in as " + loggedinuname +
+            "<button class='nav-item btn btn-small' style='margin-left:10px' onclick='logoutClick()'>Log Out</button>"
+        );
+    }
+
+    function logoutClick() { Cookies.remove("username"); window.location.href="login.html"; }
+</script>
