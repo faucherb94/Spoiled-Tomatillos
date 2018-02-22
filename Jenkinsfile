@@ -34,8 +34,9 @@ pipeline {
 		
 		stage('Quality') {
 			steps {
+				sh 'sleep 30 SECONDS'
 				timeout(time: 10, unit: 'SECONDS') {
-					retry(3) {
+					retry(5) {
 						script {
 							def qg = waitForQualityGate()
 							if (qg.status != 'OK') {
