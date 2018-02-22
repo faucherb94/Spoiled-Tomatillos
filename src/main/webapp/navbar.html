@@ -14,21 +14,19 @@
             </div>
             <div class=”collapse navbar-collapse justify-content-end”>
                 <div class="navbar-nav">
-                    <span id="loggedin"><a class="nav-item nav-link" href="login.html">Log In</a></span>
+                    <span id="loggedin" class="nav-item nav-link"><a class="nav-item nav-link" href="login.html">Log In</a></span>
                 </div>
             </div>
         </nav>
     </div>
 </div>
-
 <script>
-    function() {
-        if ($.cookie("username")) {
-            $("#loggedin").html("Logged in as" + $.cookie("username") +
-                "<a class='nav-item nav-link' href='#' onclick="logoutClick(); return false;">Log Out</a>"
-            );
-        }
-    } ();
+    var loggedinuname = Cookies.get("username");
+    if (loggedinuname != null) {
+        $("#loggedin").html("Logged in as " + loggedinuname +
+            "<button class='nav-item btn btn-small' style='margin-left:10px' onclick='logoutClick()'>Log Out</button>"
+        );
+    }
 
-    function logoutClick() { $.removeCookie("username"); }
+    function logoutClick() { Cookies.remove("username"); window.location.href="login.html"; }
 </script>

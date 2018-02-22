@@ -1,16 +1,14 @@
 function loginClick() {
     let username = $("#uname").val();
-    $.getJSON(`api/user?name=${username}`)
+    $.getJSON(`/api/user?name=${username}`)
     .done(function(json) {
         console.log(json);
-        $.cookie=("username", resp.status);
-        window.location.href("index.html");
+        Cookies.set("username", json.username);
+        window.location.href = "index.html";
     })
     .fail(function(jqxhr, status, err) {
-        if (jqxhr.responseJSON.status == 404) {
-            $("#error").html("Account not found. Please register!");
-            showCreate();
-        }
+        $("#error").html("Account not found. Please register!");
+        showCreate();
     });
 
 }
@@ -31,7 +29,7 @@ function createUser() {
         lastName: $("#ln").val(),
         email: $("#new_email").val(),
         role: "default"
-        };
+    };
     $.ajax({
         url: "/api/user/create",
         type: "POST",
@@ -40,6 +38,8 @@ function createUser() {
         dataType: "json"
     }).done(function(json) {
         loginClick();
+    }).fail(function(jqxhr, status, err) {
+        $("#error").html("User already exists - try a different username or email");
     });
 
 }
