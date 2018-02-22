@@ -34,7 +34,7 @@ pipeline {
 		
 		stage('Quality') {
 			steps {
-				timeout(time: 2, unit: 'MINUTES') {
+				timeout(time: 10, unit: 'SECONDS') {
 					retry(3) {
 						script {
 							def qg = waitForQualityGate()
@@ -66,8 +66,8 @@ pipeline {
 	post {
 		always {
 			notifyBuild(currentBuild.result)
-			archiveArtifacts artifacts: '$WORKSPACE/target/*.war', fingerprint: true
-			junit '$WORKSPACE/target/surefire-reports/*.xml'
+			archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+			junit 'target/surefire-reports/*.xml'
 		}
 	}
 }
