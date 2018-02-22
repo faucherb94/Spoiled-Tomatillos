@@ -23,13 +23,15 @@
             <i class="icon fa fa-search"></i>
             <input class="input-text" type="text" id="moviesearch" placeholder="Search by title...">
         </div>
-        <p><a class="btn btn-primary btn-lg" style="margin:10px" onclick="searchByTitle()" role="button">Search</a></p>
+        <a class="btn btn-primary btn-lg" style="margin:10px" onclick="searchByTitle()" role="button">Search</a>
     </div>
+    <div id="feed"></div>
 </div>
 
 <script>
     $(document).ready(function(){
         $('#navdiv').load('navbar.html');
+        $('#nav-index').addClass('active');
     });
 </script>
 </body>
