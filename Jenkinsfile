@@ -21,6 +21,28 @@ pipeline {
 				sh 'mvn test'
 			}
 		}
+		
+		stage('SonarQube') {
+			steps {
+				withSonarQubeEnv('SonarQube') {
+					sh 'mvn clean install'
+					sh 'mvn sonar:sonar'
+				}
+			}
+		}
+		
+		stage('Quality') {
+			steps {
+				script {
+					timeout(time: 1, unit: 'HOURS') {
+						def qg = waitForQualityGate()
+						if (qg.status != 'OK') {
+							error "Pipeline aborted due to quality gate failure: ${qg.status}"
+						}
+					}
+				}
+			}
+		}
 
 		stage('Deploy') {
 			when { branch 'master'}
@@ -42,6 +64,8 @@ pipeline {
 	post {
 		always {
 			notifyBuild(currentBuild.result)
+			archive '$WORKSPACE/target/*.war'
+			junit '$WORKSPACE/target/surefire-reports/*.xml'
 		}
 	}
 }
