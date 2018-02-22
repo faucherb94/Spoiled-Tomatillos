@@ -2,7 +2,6 @@ package edu.northeastern.cs4500.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -13,7 +12,8 @@ import javax.persistence.*;
 /**
  * Represents a UserAccount in the DB
  */
-@Entity(name="UserAccount")
+@Entity
+@Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"})
 public class User {
@@ -23,34 +23,79 @@ public class User {
     @Column(name = "UserID")
     private int id;
 
-    @NotBlank
-    @Column(unique = true)
+    public int getID() {
+        return this.id;
+    }
+
     private String username;
 
-    @NotBlank
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUsername() {
+        return this.username;
+    }
+
     private String firstName;
 
-    @NotBlank
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return this.firstName;
+    }
+
     private String lastName;
 
-    @NotBlank
-    @Column(unique = true)
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getLastName() {
+        return this.lastName;
+    }
+
     private String email;
 
-    @NotBlank
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
     private String role;
 
-    @Lob
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getRole() {
+        return this.role;
+    }
+
     @Column(name = "DisplayPicture")
     private byte[] picture;
 
-    @Column(nullable = false, updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     private Date createdAt;
 
-    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     private Date updatedAt;
+
+    public User(String username, String firstName, String lastName, String email,
+                String role) {
+        this.username = username;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.role = role;
+    }
+
+    public User() {}
 }
