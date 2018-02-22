@@ -64,7 +64,7 @@ pipeline {
 	post {
 		always {
 			notifyBuild(currentBuild.result)
-			archive '$WORKSPACE/target/*.war'
+			archiveArtifacts artifacts: '$WORKSPACE/target/*.war', fingerprint: true
 			junit '$WORKSPACE/target/surefire-reports/*.xml'
 		}
 	}
