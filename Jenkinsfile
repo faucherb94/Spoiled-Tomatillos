@@ -1,76 +1,76 @@
 pipeline {
-	agent {
-		docker {
-			image 'maven:3-alpine'
-			args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
-		}
-	}
+  agent {
+    docker {
+      image 'maven:3-alpine'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
+    }
+  }
 
-	stages {
-		stage('Build') {
-			steps {
-				notifyBuild('STARTED')
-				echo "Building"
-				sh 'mvn compile'
-				sh 'mvn package -Dmaven.test.skip=true'
-			}
-		}
+  stages {
+    stage('Build') {
+      steps {
+        notifyBuild('STARTED')
+        echo "Building"
+        sh 'mvn compile'
+        sh 'mvn package -Dmaven.test.skip=true'
+      }
+    }
 
-		stage('Test') {
-			steps {
-				echo "Testing"
-				sh 'mvn test'
-			}
-		}
-		
-		stage('SonarQube') {
-			steps {
-				withSonarQubeEnv('SonarQube') {
-					sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
-					sh 'mvn sonar:sonar'
-				}
-			}
-		}
-		
-		stage('Quality') {
-			steps {
-				sh 'sleep 30'
-				timeout(time: 10, unit: 'SECONDS') {
-					retry(5) {
-						script {
-							def qg = waitForQualityGate()
-							if (qg.status != 'OK') {
-								error "Pipeline aborted due to quality gate failure: ${qg.status}"
-							}
-						}
-					}
-				}
-			}
-		}
+    stage('Test') {
+      steps {
+        echo "Testing"
+        sh 'mvn test'
+      }
+    }
+    
+    stage('SonarQube') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
+          sh 'mvn sonar:sonar'
+        }
+      }
+    }
+    
+    stage('Quality') {
+      steps {
+        sh 'sleep 30'
+        timeout(time: 10, unit: 'SECONDS') {
+          retry(5) {
+            script {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+            }
+          }
+        }
+      }
+    }
 
-		stage('Deploy') {
-			when { branch 'master'}
-			steps {
-				checkout scm
-				echo 'Deploying...'
-				withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
-					sh 'apk add -U --no-cache openssh'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-					sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
-				}
-			}
-		}
-	}
-	
-	post {
-		always {
-			notifyBuild(currentBuild.result)
-			archiveArtifacts artifacts: 'target/*.war', fingerprint: true
-			junit 'target/surefire-reports/*.xml'
-		}
-	}
+    stage('Deploy') {
+      when { branch 'master'}
+      steps {
+        checkout scm
+        echo 'Deploying...'
+        withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
+          sh 'apk add -U --no-cache openssh'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
+        }
+      }
+    }
+  }
+  
+  post {
+    always {
+      notifyBuild(currentBuild.result)
+      archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+      junit 'target/surefire-reports/*.xml'
+    }
+  }
 }
 
 def notifyBuild(String buildStatus = 'STARTED') {
