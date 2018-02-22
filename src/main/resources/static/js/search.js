@@ -26,8 +26,9 @@ function buildMovieCard(movie) {
     var card = "<div class='card border-light'>" +
           "<h5 class='card-header'>" + movie.title + "</h5>" +
           "<div class='card-body'>" +
-            "<div class='card-img-left'><img class='card-float-left' src='" + movie.poster +
-            "' href='" + movie.poster + "'/></div>" +
+            "<div><a href='" + movie.poster + "'>" +
+            "<img class='card-img-left card-float-left' src='" + movie.poster +
+            "'/></a></div>" +
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<a href='#' class='btn btn-secondary'>Review (coming soon)</a></div>" +
