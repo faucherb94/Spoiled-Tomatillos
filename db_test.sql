@@ -5,7 +5,7 @@ USE Spoiled_Tomatillos_Backend;
 DROP TABLE IF EXISTS UserAccount;
 CREATE TABLE UserAccount (
 		Email VARCHAR(50) UNIQUE,
-		Username VARCHAR(50) UNIQUE, 
+		Username VARCHAR(50), 
 		FirstName VARCHAR(50),
 		LastName VARCHAR(50),
 		Hometown VARCHAR(50),
@@ -16,23 +16,28 @@ CREATE TABLE UserAccount (
 		PRIMARY KEY(Email)
 		);
 
-DROP TABLE IF EXISTS Relationships;
-CREATE TABLE Relationships (
-		Email VARCHAR(50),
-		FriendEmail VARCHAR(50),
-		PRIMARY KEY (Email),
-		FOREIGN KEY (Email) REFERENCES UserAccount(Email) ON DELETE CASCADE, ON UPDATE CASCADE,
-		FOREIGN KEY (FriendEmail) REFERENCES UserAccount(Email) ON DELETE CASCADE, ON UPDATE CASCADE,
-		);
 
 DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups (
 		Email VARCHAR(50),
 		GroupName VARCHAR(75) UNIQUE,
 		Description VARCHAR(500),
-		PRIMARY KEY (Email, GroupName)
-		FOREIGN KEY (Email) REFERENCES UserAccount(Email) ON DELETE CASCADE, ON UPDATE CASCADE
+		PRIMARY KEY (Email, GroupName),
+		FOREIGN KEY (Email) REFERENCES UserAccount(Email) 
+		ON DELETE CASCADE ON UPDATE CASCADE
 		);
+	
+DROP TABLE IF EXISTS Relationships;
+CREATE TABLE Relationships (
+		Email VARCHAR(50),
+		Username VARCHAR(50),
+		PRIMARY KEY (Email),
+		FOREIGN KEY (Email) REFERENCES UserAccount(Email) 
+		ON DELETE CASCADE ON UPDATE CASCADE,
+		FOREIGN KEY (Username) REFERENCES UserAccount(Username) 
+		ON DELETE CASCADE ON UPDATE CASCADE
+		);
+
 
 DROP TABLE IF EXISTS GroupMemberships;
 CREATE TABLE GroupMemberships (
@@ -40,7 +45,8 @@ CREATE TABLE GroupMemberships (
 		GroupName VARCHAR(75),
 		MemberEmail VARCHAR(50),
 		PRIMARY KEY (Email, GroupName, MemberEmail),
-		FOREIGN KEY (Email, GroupName) REFERENCES Groups(Email, GroupName) ON DELETE CASCADE, ON UPDATE CASCADE
+		FOREIGN KEY (Email, GroupName) REFERENCES Groups(Email, GroupName) 
+		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
 DROP TABLE IF EXISTS MovieReview;
@@ -50,7 +56,8 @@ CREATE TABLE MovieReview (
 		Review VARCHAR(1000),
 		StarRating Enum('1', '2', '3', '4', '5'),
 		PRIMARY KEY(Email, MovieTitle),
-		FOREIGN KEY (Email) REFERENCES UserAccount(Email) ON DELETE CASCADE, ON UPDATE CASCADE
+		FOREIGN KEY (Email) REFERENCES UserAccount(Email) 
+		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
 
@@ -58,7 +65,7 @@ DROP PROCEDURE IF EXISTS create_user;
 CREATE PROCEDURE create_user(email VARCHAR(50), username VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
 	INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES (email, username, fname, lname, 'default', NOW());
 
-DROP PROCEDURE OF EXISTS edit_hometown;
+DROP PROCEDURE IF EXISTS edit_hometown;
 CREATE PROCEDURE edit_hometown(email VARCHAR(50), hometown VARCHAR(50))
 	UPDATE UserAccount SET Hometown = hometown, UpdatedAt = NOW() WHERE Email = email;
 
@@ -80,7 +87,7 @@ CREATE PROCEDURE rate_movie(email VARCHAR(50), title VARCHAR(255), rating Enum('
 
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (email VARCHAR(50))
-	SELECT FriendEmail FROM Relationships WHERE Email = email;
+	SELECT Username FROM Relationships WHERE Email = email;
 
 DROP PROCEDURE IF EXISTS add_friend;
 CREATE PROCEDURE add_friend (adder VARCHAR(50), addee VARCHAR(50))
@@ -102,7 +109,7 @@ DROP PROCEDURE IF EXISTS list_group_members;
 CREATE PROCEDURE list_group_members (owner VARCHAR(50), groupid VARCHAR(75))
 	SELECT MemberEmail FROM Groups JOIN GroupMemberships ON Groups.Email = GroupMemberships.Email WHERE Email = owner AND GroupName = groupid;
 
-INSERT INTO UserAccount VALUES (abinader@neu.edu, abinader, george, abinader),
-	   (testdonovan@neu.edu, joe, joseph, donovan),
-	   (testfaucher@neu.edu, benji, benjamin, faucher),
-	   (testledger@neu.edu, maddy, madaline, ledger);
+INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
+	   ('testdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
+	   ('testfaucher@neu.edu', 'benji', 'benjamin', 'faucher', 'default', NOW()),
+	   ('testledger@neu.edu', 'maddy', 'madaline', 'ledger', 'default', NOW());
