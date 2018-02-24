@@ -71,8 +71,8 @@ CREATE TABLE MovieReview (
 		);
 
 DROP PROCEDURE IF EXISTS create_user;
-CREATE PROCEDURE create_user(id INT, usernm VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
-	INSERT INTO UserAccount (UserID, Username, FirstName, LastName, Role, CreatedAt) VALUES (id, usernm, fname, lname, 'default', NOW());
+CREATE PROCEDURE create_user(usernm VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
+	INSERT INTO UserAccount (Username, FirstName, LastName, Role, CreatedAt) VALUES (usernm, fname, lname, 'default', NOW());
 
 DROP PROCEDURE IF EXISTS edit_hometown;
 CREATE PROCEDURE edit_hometown(id INT, town VARCHAR(50))
