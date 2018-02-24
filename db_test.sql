@@ -129,7 +129,7 @@ INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) 
 	   ('testfaucher@neu.edu', 'benji', 'benjamin', 'faucher', 'default', NOW()),
 	   ('testledger@neu.edu', 'maddy', 'madaline', 'ledger', 'default', NOW());
 
-# TESTS FOR create_user, edit_hometown, edit_names, edit_username, add_friend, fetch_friends, and unfriend
+# TESTS FOR create_user, edit_hometown, edit_names, edit_username, add_friend, fetch_friends, unfriend
 CALL create_user('tula@hotmail.com', 'mitz', 'mirtula', 'papa');
 CALL edit_hometown(5, 'Athens');
 CALL edit_names(5, 'Tulie', 'Papas');
@@ -149,4 +149,8 @@ SELECT GroupName, Description FROM Groups WHERE GroupName = 'Filthy Animals';
 CALL add_friend(1, 4);
 CALL add_to_group(1, 'Filthy Animals', 4);
 CALL add_to_group(1, 'Filthy Animals', 2);
-CALL list_group_members('Filthy Animals');`
+CALL list_group_members('Filthy Animals');
+
+# TESTS FOR rate_movie, review_movie
+CALL rate_movie(1, 'Scarface', '5');
+CALL review_movie(1, 'Goodfellas', 'A lot of violence');
