@@ -71,20 +71,20 @@ CREATE TABLE MovieReview (
 		);
 
 DROP PROCEDURE IF EXISTS create_user;
-CREATE PROCEDURE create_user(userid INT, username VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
-	INSERT INTO UserAccount (UserID, Username, FirstName, LastName, Role, CreatedAt) VALUES (userid, username, fname, lname, 'default', NOW());
+CREATE PROCEDURE create_user(id INT, usernm VARCHAR(50), fname VARCHAR(50), lname VARCHAR(50))
+	INSERT INTO UserAccount (UserID, Username, FirstName, LastName, Role, CreatedAt) VALUES (id, usernm, fname, lname, 'default', NOW());
 
 DROP PROCEDURE IF EXISTS edit_hometown;
-CREATE PROCEDURE edit_hometown(id INT, hometown VARCHAR(50))
-	UPDATE UserAccount SET Hometown = hometown, UpdatedAt = NOW() WHERE UserID = id; 
+CREATE PROCEDURE edit_hometown(id INT, town VARCHAR(50))
+	UPDATE UserAccount SET Hometown = town, UpdatedAt = NOW() WHERE UserID = id; 
 
 DROP PROCEDURE IF EXISTS edit_names;
 CREATE PROCEDURE edit_names(id INT, fname VARCHAR(50), lname VARCHAR(50))
 	UPDATE UserAccount SET FirstName = fname, LastName = lname, UpdatedAt = NOW() WHERE UserID = id;
 
 DROP PROCEDURE IF EXISTS edit_username;
-CREATE PROCEDURE edit_username(id INT, username VARCHAR(50))
-	UPDATE UserAccount SET Username = username, UpdatedAt = NOW() WHERE UserID = id;
+CREATE PROCEDURE edit_username(id INT, usernm VARCHAR(50))
+	UPDATE UserAccount SET Username = usernm, UpdatedAt = NOW() WHERE UserID = id;
 
 DROP PROCEDURE IF EXISTS edit_pic;
 CREATE PROCEDURE edit_pic(id INT, pic LONGBLOB)
@@ -112,17 +112,17 @@ CREATE PROCEDURE unfriend (remover INT, removee int)
 	DELETE FROM Relationships WHERE UserID = remover AND MemberID = removee;
 
 DROP PROCEDURE IF EXISTS create_group;
-CREATE PROCEDURE create_group (id INT, groupName VARCHAR(75), description VARCHAR(500))
-	INSERT INTO Groups (UserID, GroupName, Description) VALUES (id, groupName, description);
+CREATE PROCEDURE create_group (id INT, gname VARCHAR(75), gdesc VARCHAR(500))
+	INSERT INTO Groups (UserID, GroupName, Description) VALUES (id, gname, gdesc);
 	
 DROP PROCEDURE IF EXISTS add_to_group;
-CREATE PROCEDURE add_to_group (id INT, groupName VARCHAR(75), addee INT)
-	INSERT INTO GroupMemberships (UserID, GroupName, MemberID) VALUES (id, groupName, addee);
+CREATE PROCEDURE add_to_group (id INT, gname VARCHAR(75), addee INT)
+	INSERT INTO GroupMemberships (UserID, GroupName, MemberID) VALUES (id, gname, addee);
 
 DROP PROCEDURE IF EXISTS list_group_members;
-CREATE PROCEDURE list_group_members (groupname VARCHAR(75))
+CREATE PROCEDURE list_group_members (gname VARCHAR(75))
 	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID
-	WHERE GroupName = groupname;
+	WHERE GroupName = gname;
 
 INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
 	   ('testAccountUser tdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
