@@ -100,7 +100,8 @@ CREATE PROCEDURE review_movie(id INT, title VARCHAR(255), review VARCHAR(1000))
 
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (id INT)
-	SELECT Username FROM Relationships JOIN UserAccount ON Relationships.MemberID = UserAccount.UserID WHERE Relationships.UserID = id;
+	SELECT Username FROM Relationships JOIN UserAccount ON Relationships.MemberID = UserAccount.UserID 
+	WHERE Relationships.UserID = id;
 
 DROP PROCEDURE IF EXISTS add_friend;
 CREATE PROCEDURE add_friend (adder INT, addee INT)
@@ -119,14 +120,16 @@ CREATE PROCEDURE add_to_group (id INT, groupName VARCHAR(75), addee INT)
 	INSERT INTO GroupMemberships (UserID, GroupName, MemberID) VALUES (id, groupName, addee);
 
 DROP PROCEDURE IF EXISTS list_group_members;
-CREATE PROCEDURE list_group_members (id INT, groupname VARCHAR(75))
-	SELECT MemberEmail FROM Groups JOIN GroupMemberships ON Groups.UserID = GroupMemberships.UserID WHERE GroupMemberships.UserID = id AND GroupName = groupname;
+CREATE PROCEDURE list_group_members (groupname VARCHAR(75))
+	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID
+	WHERE GroupName = groupname;
 
 INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
 	   ('testAccountUser tdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
 	   ('testfaucher@neu.edu', 'benji', 'benjamin', 'faucher', 'default', NOW()),
 	   ('testledger@neu.edu', 'maddy', 'madaline', 'ledger', 'default', NOW());
 
+# TESTS FOR create_user, edit_hometown, edit_names, edit_username, add_friend, fetch_friends, and unfriend
 CALL create_user('tula@hotmail.com', 'mitz', 'mirtula', 'papa');
 CALL edit_hometown(5, 'Athens');
 CALL edit_names(5, 'Tulie', 'Papas');
@@ -139,3 +142,11 @@ CALL fetch_friends(1);
 CALL fetch_friends(3);
 CALL unfriend(3, 4);
 CALL fetch_friends(3);
+
+# TESTS FOR create_group, add_to_group, list_group_members
+CALL create_group(1, 'Filthy Animals', 'This is the barnyard group');
+SELECT GroupName, Description FROM Groups WHERE GroupName = 'Filthy Animals';
+CALL add_friend(1, 4);
+CALL add_to_group(1, 'Filthy Animals', 4);
+CALL add_to_group(1, 'Filthy Animals', 2);
+CALL list_group_members('Filthy Animals');`
