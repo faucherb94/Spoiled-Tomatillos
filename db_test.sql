@@ -19,10 +19,11 @@ CREATE TABLE UserAccount (
 
 DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups (
+		GroupID INT AUTO_INCREMENT,
 		UserID INT,
 		GroupName VARCHAR(75),
 		Description VARCHAR(500),
-		PRIMARY KEY (UserID, GroupName),
+		PRIMARY KEY (GroupID),
 		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
@@ -40,11 +41,10 @@ CREATE TABLE Relationships (
 
 DROP TABLE IF EXISTS GroupMemberships;
 CREATE TABLE GroupMemberships (
-		UserID INT,
-		GroupName VARCHAR(75),
+		GroupID INT,
 		MemberID INT,
-		PRIMARY KEY (UserID, GroupName, MemberID),
-		FOREIGN KEY (UserID, GroupName) REFERENCES Groups(UserID, GroupName) 
+		PRIMARY KEY (GroupID, MemberID),
+		FOREIGN KEY (GroupID) REFERENCES Groups(GroupID) 
 		ON DELETE CASCADE ON UPDATE CASCADE,
 		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
@@ -118,13 +118,13 @@ CREATE PROCEDURE create_group (id INT, gname VARCHAR(75), gdesc VARCHAR(500))
 	INSERT INTO Groups (UserID, GroupName, Description) VALUES (id, gname, gdesc);
 	
 DROP PROCEDURE IF EXISTS add_to_group;
-CREATE PROCEDURE add_to_group (id INT, gname VARCHAR(75), addee INT)
-	INSERT INTO GroupMemberships (UserID, GroupName, MemberID) VALUES (id, gname, addee);
+CREATE PROCEDURE add_to_group (gid INT, addee INT)
+	INSERT INTO GroupMemberships (GroupID, MemberID) VALUES (gid, addee);
 
 DROP PROCEDURE IF EXISTS list_group_members;
-CREATE PROCEDURE list_group_members (id INT, gname VARCHAR(75))
-	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID
-	WHERE GroupName = gname AND GroupMemberships.UserID = id;
+CREATE PROCEDURE list_group_members (gid INT)
+	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID 
+	WHERE GroupMemberships.GroupID = gid;
 	
 INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
 	   ('testAccountUser tdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
@@ -147,11 +147,14 @@ CALL fetch_friends(3);
 
 # TESTS FOR create_group, add_to_group, list_group_members
 CALL create_group(1, 'foo', 'bar');
+CALL create_group(2, 'bar', 'foo');
 SELECT GroupName, Description FROM Groups WHERE GroupName = 'foo';
-CALL add_friend(1, 4);
-CALL add_to_group(1, 'foo', 4);
-CALL add_to_group(1, 'foo', 2);
-CALL list_group_members(1, 'foo');
+SELECT GroupName, Description FROM Groups WHERE GroupName = 'bar';
+CALL add_to_group(1, 4);
+CALL add_to_group(1, 2);
+CALL add_to_group(2, 3);
+CALL list_group_members(1);
+CALL list_group_members(2);
 
 # TESTS FOR rate_movie, review_movie
 CALL rate_movie(1, 'Scarface', '1983-12-09', '5');
