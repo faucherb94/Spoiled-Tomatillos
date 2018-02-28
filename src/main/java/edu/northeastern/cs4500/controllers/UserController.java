@@ -1,11 +1,11 @@
 package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -56,5 +56,26 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(user);
+    }
+
+    /**
+     * Update user
+     */
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable(value = "id") int id,
+                                           @Valid @RequestBody User u) {
+        User currentUser = repository.findOne(id);
+        if (currentUser == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        currentUser.setUsername(u.getUsername());
+        currentUser.setEmail(u.getEmail());
+        currentUser.setFirstName(u.getFirstName());
+        currentUser.setLastName(u.getLastName());
+        currentUser.setRole(u.getRole());
+
+        User updatedUser = repository.save(currentUser);
+        return ResponseEntity.ok(updatedUser);
     }
 }

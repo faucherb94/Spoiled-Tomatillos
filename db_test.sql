@@ -125,3 +125,39 @@ DROP PROCEDURE IF EXISTS list_group_members;
 CREATE PROCEDURE list_group_members (gid INT)
 	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID 
 	WHERE GroupMemberships.GroupID = gid;
+	
+INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
+	   ('testAccountUser tdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
+	   ('testfaucher@neu.edu', 'benji', 'benjamin', 'faucher', 'default', NOW()),
+	   ('testledger@neu.edu', 'maddy', 'madaline', 'ledger', 'default', NOW());
+
+# TESTS FOR create_user, edit_hometown, edit_names, edit_username, add_friend, fetch_friends, unfriend
+CALL create_user('tula@hotmail.com', 'mitz', 'mirtula', 'papa');
+CALL edit_hometown(5, 'Athens');
+CALL edit_names(5, 'Tulie', 'Papas');
+CALL edit_username(5, 'Mitz');
+CALL add_friend(1, 2);
+CALL add_friend(1, 3);
+CALL add_friend(3, 4);
+CALL add_friend(3, 5);
+CALL fetch_friends(1);
+CALL fetch_friends(3);
+CALL unfriend(3, 4);
+CALL fetch_friends(3);
+
+# TESTS FOR create_group, add_to_group, list_group_members
+CALL create_group(1, 'foo', 'bar');
+CALL create_group(2, 'bar', 'foo');
+SELECT GroupName, Description FROM Groups WHERE GroupName = 'foo';
+SELECT GroupName, Description FROM Groups WHERE GroupName = 'bar';
+CALL add_to_group(1, 4);
+CALL add_to_group(1, 2);
+CALL add_to_group(2, 3);
+CALL list_group_members(1);
+CALL list_group_members(2);
+
+# TESTS FOR rate_movie, review_movie
+CALL rate_movie(1, 'Scarface', '1983-12-09', '5');
+CALL review_movie(1, 'Goodfellas', '1990-09-19', 'A lot of violence');
+SELECT * FROM MovieRating;
+SELECT * FROM MovieReview;
