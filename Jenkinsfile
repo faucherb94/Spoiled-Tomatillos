@@ -1,8 +1,13 @@
 pipeline {
+  environment {
+  	DB_PASS       = credentials('spoiled_tomatillos_db_pass')
+  	OMDB_API_KEY  = credentials('omdb_api_key') 
+  }
+  
   agent {
     docker {
       image 'maven:3-alpine'
-      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASS'
     }
   }
 
