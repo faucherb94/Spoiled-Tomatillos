@@ -1,8 +1,8 @@
 pipeline {
   environment {
   	ARTIF_ID = readMavenPom().getArtifactId()
-  	VERSION = "0.0." + env.BUILD_NUMBER
-  	ARTIFACT = ARTIF_ID + "-" + VERSION
+  	VERSION = '0.0.${env.BUILD_NUMBER}'
+  	ARTIFACT = '${ARTIF_ID}-${VERSION}'
   }
   
   agent {
