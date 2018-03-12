@@ -1,11 +1,14 @@
-def pom = readMavenPom
-def artifact = pom.getArtifactId()-pom.getVersion()
-
 pipeline {
+  environment {
+  	ARTIF_ID = readMavenPom().getArtifactId()
+  	VERSION = '0.0.' + env.BUILD_NUMBER
+  	ARTIFACT = ARTIF_ID + '-' + VERSION
+  }
+  
   agent {
     docker {
       image 'maven:3-alpine'
-      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD BUILD=$env.BUILD_NUMBER'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
     }
   }
 
@@ -13,10 +16,13 @@ pipeline {
     stage('Build') {
       steps {
         notifyBuild('STARTED')
+        def pom = readMavenPom
+        pom.setVersion($VERSION)
+        writeMavenPom model: pom
         echo "Building"
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact $artifact"
+        echo "Built artifact $ARTIFACT"
       }
     }
 
@@ -61,8 +67,8 @@ pipeline {
           sh 'apk add -U --no-cache openssh'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$artifact ec2-user@app.codersunltd.me:~/app/$artifact'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$artifact > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$ARTIFACT ec2-user@app.codersunltd.me:~/app/$ARTIFACT'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$ARTIFACT > app.out 2>&1 &\''
         }
       }
     }

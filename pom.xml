@@ -5,7 +5,7 @@
 
     <groupId>edu.northeastern.cs4500</groupId>
     <artifactId>cs4500-spring2018-team26</artifactId>
-    <version>0.0.${env.BUILD}</version>
+    <version>255</version>
     <packaging>war</packaging>
 
     <name>cs4500-spring2018-team26</name>
