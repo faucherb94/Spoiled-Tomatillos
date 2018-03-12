@@ -14,23 +14,21 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 import edu.northeastern.cs4500.models.User;
-import edu.northeastern.cs4500.repositories.UserRepository;
+import edu.northeastern.cs4500.services.IUserService;
 
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
-    private UserRepository repository;
+    private IUserService service;
 
     /**
      * Create a new user
      */
     @PostMapping("/create")
     public User createUser(@Valid @RequestBody User user) {
-
-        System.out.println(user);
-        return repository.save(user);
+        return service.create(user);
     }
 
     /**
@@ -38,10 +36,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserByID(@PathVariable(value = "id") int id) {
-        User user = repository.findOne(id);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+        User user = service.findByID(id);
         return ResponseEntity.ok(user);
     }
 
@@ -51,10 +46,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<User> getUserByUsername(
             @RequestParam(value = "name") String username) {
-        User user = repository.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+        User user = service.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 
@@ -64,18 +56,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable(value = "id") int id,
                                            @Valid @RequestBody User u) {
-        User currentUser = repository.findOne(id);
-        if (currentUser == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        currentUser.setUsername(u.getUsername());
-        currentUser.setEmail(u.getEmail());
-        currentUser.setFirstName(u.getFirstName());
-        currentUser.setLastName(u.getLastName());
-        currentUser.setRole(u.getRole());
-
-        User updatedUser = repository.save(currentUser);
+        User updatedUser = service.update(id, u);
         return ResponseEntity.ok(updatedUser);
     }
 }
