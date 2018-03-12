@@ -1,8 +1,11 @@
+def pom = readMavenPom
+def artifact = pom.getArtifactId()-pom.getVersion()
+
 pipeline {
   agent {
     docker {
       image 'maven:3-alpine'
-      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD BUILD=$env.BUILD_NUMBER'
     }
   }
 
@@ -13,6 +16,7 @@ pipeline {
         echo "Building"
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
+        echo "Built artifact $artifact"
       }
     }
 
@@ -57,8 +61,8 @@ pipeline {
           sh 'apk add -U --no-cache openssh'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$artifact ec2-user@app.codersunltd.me:~/app/$artifact'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$artifact > app.out 2>&1 &\''
         }
       }
     }
