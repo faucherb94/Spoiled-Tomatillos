@@ -1,6 +1,7 @@
 package edu.northeastern.cs4500.utils;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
@@ -21,6 +22,7 @@ class ApiError {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss")
     private LocalDateTime timestamp;
     private String message;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String debugMessage;
 
     private ApiError() {

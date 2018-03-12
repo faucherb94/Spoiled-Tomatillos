@@ -14,6 +14,14 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity<Object> handleResourceNotFound(
+            ResourceNotFoundException ex) {
+        ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+        apiError.setMessage(ex.getMessage());
+        return buildResponseEntity(apiError);
+    }
+
     @ExceptionHandler(DataIntegrityViolationException.class)
     protected ResponseEntity<Object> handleDataIntegrityViolation(
             DataIntegrityViolationException ex) {
