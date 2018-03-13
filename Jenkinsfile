@@ -1,6 +1,6 @@
 pipeline {
   environment {
-  	VERSION = "0.0.0.${env.BUILD_NUMBER}"
+  	VERSION = "${env.BUILD_NUMBER}"
   }
   
   agent {
@@ -11,6 +11,15 @@ pipeline {
   }
 
   stages {
+  	stage('Deploy Prep') {
+  	  when { branch 'master' }
+  	  steps {
+  	    script {
+  	      env.VERSION = "0.0.0.${env.BUILD_NUMBER}"
+  	    }
+  	  }
+  	}
+  	
     stage('Build') {
       steps {
         notifyBuild('STARTED')
@@ -18,8 +27,8 @@ pipeline {
         script {
           pom = readMavenPom()
           pom.setVersion("${VERSION}")
-          def name = pom.getName() + ":${env.BRANCH_NAME}"
-          def artifact = pom.getArtifactId() + ":${env.BRANCH_NAME}"
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
           pom.setName(name)
           pom.setArtifactId(artifact)
         }
@@ -40,7 +49,7 @@ pipeline {
     stage('SonarQube') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
+          sh 'mvn clean install -Dmaven.test.skip=true'
           sh 'mvn sonar:sonar'
         }
       }
