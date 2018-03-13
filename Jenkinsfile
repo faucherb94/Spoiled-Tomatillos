@@ -1,6 +1,6 @@
 pipeline {
   environment {
-  	VERSION = "0.0.${env.BUILD_NUMBER}"
+  	VERSION = "0.0.0.${env.BUILD_NUMBER}"
   }
   
   agent {
@@ -18,8 +18,10 @@ pipeline {
         script {
           pom = readMavenPom()
           pom.setVersion("${VERSION}")
-          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def name = pom.getName() + ":${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + ":${env.BRANCH_NAME}"
           pom.setName(name)
+          pom.setArtifactId(artifact)
         }
         writeMavenPom model: pom
         sh 'mvn compile'
