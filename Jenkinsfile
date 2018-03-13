@@ -1,10 +1,6 @@
-def pom = readMavenPom()
-
 pipeline {
   environment {
-  	ARTIF_ROOT = '${pom.getArtifactId()}'
   	VERSION = '0.0.${env.BUILD_NUMBER}'
-  	ARTIFACT = '${ARTIF_ROOT}-${VERSION}-${pom.getPackaging()}'
   }
   
   agent {
@@ -20,12 +16,14 @@ pipeline {
         notifyBuild('STARTED')
         echo "Building"
         script {
-          pom.setVersion($VERSION)
+          pom = readMavenPom()
+          pom.setVersion('${VERSION}')
+          pom.setProject('${pom.getProject()}-${env.BRANCH_NAME}')
         }
         writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact $ARTIFACT"
+        echo "Built artifact ${readMavenPom.getArtifactId()}"
       }
     }
 
@@ -63,6 +61,9 @@ pipeline {
 
     stage('Deploy') {
       when { branch 'master'}
+      environment {
+        ARTIFACT = '${readMavenPom.getArtifactId()}-${VERSION}.${readMavenPom.getPackaging()}'
+      }
       steps {
         checkout scm
         echo 'Deploying...'
