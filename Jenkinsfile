@@ -17,8 +17,9 @@ pipeline {
         echo "Building"
         script {
           pom = readMavenPom()
-          pom.setVersion('${VERSION}')
-          pom.setName('${pom.getName()}-${env.BRANCH_NAME}')
+          pom.setVersion('$VERSION')
+          def name = pom.getName() + '-${env.BRANCH_NAME}'
+          pom.setName(name)
         }
         writeMavenPom model: pom
         sh 'mvn compile'
