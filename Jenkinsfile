@@ -18,12 +18,12 @@ pipeline {
         script {
           pom = readMavenPom()
           pom.setVersion('${VERSION}')
-          pom.setProject('${pom.getProject()}-${env.BRANCH_NAME}')
+          pom.setName('${pom.getName()}-${env.BRANCH_NAME}')
         }
         writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact ${readMavenPom.getArtifactId()}"
+        echo "Built artifact ${pom.getArtifactId()}"
       }
     }
 
