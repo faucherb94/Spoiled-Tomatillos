@@ -17,8 +17,8 @@ pipeline {
         echo "Building"
         script {
           pom = readMavenPom()
-          pom.setVersion($VERSION)
-          def name = pom.getName() + '-' + $BRANCH_NAME
+          pom.setVersion("${env.VERSION}")
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
           pom.setName(name)
         }
         writeMavenPom model: pom
@@ -63,7 +63,7 @@ pipeline {
     stage('Deploy') {
       when { branch 'master'}
       environment {
-        ARTIFACT = '${readMavenPom.getArtifactId()}-${VERSION}.${readMavenPom.getPackaging()}'
+        ARTIFACT = "${readMavenPom.getArtifactId()}-${VERSION}.${readMavenPom.getPackaging()}"
       }
       steps {
         checkout scm
