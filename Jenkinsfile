@@ -17,14 +17,14 @@ pipeline {
         echo "Building"
         script {
           pom = readMavenPom()
-          pom.setVersion('${VERSION}')
-          def name = pom.getName() + '-${env.BRANCH_NAME}'
+          pom.setVersion($VERSION)
+          def name = pom.getName() + '-' + $BRANCH_NAME
           pom.setName(name)
         }
         writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact ${pom.getArtifactId()}-${VERSION}.${pom.getPackage()}"
+        echo "Built artifact ${pom.getArtifactId()}-${VERSION}.${pom.getPackaging()}"
       }
     }
 
