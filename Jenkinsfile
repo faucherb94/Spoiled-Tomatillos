@@ -1,3 +1,5 @@
+def pom = readMavenPom()
+
 pipeline {
   environment {
   	VERSION = '0.0.${env.BUILD_NUMBER}'
@@ -12,12 +14,11 @@ pipeline {
 
   stages {
     stage('Build') {
-      def pom = readMavenPom
-	  pom.setVersion($VERSION)
-	  writeMavenPom model: pom
       steps {
         notifyBuild('STARTED')
         echo "Building"
+        pom.setVersion($VERSION)
+        writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
         echo "Built artifact ${pom.artifactId}-${pom.version}.${pom.packaging}"
@@ -58,7 +59,6 @@ pipeline {
 
     stage('Deploy') {
       when { branch 'master'}
-      def pom = readMavenPom
       steps {
         checkout scm
         echo 'Deploying...'
