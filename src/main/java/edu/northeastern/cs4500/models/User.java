@@ -18,7 +18,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Setter;
 
 /**
  * Represents a UserAccount in the DB
@@ -52,10 +54,12 @@ public class User {
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
+    @Setter(AccessLevel.NONE)
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @Setter(AccessLevel.NONE)
     private Date updatedAt;
 
     public User(String username, String firstName, String lastName, String email,
