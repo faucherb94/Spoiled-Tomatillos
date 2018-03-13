@@ -2,7 +2,9 @@ def pom = readMavenPom()
 
 pipeline {
   environment {
+  	ARTIF_ROOT = '${pom.getArtifactId()}'
   	VERSION = '0.0.${env.BUILD_NUMBER}'
+  	ARTIFACT = '${ARTIF_ROOT}-${VERSION}-${pom.getPackaging()}'
   }
   
   agent {
@@ -17,11 +19,13 @@ pipeline {
       steps {
         notifyBuild('STARTED')
         echo "Building"
-        pom.setVersion($VERSION)
+        script {
+          pom.setVersion($VERSION)
+        }
         writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact ${pom.artifactId}-${pom.version}.${pom.packaging}"
+        echo "Built artifact $ARTIFACT"
       }
     }
 
@@ -66,8 +70,8 @@ pipeline {
           sh 'apk add -U --no-cache openssh'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/${pom.artifactId}-${pom.version}.${pom.packaging} ec2-user@app.codersunltd.me:~/app/${pom.artifactId}-${pom.version}.${pom.packaging}'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/${pom.artifactId}-${pom.version}.${pom.packaging} > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$ARTIFACT ec2-user@app.codersunltd.me:~/app/$ARTIFACT'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$ARTIFACT > app.out 2>&1 &\''
         }
       }
     }
