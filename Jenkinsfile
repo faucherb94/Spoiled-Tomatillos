@@ -1,8 +1,6 @@
 pipeline {
   environment {
-  	ARTIF_ID = readMavenPom().getArtifactId()
   	VERSION = '0.0.${env.BUILD_NUMBER}'
-  	ARTIFACT = '${ARTIF_ID}-${VERSION}'
   }
   
   agent {
@@ -13,18 +11,17 @@ pipeline {
   }
 
   stages {
+    def pom = readMavenPom
+	pom.setVersion($VERSION)
+	writeMavenPom model: pom
+	
     stage('Build') {
       steps {
         notifyBuild('STARTED')
-        script {
-          def pom = readMavenPom
-          pom.setVersion($VERSION)
-          writeMavenPom model: pom
-        }
         echo "Building"
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact $ARTIFACT"
+        echo "Built artifact ${pom.artifactId}-${pom.version}.${pom.packaging}"
       }
     }
 
