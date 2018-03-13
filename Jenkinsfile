@@ -1,6 +1,6 @@
 pipeline {
   environment {
-  	VERSION = '0.0.${env.BUILD_NUMBER}'
+  	VERSION = "0.0.${env.BUILD_NUMBER}"
   }
   
   agent {
@@ -17,7 +17,7 @@ pipeline {
         echo "Building"
         script {
           pom = readMavenPom()
-          pom.setVersion("${env.VERSION}")
+          pom.setVersion("${VERSION}")
           def name = pom.getName() + "-${env.BRANCH_NAME}"
           pom.setName(name)
         }
