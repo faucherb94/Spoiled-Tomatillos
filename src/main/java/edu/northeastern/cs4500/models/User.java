@@ -7,11 +7,23 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import lombok.Data;
 
 /**
  * Represents a UserAccount in the DB
  */
+@Data
 @Entity
 @Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
@@ -23,59 +35,17 @@ public class User {
     @Column(name = "UserID")
     private int id;
 
-    public int getID() {
-        return this.id;
-    }
-
     private String username;
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
 
     private String firstName;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
     private String lastName;
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
 
     private String email;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
     private String role;
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return this.role;
-    }
+    private String hometown;
 
     @Column(name = "DisplayPicture")
     private byte[] picture;
@@ -89,12 +59,13 @@ public class User {
     private Date updatedAt;
 
     public User(String username, String firstName, String lastName, String email,
-                String role) {
+                String role, String hometown) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+        this.hometown = hometown;
     }
 
     public User() {}
