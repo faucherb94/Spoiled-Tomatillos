@@ -116,7 +116,7 @@
         </plugins>
     </build>
 
-    <artifactId>spoiled-tomatillos-app</artifactId>
+    <artifactId>team26-st-app</artifactId>
     <description>Web App Spoiled Tomatillos by Coders Unlimited (Team 26)</description>
     <url>http://app.codersunltd.me</url>
 </project>
