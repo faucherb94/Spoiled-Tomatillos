@@ -18,14 +18,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import lombok.AccessLevel;
-import lombok.Data;
+import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Represents a UserAccount in the DB
  */
-@Data
 @Entity
 @Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
@@ -35,31 +33,39 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserID")
+    @Getter @Setter
     private int id;
 
+    @Getter @Setter
     private String username;
 
+    @Getter @Setter
     private String firstName;
 
+    @Getter @Setter
     private String lastName;
 
+    @Getter @Setter
     private String email;
 
+    @Getter @Setter
     private String role;
 
+    @Getter @Setter
     private String hometown;
 
     @Column(name = "DisplayPicture")
+    @Getter @Setter
     private byte[] picture;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
-    @Setter(AccessLevel.NONE)
+    @Getter
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    @Setter(AccessLevel.NONE)
+    @Getter
     private Date updatedAt;
 
     public User(String username, String firstName, String lastName, String email,

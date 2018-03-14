@@ -4,8 +4,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class UserTest {
 
@@ -114,54 +112,6 @@ public class UserTest {
         byte[] newPic = new byte[]{};
         user.setPicture(newPic);
         assertEquals(newPic, user.getPicture());
-    }
-
-    @Test
-    public void equals() throws Exception {
-        User user2 = new User(user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getHometown());
-        user2.setId(user.getId());
-
-        assertTrue(user.equals(user2) && user2.equals(user));
-
-        user2.setId(48792);
-        assertFalse(user.equals(user2));
-    }
-
-    @Test
-    public void testHashCode() throws Exception {
-        User user2 = new User(user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getRole(),
-                user.getHometown());
-        user2.setId(user.getId());
-
-        assertTrue(user.hashCode() == user2.hashCode());
-    }
-
-    @Test
-    public void canEqual() throws Exception {
-        assertFalse(user.canEqual(new Object()));
-    }
-
-    @Test
-    public void testToString() throws Exception {
-        String expected = "User(id=" + user.getId() +
-                ", username=" + user.getUsername() +
-                ", firstName=" + user.getFirstName() +
-                ", lastName=" + user.getLastName() +
-                ", email=" + user.getEmail() +
-                ", role=" + user.getRole() +
-                ", hometown=" + user.getHometown() +
-                ", picture=null, createdAt=null, updatedAt=null)";
-
-        assertEquals(expected, user.toString());
     }
 
 }
