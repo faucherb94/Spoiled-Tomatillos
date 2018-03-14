@@ -1,4 +1,8 @@
 pipeline {
+  environment {
+  	VERSION = "${env.BUILD_NUMBER}"
+  }
+  
   agent {
     docker {
       image 'maven:3-alpine'
@@ -7,12 +11,31 @@ pipeline {
   }
 
   stages {
+  	stage('Deploy Prep') {
+  	  when { branch 'master' }
+  	  steps {
+  	    script {
+  	      env.VERSION = "0.0.0.${env.BUILD_NUMBER}"
+  	    }
+  	  }
+  	}
+  	
     stage('Build') {
       steps {
         notifyBuild('STARTED')
         echo "Building"
+        script {
+          pom = readMavenPom()
+          pom.setVersion("${VERSION}")
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
+          pom.setName(name)
+          pom.setArtifactId(artifact)
+        }
+        writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
+        echo "Built artifact ${pom.getArtifactId()}-${VERSION}.${pom.getPackaging()}"
       }
     }
 
@@ -26,7 +49,6 @@ pipeline {
     stage('SonarQube') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
           sh 'mvn sonar:sonar'
         }
       }
@@ -50,6 +72,9 @@ pipeline {
 
     stage('Deploy') {
       when { branch 'master'}
+      environment {
+        ARTIFACT = "${readMavenPom.getArtifactId()}-${VERSION}.${readMavenPom.getPackaging()}"
+      }
       steps {
         checkout scm
         echo 'Deploying...'
@@ -57,8 +82,8 @@ pipeline {
           sh 'apk add -U --no-cache openssh'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26-st-app > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/team26-st-app-255.war ec2-user@app.codersunltd.me:~/app/team26-st-app-255.war'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/team26-st-app-255.war > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$ARTIFACT ec2-user@app.codersunltd.me:~/app/$ARTIFACT'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$ARTIFACT > app.out 2>&1 &\''
         }
       }
     }
