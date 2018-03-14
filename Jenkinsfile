@@ -55,10 +55,10 @@ pipeline {
         echo 'Deploying...'
         withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
           sh 'apk add -U --no-cache openssh'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26-st-app > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/spoiled-tomatillos-app-255.war ec2-user@app.codersunltd.me:~/app/spoiled-tomatillos-app-255.war'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/spoiled-tomatillos-app-255.war > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/team26-st-app-255.war ec2-user@app.codersunltd.me:~/app/team26-st-app-255.war'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/team26-st-app-255.war > app.out 2>&1 &\''
         }
       }
     }
