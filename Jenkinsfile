@@ -2,7 +2,7 @@ pipeline {
   environment {
   	DB_PASS       = credentials('spoiled_tomatillos_db_pass')
   	OMDB_API_KEY  = credentials('omdb_api_key') 
-  	VERSION = "${env.BUILD_NUMBER}"
+  	VERSION       = "${env.BUILD_NUMBER}"
   }
   
   agent {
@@ -13,12 +13,20 @@ pipeline {
   }
 
   stages {
-  	stage('Deploy Prep') {
-  	  when { branch 'master' }
+  	
+  	stage('Modify Pom') {
   	  steps {
   	    script {
-  	      env.VERSION = "0.0.0.${env.BUILD_NUMBER}"
-  	    }
+          pom = readMavenPom()
+          pom.setVersion("${VERSION}")
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
+          pom.setName(name)
+          pom.setArtifactId(artifact)
+          ARTIFACT = pom.getArtifactId() + "-${VERSION}." + pom.getPackaging()
+        }
+        writeMavenPom model: pom
+        echo "Defined artifact: $ARTIFACT"
   	  }
   	}
   	
@@ -26,18 +34,8 @@ pipeline {
       steps {
         notifyBuild('STARTED')
         echo "Building"
-        script {
-          pom = readMavenPom()
-          pom.setVersion("${VERSION}")
-          def name = pom.getName() + "-${env.BRANCH_NAME}"
-          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
-          pom.setName(name)
-          pom.setArtifactId(artifact)
-        }
-        writeMavenPom model: pom
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
-        echo "Built artifact ${pom.getArtifactId()}-${VERSION}.${pom.getPackaging()}"
       }
     }
 
@@ -74,12 +72,13 @@ pipeline {
 
     stage('Deploy') {
       when { branch 'master'}
-      environment {
-        ARTIFACT = "${readMavenPom.getArtifactId()}-${VERSION}.${readMavenPom.getPackaging()}"
-      }
       steps {
         checkout scm
         echo 'Deploying...'
+        script {
+          pom = readMavenPom()
+          ARTIFACT = pom.getArtifactId() + "-${VERSION}." + pom.getPackaging()
+        }
         withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
           sh 'apk add -U --no-cache openssh'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26-st-app > /dev/null 2>&1 &\''
