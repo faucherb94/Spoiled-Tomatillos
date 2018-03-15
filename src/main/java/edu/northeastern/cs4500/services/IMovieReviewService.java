@@ -1,5 +1,7 @@
 package edu.northeastern.cs4500.services;
 
+import java.util.List;
+
 import edu.northeastern.cs4500.models.MovieReview;
 
 public interface IMovieReviewService {
@@ -7,5 +9,7 @@ public interface IMovieReviewService {
     MovieReview reviewMovie(MovieReview review);
 
     MovieReview getUserMovieReview(String movieID, int userID);
+
+    List<MovieReview> getMovieReviews(String movieID);
 
 }

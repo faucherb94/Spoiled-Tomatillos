@@ -8,12 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.models.MovieReview;
@@ -40,12 +44,15 @@ public class MovieControllerTest {
     private final String URI = "/api/movie";
     private MovieRating rating;
     private MovieReview review;
+    private List<MovieReview> reviewList = new ArrayList<>();
 
     @Before
     public void setUp() {
         String movieID = "tt0266543";
         rating = new MovieRating(movieID, 1, 5);
         review = new MovieReview(movieID, 1, "an amazing review");
+        reviewList.add(review);
+        reviewList.add(new MovieReview("tt0266543", 10, "a bad review"));
     }
 
     @Test
@@ -142,6 +149,18 @@ public class MovieControllerTest {
                 MovieReview.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void getMovieReviews_HappyPath() throws Exception {
+        when(reviewService.getMovieReviews(review.getMovieID())).thenReturn(reviewList);
+
+        ResponseEntity<List<MovieReview>> response = restTemplate.exchange(URI + "/{id}/reviews",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<MovieReview>>() {},
+                "tt0266543");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getBody().size()).isEqualTo(reviewList.size());
     }
 
 }

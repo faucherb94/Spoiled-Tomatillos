@@ -3,6 +3,8 @@ package edu.northeastern.cs4500.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.repositories.MovieReviewRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
@@ -27,6 +29,11 @@ public class MovieReviewService implements IMovieReviewService {
                     "userID", Integer.toString(userID));
         }
         return review;
+    }
+
+    @Override
+    public List<MovieReview> getMovieReviews(String movieID) {
+        return repository.findByMovieID(movieID);
     }
 
 }
