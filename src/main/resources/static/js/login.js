@@ -15,9 +15,9 @@ function loginClick() {
 
 function showCreate() {
     $("#create").html(
-    "<input type='text' placeholder='email' id='new_email'/><br>" +
-    "<input type='text' placeholder='First name' id='fn'/><br>" +
-    "<input type='text' placeholder='Last name' id='ln'/><br>" +
+    "<input style='margin-bottom:15px;' type='text' placeholder='email' id='new_email'/><br>" +
+    "<input style='margin-bottom:15px;' type='text' placeholder='First name' id='fn'/><br>" +
+    "<input style='margin-bottom:15px;' type='text' placeholder='Last name' id='ln'/><br>" +
     "<button class='btn btn-secondary btn-sm' onclick='createUser()'>Register</button>"
     );
 }

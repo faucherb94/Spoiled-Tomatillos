@@ -9,9 +9,18 @@ function searchByTitle() {
     $.getJSON(`/api/search?q=${title}`)
     .done(function(json) {
         for (var i=0; i < json.length; i++) {
-            console.log(json[i]);
-            $("#feed").append(buildMovieCard(json[i]));
+            $("#feed").append(buildMovieCard(json[i], i));
         }
+        $('.kv-ltr-theme-fa-star').rating({
+            theme: 'krajee-fa',
+            size: 'sm',
+            step: '1',
+            hoverOnClear: false,
+            showClear: false
+        }).on('rating:change', function(event, value, caption) {
+            console.log(event.currentTarget.name);
+
+        });
     })
     .fail(function(jqxhr, status, err) {
         console.err(status);
@@ -22,7 +31,7 @@ function searchByTitle() {
  * Build responsive containers for a single search result
  * Return html scaffolding for the card
  */
-function buildMovieCard(movie) {
+function buildMovieCard(movie, i) {
     var card = "<div class='card border-light'>" +
           "<h5 class='card-header'>" + movie.title + "</h5>" +
           "<div class='card-body'>" +
@@ -31,10 +40,17 @@ function buildMovieCard(movie) {
             "'/></a></div>" +
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
-            "<a href='#' class='btn btn-secondary'>Review (coming soon)</a></div>" +
+            "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-fa-star'><br>" +
+            "<textarea id='review" + i +"' rows='4' columns='50'>Leave a review</textarea>" +
+            "<input type='button' onclick='submitReview(i)' class='btn btn-secondary'>Review</input></div>" +
           "</div>" +
         "</div>";
     return card;
+}
+
+function submitReview(r) {
+
+
 }
 
 /**
