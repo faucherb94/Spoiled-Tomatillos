@@ -12,7 +12,7 @@ function searchByTitle() {
             $("#feed").append(buildMovieCard(json[i], i));
             var movieid = json[i].imdbID;
             $('#rating' + i).rating({
-                theme: 'krajee-fa',
+                theme: 'krajee-svg',
                 size: 'sm',
                 step: '1',
                 hoverOnClear: false,
@@ -38,7 +38,7 @@ function searchByTitle() {
             $.getJSON(`/api/movie/rating?userID=${Cookies.get("uid")}&movieID=${movieid}`)
                 .done(function(resp) {
                     console.log(resp.rating);
-                    $("#rating" + i).rating('update', resp.rating);
+                    $("#rating" + i).rating("update", resp.rating);
             });
         }
 
@@ -62,7 +62,7 @@ function buildMovieCard(movie, i) {
             "'/></a></div>" +
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
-            "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-fa-star'><br>" +
+            "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-svg-star'><br>" +
             "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
             "<button onclick='submitReview(" + movie.imdbID + ")' class='btn btn-secondary'>Review</button></div>" +
           "</div>" +
