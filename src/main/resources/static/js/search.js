@@ -42,7 +42,7 @@ function buildMovieCard(movie, i) {
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-fa-star'><br>" +
             "<textarea id='review" + i +"' rows='4' columns='50'>Leave a review</textarea>" +
-            "<input type='button' onclick='submitReview(i)' class='btn btn-secondary'>Review</input></div>" +
+            "<button onclick='submitReview(i)' class='btn btn-secondary'>Review</button></div>" +
           "</div>" +
         "</div>";
     return card;
