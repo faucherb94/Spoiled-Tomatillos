@@ -1,12 +1,35 @@
 pipeline {
+  environment {
+  	DB_PASS       = credentials('spoiled_tomatillos_db_pass')
+  	OMDB_API_KEY  = credentials('omdb_api_key') 
+  	VERSION       = "${env.BUILD_NUMBER}"
+  }
+  
   agent {
     docker {
       image 'maven:3-alpine'
-      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASS'
     }
   }
 
   stages {
+  	
+  	stage('Modify Pom') {
+  	  steps {
+  	    script {
+          pom = readMavenPom()
+          pom.setVersion("${VERSION}")
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
+          pom.setName(name)
+          pom.setArtifactId(artifact)
+          ARTIFACT = pom.getArtifactId() + "-${VERSION}." + pom.getPackaging()
+        }
+        writeMavenPom model: pom
+        echo "Defined artifact: $ARTIFACT"
+  	  }
+  	}
+  	
     stage('Build') {
       steps {
         notifyBuild('STARTED')
@@ -26,7 +49,6 @@ pipeline {
     stage('SonarQube') {
       steps {
         withSonarQubeEnv('SonarQube') {
-          sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=true'
           sh 'mvn sonar:sonar'
         }
       }
@@ -53,12 +75,16 @@ pipeline {
       steps {
         checkout scm
         echo 'Deploying...'
+        script {
+          pom = readMavenPom()
+          ARTIFACT = pom.getArtifactId() + "-${VERSION}." + pom.getPackaging()
+        }
         withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
           sh 'apk add -U --no-cache openssh'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26-st-app > /dev/null 2>&1 &\''
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/$ARTIFACT ec2-user@app.codersunltd.me:~/app/$ARTIFACT'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/$ARTIFACT > app.out 2>&1 &\''
         }
       }
     }
