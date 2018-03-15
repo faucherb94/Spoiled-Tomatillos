@@ -5,4 +5,4 @@ var loggedinuname = Cookies.get("username");
         );
     }
 
-function logoutClick() { Cookies.remove("username"); window.location.href="login.html"; }
+function logoutClick() { Cookies.remove("username"); Cookies.remove("uid"); window.location.href="login.html"; }
