@@ -12,25 +12,43 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 import edu.northeastern.cs4500.models.MovieRating;
+import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.services.IMovieRatingService;
+import edu.northeastern.cs4500.services.IMovieReviewService;
 
 @RestController
 @RequestMapping("/api/movie")
 public class MovieController {
 
     @Autowired
-    private IMovieRatingService service;
+    private IMovieRatingService ratingService;
+
+    @Autowired
+    private IMovieReviewService reviewService;
 
     @PostMapping("/rating")
     public MovieRating rateMovie(@Valid @RequestBody MovieRating rating) {
-        return service.rateMovie(rating);
+        return ratingService.rateMovie(rating);
     }
 
     @GetMapping("/rating")
     public ResponseEntity<MovieRating> getUserMovieRating(
             @RequestParam(value = "userID") int userID,
             @RequestParam(value = "movieID") String movieID) {
-        MovieRating rating = service.getUserMovieRating(movieID, userID);
+        MovieRating rating = ratingService.getUserMovieRating(movieID, userID);
         return ResponseEntity.ok(rating);
+    }
+
+    @PostMapping("/review")
+    public MovieReview reviewMovie(@Valid @RequestBody MovieReview review) {
+        return reviewService.reviewMovie(review);
+    }
+
+    @GetMapping("/review")
+    public ResponseEntity<MovieReview> getUserMovieReview(
+            @RequestParam(value = "userID") int userID,
+            @RequestParam(value = "movieID") String movieID) {
+        MovieReview review = reviewService.getUserMovieReview(movieID, userID);
+        return ResponseEntity.ok(review);
     }
 }
