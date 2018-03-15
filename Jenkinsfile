@@ -33,6 +33,20 @@ pipeline {
     stage('Build') {
       steps {
         notifyBuild('STARTED')
+        script {
+          properties([
+            buildDiscarder(
+              logRotator(
+                artifactDaysToKeepStr: '',
+                artifactNumToKeepStr: '4',
+                daysToKeepStr: '',
+                numToKeepStr: '10'
+                )
+              ),
+            disableConcurrentBuilds(),
+            pipelineTriggers([[$class: 'PeriodicFolderTrigger', interval: '12h']])
+          ])
+        }
         echo "Building"
         sh 'mvn compile'
         sh 'mvn package -Dmaven.test.skip=true'
@@ -91,6 +105,7 @@ pipeline {
       notifyBuild(currentBuild.result)
       archiveArtifacts artifacts: 'target/*.war', fingerprint: true
       junit 'target/surefire-reports/*.xml'
+      cleanWs()
     }
   }
 }
