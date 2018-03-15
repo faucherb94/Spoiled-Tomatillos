@@ -8,4 +8,6 @@ import edu.northeastern.cs4500.models.MovieRating;
 @Repository
 public interface MovieRatingRepository extends JpaRepository<MovieRating,Integer> {
 
+    MovieRating findByMovieIDAndUserID(String movieID, int userID);
+
 }

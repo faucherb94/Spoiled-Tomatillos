@@ -11,6 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.repositories.MovieRatingRepository;
+import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -47,6 +48,35 @@ public class MovieRatingServiceTest {
         MovieRating newRating = movieRatingService.rateMovie(rating);
 
         assertThat(newRating).isEqualTo(rating);
+    }
+
+    @Test
+    public void getUserMovieRating_HappyPath() throws Exception {
+        when(repository.findByMovieIDAndUserID(rating.getMovieID(), rating.getUserID()))
+                .thenReturn(rating);
+
+        MovieRating newRating = movieRatingService.getUserMovieRating(
+                rating.getMovieID(), rating.getUserID());
+
+        assertThat(newRating).isEqualTo(rating);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getUserMovieRating_MovieNotFound() throws Exception {
+        String badMovieID = "bad";
+        when(repository.findByMovieIDAndUserID(badMovieID, 1))
+                .thenReturn(null);
+
+        movieRatingService.getUserMovieRating(badMovieID, 1);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getUserMovieRating_UserNotFound() throws Exception {
+        int badUserID = 874923;
+        when(repository.findByMovieIDAndUserID("", badUserID))
+                .thenReturn(null);
+
+        movieRatingService.getUserMovieRating("", badUserID);
     }
 
 }

@@ -17,6 +17,7 @@ import java.sql.SQLException;
 
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.services.IMovieRatingService;
+import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
@@ -59,6 +60,32 @@ public class MovieControllerTest {
                 rating, MovieRating.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void getUserMovieRating_HappyPath() throws Exception {
+        when(service.getUserMovieRating(rating.getMovieID(), rating.getUserID()))
+                .thenReturn(rating);
+
+        ResponseEntity<MovieRating> response = restTemplate.getForEntity(
+                URI + "/rating?userID=" + rating.getUserID() + "&movieID=" + rating.getMovieID(),
+                MovieRating.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUserMovieRating_NotFound() throws Exception {
+        when(service.getUserMovieRating(rating.getMovieID(), rating.getUserID()))
+                .thenThrow(new ResourceNotFoundException(
+                        MovieRating.class, "movieID", rating.getMovieID(),
+                        "userID", Integer.toString(rating.getUserID())));
+
+        ResponseEntity<MovieRating> response = restTemplate.getForEntity(
+                URI + "/rating?userID=" + rating.getUserID()+ "&movieID=" + rating.getMovieID(),
+                MovieRating.class);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
 }
