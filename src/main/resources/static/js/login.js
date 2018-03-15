@@ -4,6 +4,7 @@ function loginClick() {
     .done(function(json) {
         console.log(json);
         Cookies.set("username", json.username);
+        Cookies.set("uid", json.id);
         window.location.href = "index.html";
     })
     .fail(function(jqxhr, status, err) {
