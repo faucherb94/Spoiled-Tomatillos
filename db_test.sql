@@ -4,17 +4,16 @@ USE Spoiled_Tomatillos_Backend;
 
 DROP TABLE IF EXISTS UserAccount;
 CREATE TABLE UserAccount (
-		UserID INT AUTO_INCREMENT,
+		UserID INT PRIMARY KEY AUTO_INCREMENT,
 		Email VARCHAR(50) UNIQUE,
-		Username VARCHAR(50) UNIQUE, 
+		Username VARCHAR(50) UNIQUE,
 		FirstName VARCHAR(50) NOT NULL,
 		LastName VARCHAR(50) NOT NULL,
 		Hometown VARCHAR(50),
 		DisplayPicture LONGBLOB,
 		Role ENUM('default', 'group admin', 'admin', 'moderator'),
 		CreatedAt TIMESTAMP,
-		UpdatedAt TIMESTAMP,
-		PRIMARY KEY(UserID)
+		UpdatedAt TIMESTAMP
 		);
 
 DROP TABLE IF EXISTS Groups;
@@ -24,18 +23,18 @@ CREATE TABLE Groups (
 		GroupName VARCHAR(75),
 		Description VARCHAR(500),
 		PRIMARY KEY (GroupID),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
-	
+
 DROP TABLE IF EXISTS Relationships;
 CREATE TABLE Relationships (
 		UserID INT,
 		MemberID INT,
 		PRIMARY KEY (UserID, MemberID),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE,
-		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID) 
+		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
@@ -44,7 +43,7 @@ CREATE TABLE GroupMemberships (
 		GroupID INT,
 		MemberID INT,
 		PRIMARY KEY (GroupID, MemberID),
-		FOREIGN KEY (GroupID) REFERENCES Groups(GroupID) 
+		FOREIGN KEY (GroupID) REFERENCES Groups(GroupID)
 		ON DELETE CASCADE ON UPDATE CASCADE,
 		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
@@ -52,23 +51,27 @@ CREATE TABLE GroupMemberships (
 
 DROP TABLE IF EXISTS MovieRating;
 CREATE TABLE MovieRating (
-		UserID INT,
-		MovieTitle VARCHAR(255),
-		ReleaseDate DATE,
-		StarRating Enum('1', '2', '3', '4', '5'),
-		PRIMARY KEY(UserID, MovieTitle, ReleaseDate),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+        RatingID INT PRIMARY KEY AUTO_INCREMENT,
+        MovieID VARCHAR(20) NOT NULL,
+		UserID INT NOT NULL,
+		StarRating Enum('1', '2', '3', '4', '5') NOT NULL,
+        CreatedAt TIMESTAMP,
+        UpdatedAt TIMESTAMP,
+        CONSTRAINT movie_user_unique UNIQUE (MovieID, UserID),
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
 DROP TABLE IF EXISTS MovieReview;
 CREATE TABLE MovieReview (
-		UserID INT,
-		MovieTitle VARCHAR(255),
-		ReleaseDate DATE,
-		Review VARCHAR(1000),
-		PRIMARY KEY(UserID, MovieTitle, ReleaseDate),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+        ReviewID INT PRIMARY KEY AUTO_INCREMENT,
+        MovieID VARCHAR(20) NOT NULL,
+		UserID INT NOT NULL,
+		Review VARCHAR(1000) NOT NULL,
+		CreatedAt TIMESTAMP,
+		UpdatedAt TIMESTAMP,
+		CONSTRAINT movie_user_unique UNIQUE (MovieID, UserID),
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
@@ -78,7 +81,7 @@ CREATE PROCEDURE create_user(eml VARCHAR(50), usernm VARCHAR(50), fname VARCHAR(
 
 DROP PROCEDURE IF EXISTS edit_hometown;
 CREATE PROCEDURE edit_hometown(id INT, town VARCHAR(50))
-	UPDATE UserAccount SET Hometown = town, UpdatedAt = NOW() WHERE UserID = id; 
+	UPDATE UserAccount SET Hometown = town, UpdatedAt = NOW() WHERE UserID = id;
 
 DROP PROCEDURE IF EXISTS edit_names;
 CREATE PROCEDURE edit_names(id INT, fname VARCHAR(50), lname VARCHAR(50))
@@ -93,12 +96,14 @@ CREATE PROCEDURE edit_pic(id INT, pic LONGBLOB)
 	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = NOW() WHERE UserID = id;
 
 DROP PROCEDURE IF EXISTS rate_movie;
-CREATE PROCEDURE rate_movie(id INT, title VARCHAR(255), released DATE, rating Enum('1', '2', '3', '4', '5'))
-	INSERT INTO MovieRating (UserID, MovieTitle, ReleaseDate, StarRating) VALUES (id, title, released, rating);
+CREATE PROCEDURE rate_movie(movieID VARCHAR(20), userID INT, rating Enum('1', '2', '3', '4', '5'))
+	INSERT INTO MovieRating (MovieID, UserID, StarRating, CreatedAt, UpdatedAt)
+	VALUES (movieID, userID, rating, NOW(), NOW());
 
 DROP PROCEDURE IF EXISTS review_movie;
-CREATE PROCEDURE review_movie(id INT, title VARCHAR(255), released DATE, review VARCHAR(1000))
-	INSERT INTO MovieReview (UserID, MovieTitle, ReleaseDate, Review) VALUES (id, title, released, review);
+CREATE PROCEDURE review_movie(movieID VARCHAR(20), userID INT, review VARCHAR(1000))
+	INSERT INTO MovieReview (MovieID, UserID, Review, CreatedAt, UpdatedAt)
+	VALUES (movieID, userID, review, NOW(), NOW());
 
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (id INT)
@@ -126,7 +131,8 @@ CREATE PROCEDURE list_group_members (gid INT)
 	SELECT Username FROM GroupMemberships JOIN UserAccount ON GroupMemberships.MemberID = UserAccount.UserID 
 	WHERE GroupMemberships.GroupID = gid;
 	
-INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt) VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
+INSERT INTO UserAccount (Email, Username, FirstName, LastName, Role, CreatedAt)
+VALUES ('abinader@neu.edu', 'abinader', 'george', 'abinader', 'default', NOW()),
 	   ('testAccountUser tdonovan@neu.edu', 'joe', 'joseph', 'donovan', 'default', NOW()),
 	   ('testfaucher@neu.edu', 'benji', 'benjamin', 'faucher', 'default', NOW()),
 	   ('testledger@neu.edu', 'maddy', 'madaline', 'ledger', 'default', NOW());
@@ -157,7 +163,7 @@ CALL list_group_members(1);
 CALL list_group_members(2);
 
 # TESTS FOR rate_movie, review_movie
-CALL rate_movie(1, 'Scarface', '1983-12-09', '5');
-CALL review_movie(1, 'Goodfellas', '1990-09-19', 'A lot of violence');
+CALL rate_movie('tt798423', 1, '5');
+CALL review_movie('tt42387', 1, 'A lot of violence');
 SELECT * FROM MovieRating;
 SELECT * FROM MovieReview;
