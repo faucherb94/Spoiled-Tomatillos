@@ -91,6 +91,7 @@ pipeline {
       notifyBuild(currentBuild.result)
       archiveArtifacts artifacts: 'target/*.war', fingerprint: true
       junit 'target/surefire-reports/*.xml'
+      cleanWs()
     }
   }
 }
