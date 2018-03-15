@@ -30,15 +30,19 @@ function searchByTitle() {
                     contentType: "application/json",
                     dataType: "json"
                 }).done(function(json) {
-                    console.log("Rating Successful");
+                    $("#rating" + i).rating("update", resp.rating);
                 }).fail(function(jqxhr, status, err) {
                     $("#error").html("Failed rating");
                 });
             });
             $.getJSON(`/api/movie/rating?userID=${Cookies.get("uid")}&movieID=${movieid}`)
                 .done(function(resp) {
-                    console.log(resp.rating);
                     $("#rating" + i).rating("update", resp.rating);
+            });
+            $.getJSON(`/api/movie/review?userID=${Cookies.get("uid")}&movieID=${movieid}`)
+                .done(function(resp) {
+                    $("#review" + i).val(resp.review);
+                    $("#reviewbtn" + i).html("Update Review");
             });
         }
 
@@ -64,14 +68,29 @@ function buildMovieCard(movie, i) {
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-svg-star'><br>" +
             "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
-            "<button onclick='submitReview(" + movie.imdbID + ")' class='btn btn-secondary'>Review</button></div>" +
+            "<button onclick='submitReview(" + movie.imdbID + ", " + i + ")' class='btn btn-secondary' id='reviewbtn" + i + "'>Review</button></div>" +
           "</div>" +
         "</div>";
     return card;
 }
 
-function submitReview(movieID) {
-    console.log(movieID);
+function submitReview(movieID, i) {
+    var reviewpkg = {
+        movieID: movieid,
+        userID: Cookies.get("uid"),
+        review: $("#review" + i).val();
+}
+    $.ajax({
+        url: "/api/movie/review",
+        type: "POST",
+        data: JSON.stringify(reviewpkg),
+        contentType: "application/json",
+        dataType: "json"
+    }).done(function(json) {
+        console.log("Review Successful");
+    }).fail(function(jqxhr, status, err) {
+        $("#error").html("Failed review");
+    });
 
 }
 
