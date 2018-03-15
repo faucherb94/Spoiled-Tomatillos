@@ -30,15 +30,20 @@ function searchByTitle() {
                     contentType: "application/json",
                     dataType: "json"
                 }).done(function(json) {
-                    console.log("Rating Successful");
+                    $("#rating" + i).rating("update", json.rating);
                 }).fail(function(jqxhr, status, err) {
                     $("#error").html("Failed rating");
                 });
             });
             $.getJSON(`/api/movie/rating?userID=${Cookies.get("uid")}&movieID=${movieid}`)
-                .done(function(resp) {
-                    console.log(resp.rating);
+            .done(function(resp) {
                     $("#rating" + i).rating("update", resp.rating);
+            });
+            $.getJSON(`/api/movie/review?userID=${Cookies.get("uid")}&movieID=${movieid}`)
+            .done(function(resp) {
+                    console.log("here2");
+                    $(`#review${i}`).text(resp.review);
+                    $(`#reviewbtn${i}`).remove();
             });
         }
 
@@ -53,6 +58,7 @@ function searchByTitle() {
  * Return html scaffolding for the card
  */
 function buildMovieCard(movie, i) {
+    var movieid = movie.imdbID;
     var card = "<div class='card border-light'>" +
           "<h5 class='card-header'>" + movie.title + "</h5>" +
           "<div class='card-body'>" +
@@ -64,14 +70,30 @@ function buildMovieCard(movie, i) {
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-svg-star'><br>" +
             "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
-            "<button onclick='submitReview(" + movie.imdbID + ")' class='btn btn-secondary'>Review</button></div>" +
+            "<button onclick='submitReview(this)' class='btn btn-secondary' id='reviewbtn" + i + "' movieid='" + movieid + "' iter='" + i + "'>Review</button></div>" +
           "</div>" +
         "</div>";
     return card;
 }
 
-function submitReview(movieID) {
-    console.log(movieID);
+function submitReview(b) {
+    var reviewpkg = {
+        movieID: $(b).attr("movieid"),
+        userID: Cookies.get("uid"),
+        review: $("#review" + $(b).attr("iter")).val()
+    };
+    $.ajax({
+        url: "/api/movie/review",
+        type: "POST",
+        data: JSON.stringify(reviewpkg),
+        contentType: "application/json",
+        dataType: "json"
+    }).done(function(json) {
+        $("#review" + i).text($("#review" + $(b).attr("iter")).val());
+        $("#reviewbtn" + i).remove();
+    }).fail(function(jqxhr, status, err) {
+        $("#error").html("Failed review");
+    });
 
 }
 
