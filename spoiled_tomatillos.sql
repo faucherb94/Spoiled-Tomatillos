@@ -4,7 +4,7 @@ USE Spoiled_Tomatillos_Backend;
 
 DROP TABLE IF EXISTS UserAccount;
 CREATE TABLE UserAccount (
-		UserID INT AUTO_INCREMENT,
+		UserID INT PRIMARY KEY AUTO_INCREMENT,
 		Email VARCHAR(50) UNIQUE,
 		Username VARCHAR(50) UNIQUE, 
 		FirstName VARCHAR(50) NOT NULL,
@@ -13,8 +13,7 @@ CREATE TABLE UserAccount (
 		DisplayPicture LONGBLOB,
 		Role ENUM('default', 'group admin', 'admin', 'moderator'),
 		CreatedAt TIMESTAMP,
-		UpdatedAt TIMESTAMP,
-		PRIMARY KEY(UserID)
+		UpdatedAt TIMESTAMP
 		);
 
 DROP TABLE IF EXISTS Groups;
@@ -52,22 +51,26 @@ CREATE TABLE GroupMemberships (
 
 DROP TABLE IF EXISTS MovieRating;
 CREATE TABLE MovieRating (
-		UserID INT,
-		MovieTitle VARCHAR(255),
-		ReleaseDate DATE,
-		StarRating Enum('1', '2', '3', '4', '5'),
-		PRIMARY KEY(UserID, MovieTitle, ReleaseDate),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+        RatingID INT PRIMARY KEY AUTO_INCREMENT,
+        MovieID VARCHAR(20) NOT NULL,
+		UserID INT NOT NULL,
+		StarRating Enum('1', '2', '3', '4', '5') NOT NULL,
+        CreatedAt TIMESTAMP,
+        UpdatedAt TIMESTAMP,
+        CONSTRAINT movie_user_unique UNIQUE (MovieID, UserID),
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
 
 DROP TABLE IF EXISTS MovieReview;
 CREATE TABLE MovieReview (
-		UserID INT,
-		MovieTitle VARCHAR(255),
-		ReleaseDate DATE,
-		Review VARCHAR(1000),
-		PRIMARY KEY(UserID, MovieTitle, ReleaseDate),
+        ReviewID INT PRIMARY KEY AUTO_INCREMENT,
+        MovieID VARCHAR(20) NOT NULL,
+		UserID INT NOT NULL,
+		Review VARCHAR(1000) NOT NULL,
+		CreatedAt TIMESTAMP,
+		UpdatedAt TIMESTAMP,
+		CONSTRAINT movie_user_unique UNIQUE (MovieID, UserID),
 		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
@@ -93,12 +96,14 @@ CREATE PROCEDURE edit_pic(id INT, pic LONGBLOB)
 	UPDATE UserAccount SET DisplayPicture = pic, UpdatedAt = NOW() WHERE UserID = id;
 
 DROP PROCEDURE IF EXISTS rate_movie;
-CREATE PROCEDURE rate_movie(id INT, title VARCHAR(255), released DATE, rating Enum('1', '2', '3', '4', '5'))
-	INSERT INTO MovieRating (UserID, MovieTitle, ReleaseDate, StarRating) VALUES (id, title, released, rating);
+CREATE PROCEDURE rate_movie(movieID VARCHAR(20), userID INT, rating Enum('1', '2', '3', '4', '5'))
+	INSERT INTO MovieRating (MovieID, UserID, StarRating, CreatedAt, UpdatedAt)
+	VALUES (movieID, userID, rating, NOW(), NOW());
 
 DROP PROCEDURE IF EXISTS review_movie;
-CREATE PROCEDURE review_movie(id INT, title VARCHAR(255), released DATE, review VARCHAR(1000))
-	INSERT INTO MovieReview (UserID, MovieTitle, ReleaseDate, Review) VALUES (id, title, released, review);
+CREATE PROCEDURE review_movie(movieID VARCHAR(20), userID INT, review VARCHAR(1000))
+	INSERT INTO MovieReview (MovieID, UserID, Review, CreatedAt, UpdatedAt)
+	VALUES (movieID, userID, review, NOW(), NOW());
 
 DROP PROCEDURE IF EXISTS fetch_friends;
 CREATE PROCEDURE fetch_friends (id INT)
