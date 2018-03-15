@@ -23,7 +23,7 @@ function searchByTitle() {
         });
     })
     .fail(function(jqxhr, status, err) {
-        console.err(status);
+        console.error(status);
     });
 }
 
@@ -41,15 +41,15 @@ function buildMovieCard(movie, i) {
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-fa-star'><br>" +
-            "<textarea id='review" + i +"' rows='4' columns='50'>Leave a review</textarea>" +
-            "<button onclick='submitReview(i)' class='btn btn-secondary'>Review</button></div>" +
+            "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
+            "<button onclick='submitReview(" + i + ")' class='btn btn-secondary'>Review</button></div>" +
           "</div>" +
         "</div>";
     return card;
 }
 
-function submitReview(r) {
-
+function submitReview(id) {
+    console.log(id);
 
 }
 
