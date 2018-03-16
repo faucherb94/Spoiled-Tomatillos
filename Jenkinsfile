@@ -1,49 +1,113 @@
 pipeline {
-	agent {
-		docker {
-			image 'maven:3-alpine'
-			args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASSWORD'
-		}
-	}
+  environment {
+  	DB_PASS       = credentials('spoiled_tomatillos_db_pass')
+  	OMDB_API_KEY  = credentials('omdb_api_key') 
+  	VERSION       = "${env.BUILD_NUMBER}"
+  }
+  
+  agent {
+    docker {
+      image 'maven:3-alpine'
+      args '-v /root/.m2:/root/.m2 -e DB_PASS=$DB_PASS'
+    }
+  }
 
-	stages {
-		stage('Build') {
-			steps {
-				notifyBuild('STARTED')
-				echo "Building"
-				sh 'mvn compile'
-			}
-		}
+  stages {
+  	
+  	stage('Modify Pom') {
+  	  steps {
+  	    script {
+          pom = readMavenPom()
+          pom.setVersion("${VERSION}")
+          def name = pom.getName() + "-${env.BRANCH_NAME}"
+          def artifact = pom.getArtifactId() + "-${env.BRANCH_NAME}"
+          pom.setName(name)
+          pom.setArtifactId(artifact)
+          ARTIFACT = pom.getArtifactId() + "-${VERSION}." + pom.getPackaging()
+        }
+        writeMavenPom model: pom
+        echo "Defined artifact: $ARTIFACT"
+  	  }
+  	}
+  	
+    stage('Build') {
+      steps {
+        notifyBuild('STARTED')
+        script {
+          properties([
+            buildDiscarder(
+              logRotator(
+                artifactDaysToKeepStr: '',
+                artifactNumToKeepStr: '4',
+                daysToKeepStr: '',
+                numToKeepStr: '10'
+                )
+              ),
+            disableConcurrentBuilds(),
+            pipelineTriggers([[$class: 'PeriodicFolderTrigger', interval: '12h']])
+          ])
+        }
+        echo "Building"
+        sh 'mvn compile'
+        sh 'mvn package -Dmaven.test.skip=true'
+      }
+    }
 
-		stage('Test') {
-			steps {
-				echo "Testing"
-				sh 'mvn test'
-			}
-		}
+    stage('Test') {
+      steps {
+        echo "Testing"
+        sh 'mvn test'
+      }
+    }
+    
+    stage('SonarQube') {
+      steps {
+        withSonarQubeEnv('SonarQube') {
+          sh 'mvn sonar:sonar'
+        }
+      }
+    }
+    
+    stage('Quality') {
+      steps {
+        sh 'sleep 30'
+        timeout(time: 10, unit: 'SECONDS') {
+          retry(5) {
+            script {
+              def qg = waitForQualityGate()
+              if (qg.status != 'OK') {
+                error "Pipeline aborted due to quality gate failure: ${qg.status}"
+              }
+            }
+          }
+        }
+      }
+    }
 
-		stage('Deploy') {
-			when { branch 'master'}
-			steps {
-				sh 'mvn package -Dmaven.test.skip=true'
-				checkout scm
-				echo 'Deploying...'
-				withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
-					sh 'apk add -U --no-cache openssh'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'pkill -f team26 > /dev/null 2>&1 &\''
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
-					sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/cs4500-spring2018-team26-1.war ec2-user@app.codersunltd.me:~/app/cs4500-spring2018-team26-1.war'
-					sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup java -jar app/cs4500-spring2018-team26-1.war > app.out 2>&1 &\''
-				}
-			}
-		}
-	}
-	
-	post {
-		always {
-			notifyBuild(currentBuild.result)
-		}
-	}
+    stage('Deploy') {
+      when { branch 'master'}
+      steps {
+        checkout scm
+        echo 'Deploying...'
+        withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
+          sh 'apk add -U --no-cache openssh'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'./stopapp.sh\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/*.war ec2-user@app.codersunltd.me:~/app/'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup ./startapp.sh\''
+        }
+      }
+    }
+  }
+  
+  post {
+    always {
+      notifyBuild(currentBuild.result)
+      archiveArtifacts artifacts: 'target/*.war', fingerprint: true
+      junit 'target/surefire-reports/*.xml'
+      cleanWs()
+    }
+  }
 }
 
 def notifyBuild(String buildStatus = 'STARTED') {

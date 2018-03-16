@@ -7,7 +7,19 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.util.Date;
-import javax.persistence.*;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents a UserAccount in the DB
@@ -21,80 +33,49 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "UserID")
+    @Getter @Setter
     private int id;
 
-    public int getID() {
-        return this.id;
-    }
-
+    @Getter @Setter
     private String username;
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
+    @Getter @Setter
     private String firstName;
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public String getFirstName() {
-        return this.firstName;
-    }
-
+    @Getter @Setter
     private String lastName;
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public String getLastName() {
-        return this.lastName;
-    }
-
+    @Getter @Setter
     private String email;
 
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getEmail() {
-        return this.email;
-    }
-
+    @Getter @Setter
     private String role;
 
-    public void setRole(String role) {
-        this.role = role;
-    }
-
-    public String getRole() {
-        return this.role;
-    }
+    @Getter @Setter
+    private String hometown;
 
     @Column(name = "DisplayPicture")
+    @Getter @Setter
     private byte[] picture;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
+    @Getter
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @Getter
     private Date updatedAt;
 
     public User(String username, String firstName, String lastName, String email,
-                String role) {
+                String role, String hometown) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
+        this.hometown = hometown;
     }
 
     public User() {}
