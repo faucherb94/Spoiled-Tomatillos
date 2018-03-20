@@ -1,6 +1,6 @@
 function loginClick() {
     let username = $("#uname").val();
-    $.getJSON(`/api/user?name=${username}`)
+    $.getJSON(`/api/users?name=${username}`)
     .done(function(json) {
         console.log(json);
         Cookies.set("username", json.username);
@@ -32,7 +32,7 @@ function createUser() {
         role: "default"
     };
     $.ajax({
-        url: "/api/user/create",
+        url: "/api/users",
         type: "POST",
         data: JSON.stringify(user),
         contentType: "application/json",

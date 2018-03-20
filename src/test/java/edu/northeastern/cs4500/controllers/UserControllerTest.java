@@ -38,7 +38,7 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private final String URI = "/api/user";
+    private final String URI = "/api/users";
     private User mockUser;
 
     @Before
@@ -50,7 +50,7 @@ public class UserControllerTest {
     public void createUser_HappyPath() throws Exception {
         when(userService.create(any(User.class))).thenReturn(mockUser);
 
-        ResponseEntity<User> user = restTemplate.postForEntity(URI + "/create",
+        ResponseEntity<User> user = restTemplate.postForEntity(URI,
                 mockUser, User.class);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -62,7 +62,7 @@ public class UserControllerTest {
                 .thenThrow(new DataIntegrityViolationException("",
                         new ConstraintViolationException("", new SQLException(), "")));
 
-        ResponseEntity<User> user = restTemplate.postForEntity(URI + "/create",
+        ResponseEntity<User> user = restTemplate.postForEntity(URI,
                 mockUser, User.class);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);

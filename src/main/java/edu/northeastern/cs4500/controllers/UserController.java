@@ -17,7 +17,7 @@ import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IUserService;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
 
     @Autowired
@@ -26,7 +26,7 @@ public class UserController {
     /**
      * Create a new user
      */
-    @PostMapping("/create")
+    @PostMapping
     public User createUser(@Valid @RequestBody User user) {
         return service.create(user);
     }
