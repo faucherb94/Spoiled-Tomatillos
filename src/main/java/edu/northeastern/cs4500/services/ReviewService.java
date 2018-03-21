@@ -10,7 +10,7 @@ import edu.northeastern.cs4500.repositories.MovieReviewRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 @Service
-public class MovieReviewService implements IMovieReviewService {
+public class ReviewService implements IReviewService {
 
     @Autowired
     private MovieReviewRepository repository;

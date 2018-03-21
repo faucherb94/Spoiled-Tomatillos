@@ -17,18 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-public class MovieRatingServiceTest {
+public class RatingServiceTest {
 
     @TestConfiguration
     static class MovieRatingServiceContextConfiguration {
         @Bean
-        public IMovieRatingService movieRatingService() {
-            return new MovieRatingService();
+        public IRatingService movieRatingService() {
+            return new RatingService();
         }
     }
 
     @Autowired
-    private IMovieRatingService movieRatingService;
+    private IRatingService movieRatingService;
 
     @MockBean
     private MovieRatingRepository repository;
@@ -45,7 +45,7 @@ public class MovieRatingServiceTest {
     public void rateMovie_HappyPath() throws Exception {
         when(repository.save(rating)).thenReturn(rating);
 
-        MovieRating newRating = movieRatingService.rateMovie(rating);
+        MovieRating newRating = movieRatingService.rateMovie(rating.getMovieID(), rating);
 
         assertThat(newRating).isEqualTo(rating);
     }

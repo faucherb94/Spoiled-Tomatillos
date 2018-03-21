@@ -8,13 +8,14 @@ import edu.northeastern.cs4500.repositories.MovieRatingRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 @Service
-public class MovieRatingService implements IMovieRatingService {
+public class RatingService implements IMovieRatingService {
 
     @Autowired
     private MovieRatingRepository repository;
 
     @Override
-    public MovieRating rateMovie(MovieRating rating) {
+    public MovieRating rateMovie(String movieID, MovieRating rating) {
+        rating.setMovieID(movieID);
         return repository.save(rating);
     }
 

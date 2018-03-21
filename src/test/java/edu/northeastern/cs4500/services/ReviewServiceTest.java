@@ -17,18 +17,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
-public class MovieReviewServiceTest {
+public class ReviewServiceTest {
 
     @TestConfiguration
     static class MovieReviewServiceContextConfiguration {
         @Bean
-        public IMovieReviewService movieReviewService() {
-            return new MovieReviewService();
+        public IReviewService movieReviewService() {
+            return new ReviewService();
         }
     }
 
     @Autowired
-    private IMovieReviewService movieReviewService;
+    private IReviewService movieReviewService;
 
     @MockBean
     private MovieReviewRepository repository;
