@@ -31,4 +31,20 @@ public class RatingService implements IRatingService {
         return rating;
     }
 
+    @Override
+    public MovieRating updateUserMovieRating(String movieID, int userID, MovieRating rating) {
+        MovieRating currentRating = repository.findByMovieIDAndUserID(movieID, userID);
+        if (currentRating == null) {
+            throw new ResourceNotFoundException(MovieRating.class,
+                    "movieID", movieID,
+                    "userID", Integer.toString(userID));
+        }
+
+        currentRating.setMovieID(movieID);
+        currentRating.setUserID(userID);
+        currentRating.setRating(rating.getRating());
+
+        return repository.save(currentRating);
+    }
+
 }
