@@ -18,7 +18,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
 
+import edu.northeastern.cs4500.models.MovieRating;
+import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.services.IRatingService;
+import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.UserService;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
@@ -38,13 +42,26 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
+    @MockBean
+    private IRatingService ratingService;
+
+    @MockBean
+    private IReviewService reviewService;
+
     private final String URI = "/api/users";
     private User mockUser;
+    private MovieRating rating;
+    private MovieReview review;
 
     @Before
     public void setUp() {
         mockUser = new User("un", "fn", "ln", "random@neu.edu", "default", "boston");
+        String movieID = "tt0266543";
+        rating = new MovieRating(movieID, 1, 5);
+        review = new MovieReview(movieID, 1, "an amazing review");
     }
+
+    /********************************USER MANAGEMENT*****************************************/
 
     @Test
     public void createUser_HappyPath() throws Exception {
@@ -146,6 +163,112 @@ public class UserControllerTest {
                 entity, User.class, 1);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    /*********************************USER RATINGS****************************************/
+
+    @Test
+    public void rateMovie_HappyPath() throws Exception {
+        when(ratingService.rateMovie(rating.getUserID(), rating.getMovieID(), rating))
+                .thenReturn(rating);
+
+        ResponseEntity<MovieRating> response = restTemplate.postForEntity(
+                URI + "/{id}/ratings/movies/{movie-id}",
+                rating, MovieRating.class, 1, rating.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void rateMovie_DBConflict() throws Exception {
+        when(ratingService.rateMovie(rating.getUserID(), rating.getMovieID(), rating))
+                .thenThrow(new DataIntegrityViolationException("",
+                        new ConstraintViolationException("", new SQLException(), "")));
+
+        ResponseEntity<MovieRating> response = restTemplate.postForEntity(
+                URI + "/{id}/ratings/movies/{movie-id}",
+                rating, MovieRating.class, 1, rating.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void getUserMovieRating_HappyPath() throws Exception {
+        when(ratingService.getUserMovieRating(rating.getMovieID(), rating.getUserID()))
+                .thenReturn(rating);
+
+        ResponseEntity<MovieRating> response = restTemplate.getForEntity(
+                URI + "/{id}/ratings/movies/{movie-id}",
+                MovieRating.class, rating.getUserID(), rating.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUserMovieRating_NotFound() throws Exception {
+        when(ratingService.getUserMovieRating(rating.getMovieID(), rating.getUserID()))
+                .thenThrow(new ResourceNotFoundException(
+                        MovieRating.class, "movieID", rating.getMovieID(),
+                        "userID", Integer.toString(rating.getUserID())));
+
+        ResponseEntity<MovieRating> response = restTemplate.getForEntity(
+                URI + "/{id}/ratings/movies/{movie-id}",
+                MovieRating.class, rating.getUserID(), rating.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    /*********************************USER REVIEWS****************************************/
+
+    @Test
+    public void reviewMovie_HappyPath() throws Exception {
+        when(reviewService.reviewMovie(review.getUserID(), review.getMovieID(), review))
+                .thenReturn(review);
+
+        ResponseEntity<MovieReview> response = restTemplate.postForEntity(
+                URI + "/{id}/reviews/movies/{movie-id}",
+                review, MovieReview.class, review.getUserID(), review.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void reviewMovie_DBConflict() throws Exception {
+        when(reviewService.reviewMovie(review.getUserID(), review.getMovieID(), review))
+                .thenThrow(new DataIntegrityViolationException("",
+                        new ConstraintViolationException("", new SQLException(), "")));
+
+        ResponseEntity<MovieReview> response = restTemplate.postForEntity(
+                URI + "/{id}/reviews/movies/{movie-id}",
+                review, MovieReview.class, review.getUserID(), review.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
+    @Test
+    public void getUserMovieReview_HappyPath() throws Exception {
+        when(reviewService.getUserMovieReview(review.getMovieID(), rating.getUserID()))
+                .thenReturn(review);
+
+        ResponseEntity<MovieReview> response = restTemplate.getForEntity(
+                URI + "/{id}/reviews/movies/{movie-id}",
+                MovieReview.class, review.getUserID(), review.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getUserMovieReview_NotFound() throws Exception {
+        when(reviewService.getUserMovieReview(review.getMovieID(), review.getUserID()))
+                .thenThrow(new ResourceNotFoundException(
+                        MovieReview.class, "movieID", review.getMovieID(),
+                        "userID", Integer.toString(review.getUserID())));
+
+        ResponseEntity<MovieReview> response = restTemplate.getForEntity(
+                URI + "{id}/reviews/movies/{movie-id}",
+                MovieReview.class, review.getUserID(), review.getUserID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
 }

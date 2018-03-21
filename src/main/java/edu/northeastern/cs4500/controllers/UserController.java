@@ -13,12 +13,18 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 
+import edu.northeastern.cs4500.models.MovieRating;
+import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.services.IRatingService;
+import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.IUserService;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
+
+    /*********************************USER MANAGEMENT****************************************/
 
     @Autowired
     private IUserService service;
@@ -58,5 +64,57 @@ public class UserController {
                                            @Valid @RequestBody User u) {
         User updatedUser = service.update(id, u);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    /*********************************USER REVIEWS****************************************/
+
+    @Autowired
+    private IReviewService reviewService;
+
+    /**
+     * Get user movie review
+     */
+    @GetMapping("/{id}/reviews/movies/{movie-id}")
+    public ResponseEntity<MovieReview> getUserMovieReview(
+            @PathVariable(value = "id") int userID,
+            @PathVariable(value = "movie-id") String movieID) {
+        MovieReview review = reviewService.getUserMovieReview(movieID, userID);
+        return ResponseEntity.ok(review);
+    }
+
+    /**
+     * Create user movie review
+     */
+    @PostMapping("/{id}/reviews/movies/{movie-id}")
+    public MovieReview reviewMovie(@PathVariable(value = "id") int userID,
+                                   @PathVariable(value = "movie-id") String movieID,
+                                   @Valid @RequestBody MovieReview review) {
+        return reviewService.reviewMovie(userID, movieID, review);
+    }
+
+    /*********************************USER RATINGS****************************************/
+
+    @Autowired
+    private IRatingService ratingService;
+
+    /**
+     * Get user movie rating
+     */
+    @GetMapping("/{id}/ratings/movies/{movie-id}")
+    public ResponseEntity<MovieRating> getUserMovieRating(
+            @PathVariable(value = "id") int userID,
+            @PathVariable(value = "movie-id") String movieID) {
+        MovieRating rating = ratingService.getUserMovieRating(movieID, userID);
+        return ResponseEntity.ok(rating);
+    }
+
+    /**
+     * Create user movie rating
+     */
+    @PostMapping("/{id}/ratings/movies/{movie-id}")
+    public MovieRating rateMovie(@PathVariable(value = "id") int userID,
+                                 @PathVariable(value = "movie-id") String movieID,
+                                 @Valid @RequestBody MovieRating rating) {
+        return ratingService.rateMovie(userID, movieID, rating);
     }
 }

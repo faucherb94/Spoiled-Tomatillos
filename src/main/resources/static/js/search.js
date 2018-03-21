@@ -19,12 +19,10 @@ function searchByTitle() {
                 showClear: false
             }).on('rating:change', function(event, value, caption) {
                 var ratingpkg = {
-                    movieID: movieid,
-                    userID: Cookies.get("uid"),
                     rating: value
                 };
                 $.ajax({
-                    url: "/api/movie/rating",
+                    url: "/api/users/" + Cookies.get("uid") +"/ratings/movies/" + $(this).closest('.card').attr('id'),
                     type: "POST",
                     data: JSON.stringify(ratingpkg),
                     contentType: "application/json",
@@ -35,11 +33,11 @@ function searchByTitle() {
                     $("#error").html("Failed rating");
                 });
             });
-            $.getJSON(`/api/movie/rating?userID=${Cookies.get("uid")}&movieID=${movieid}`)
+            $.getJSON(`/api/users/${Cookies.get("uid")}/ratings/movies/${movieid}`)
             .done(function(resp) {
                     $("#rating" + i).rating("update", resp.rating);
             });
-            $.getJSON(`/api/movie/review?userID=${Cookies.get("uid")}&movieID=${movieid}`)
+            $.getJSON(`/api/users/${Cookies.get("uid")}/reviews/movies/${movieid}`)
             .done(function(resp) {
                     console.log("here2");
                     $(`#review${i}`).text(resp.review);
@@ -58,11 +56,9 @@ function searchByTitle() {
  * Return html scaffolding for the card
  */
 function buildMovieCard(movie, i) {
-    var movieid = movie.imdbID;
-    var card = "<div class='card border-light'>" +
+    var card = "<div id='" + movie.imdbID + "' class='card border-light'>" +
           "<h5 class='card-header'>" + movie.title + "</h5>" +
           "<div class='card-body'>" +
-            "<span hidden id='mid-rating" + i + "'>" + movie.imdbID + "</span>" +
             "<div><a href='" + movie.poster + "'>" +
             "<img class='card-img-left card-float-left' src='" + movie.poster +
             "'/></a></div>" +
@@ -70,7 +66,7 @@ function buildMovieCard(movie, i) {
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating" + i + "' name='rating" + i + "' class='kv-ltr-theme-svg-star'><br>" +
             "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
-            "<button onclick='submitReview(this)' class='btn btn-secondary' id='reviewbtn" + i + "' movieid='" + movieid + "' iter='" + i + "'>Review</button></div>" +
+            "<button onclick='submitReview(this)' class='btn btn-secondary' id='reviewbtn" + i + "' movieid='" + movie.imdbID + "' iter='" + i + "'>Review</button></div>" +
           "</div>" +
         "</div>";
     return card;
@@ -78,12 +74,10 @@ function buildMovieCard(movie, i) {
 
 function submitReview(b) {
     var reviewpkg = {
-        movieID: $(b).attr("movieid"),
-        userID: Cookies.get("uid"),
         review: $("#review" + $(b).attr("iter")).val()
     };
     $.ajax({
-        url: "/api/movie/review",
+        url: "/api/users/" + Cookies.get("uid") + "/reviews/movies/" + $(b).attr("movieid"),
         type: "POST",
         data: JSON.stringify(reviewpkg),
         contentType: "application/json",

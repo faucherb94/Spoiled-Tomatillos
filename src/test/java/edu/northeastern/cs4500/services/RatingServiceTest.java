@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.northeastern.cs4500.models.MovieRating;
-import edu.northeastern.cs4500.repositories.MovieRatingRepository;
+import edu.northeastern.cs4500.repositories.RatingRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ public class RatingServiceTest {
     private IRatingService movieRatingService;
 
     @MockBean
-    private MovieRatingRepository repository;
+    private RatingRepository repository;
 
     private MovieRating rating;
 
@@ -45,7 +45,8 @@ public class RatingServiceTest {
     public void rateMovie_HappyPath() throws Exception {
         when(repository.save(rating)).thenReturn(rating);
 
-        MovieRating newRating = movieRatingService.rateMovie(rating.getMovieID(), rating);
+        MovieRating newRating = movieRatingService.rateMovie(
+                rating.getUserID(), rating.getMovieID(), rating);
 
         assertThat(newRating).isEqualTo(rating);
     }

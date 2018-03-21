@@ -4,17 +4,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import edu.northeastern.cs4500.models.MovieRating;
-import edu.northeastern.cs4500.repositories.MovieRatingRepository;
+import edu.northeastern.cs4500.repositories.RatingRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 @Service
-public class RatingService implements IMovieRatingService {
+public class RatingService implements IRatingService {
 
     @Autowired
-    private MovieRatingRepository repository;
+    private RatingRepository repository;
 
     @Override
-    public MovieRating rateMovie(String movieID, MovieRating rating) {
+    public MovieRating rateMovie(int userID, String movieID, MovieRating rating) {
+        rating.setUserID(userID);
         rating.setMovieID(movieID);
         return repository.save(rating);
     }
