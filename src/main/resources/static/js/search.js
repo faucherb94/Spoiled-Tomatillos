@@ -6,7 +6,7 @@
 function searchByTitle() {
     $("#feed").html("");
     var title = $("#moviesearch").val();
-    $.getJSON(`/api/search?q=${title}`)
+    $.getJSON(`/api/movies/search?q=${title}`)
     .done(function(json) {
         for (var i=0; i < json.length; i++) {
             $("#feed").append(buildMovieCard(json[i], i));
