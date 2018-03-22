@@ -8,7 +8,7 @@ import java.util.List;
 import edu.northeastern.cs4500.models.MovieReview;
 
 @Repository
-public interface MovieReviewRepository extends JpaRepository<MovieReview, Integer> {
+public interface ReviewRepository extends JpaRepository<MovieReview, Integer> {
 
     MovieReview findByMovieIDAndUserID(String movieID, int userID);
 

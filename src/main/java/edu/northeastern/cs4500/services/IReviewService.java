@@ -4,9 +4,9 @@ import java.util.List;
 
 import edu.northeastern.cs4500.models.MovieReview;
 
-public interface IMovieReviewService {
+public interface IReviewService {
 
-    MovieReview reviewMovie(MovieReview review);
+    MovieReview reviewMovie(int userID, String movieID, MovieReview review);
 
     MovieReview getUserMovieReview(String movieID, int userID);
 

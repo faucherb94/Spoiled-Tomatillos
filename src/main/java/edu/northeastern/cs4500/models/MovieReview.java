@@ -2,6 +2,7 @@ package edu.northeastern.cs4500.models;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -36,9 +37,11 @@ public class MovieReview {
     @Getter @Setter
     private int id;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter @Setter
     private String movieID;
 
+    @JsonInclude(JsonInclude.Include.NON_EMPTY)
     @Getter @Setter
     private int userID;
 

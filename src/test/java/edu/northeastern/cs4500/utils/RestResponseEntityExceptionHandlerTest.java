@@ -38,7 +38,7 @@ public class RestResponseEntityExceptionHandlerTest {
                 .thenThrow(new ResourceNotFoundException(
                         User.class, "id", "1"));
 
-        ResponseEntity<User> response = restTemplate.getForEntity("/api/user/{id}",
+        ResponseEntity<User> response = restTemplate.getForEntity("/api/users/{id}",
                 User.class, 1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
@@ -50,7 +50,7 @@ public class RestResponseEntityExceptionHandlerTest {
                 .thenThrow(new DataIntegrityViolationException("",
                         new ConstraintViolationException("", new SQLException(), "")));
 
-        ResponseEntity<User> user = restTemplate.postForEntity("/api/user/create",
+        ResponseEntity<User> user = restTemplate.postForEntity("/api/users",
                 new User(), User.class);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
@@ -61,7 +61,7 @@ public class RestResponseEntityExceptionHandlerTest {
         when(userService.create(any(User.class)))
                 .thenThrow(new DataIntegrityViolationException("", new Exception()));
 
-        ResponseEntity<User> user = restTemplate.postForEntity("/api/user/create",
+        ResponseEntity<User> user = restTemplate.postForEntity("/api/users",
                 new User(), User.class);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
