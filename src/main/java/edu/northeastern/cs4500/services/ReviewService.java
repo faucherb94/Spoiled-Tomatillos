@@ -6,17 +6,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import edu.northeastern.cs4500.models.MovieReview;
-import edu.northeastern.cs4500.repositories.MovieReviewRepository;
+import edu.northeastern.cs4500.repositories.ReviewRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 @Service
-public class MovieReviewService implements IMovieReviewService {
+public class ReviewService implements IReviewService {
 
     @Autowired
-    private MovieReviewRepository repository;
+    private ReviewRepository repository;
 
     @Override
-    public MovieReview reviewMovie(MovieReview review) {
+    public MovieReview reviewMovie(int userID, String movieID, MovieReview review) {
+        review.setUserID(userID);
+        review.setMovieID(movieID);
         return repository.save(review);
     }
 
