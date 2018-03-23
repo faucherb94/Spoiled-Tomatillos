@@ -28,14 +28,14 @@ public class UserController {
     /*********************************USER MANAGEMENT****************************************/
 
     @Autowired
-    private IUserService service;
+    private IUserService userService;
 
     /**
      * Create a new user
      */
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return service.create(user);
+        return userService.create(user);
     }
 
     /**
@@ -43,7 +43,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserByID(@PathVariable(value = "id") int id) {
-        User user = service.findByID(id);
+        User user = userService.findByID(id);
         return ResponseEntity.ok(user);
     }
 
@@ -53,7 +53,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<User> getUserByUsername(
             @RequestParam(value = "name") String username) {
-        User user = service.findByUsername(username);
+        User user = userService.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 
@@ -63,7 +63,7 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable(value = "id") int id,
                                            @Valid @RequestBody User u) {
-        User updatedUser = service.update(id, u);
+        User updatedUser = userService.update(id, u);
         return ResponseEntity.ok(updatedUser);
     }
 
@@ -72,7 +72,7 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable(value = "id") int id) {
-        User deletedUser = service.delete(id);
+        User deletedUser = userService.delete(id);
         return ResponseEntity.ok(deletedUser);
     }
 
