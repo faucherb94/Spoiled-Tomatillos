@@ -84,6 +84,21 @@ pipeline {
       }
     }
 
+    stage('Dev Deploy') {
+      when { not branch 'master'}
+      steps {
+        checkout scm
+        echo 'Deploying...'
+        withCredentials ([file(credentialsId: 'st_dev_deploy_pem', variable: 'PEM_PATH')]) {
+          sh 'apk add -U --no-cache openssh'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'./stopapp.sh > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'./rotate.sh > /dev/null 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/*.war ec2-user@dev.codersunltd.me:~/app/'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'nohup ./startapp.sh\''
+        }
+      }
+    }
+
     stage('Deploy') {
       when { branch 'master'}
       steps {
