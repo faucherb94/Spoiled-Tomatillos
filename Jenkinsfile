@@ -85,7 +85,7 @@ pipeline {
     }
 
     stage('Dev Deploy') {
-      when { not { branch 'master'} }
+      when { branch 'dev' }
       steps {
         checkout scm
         echo 'Deploying...'
