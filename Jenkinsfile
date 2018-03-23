@@ -61,6 +61,7 @@ pipeline {
     }
     
     stage('SonarQube') {
+      when { not { branch 'dev' } }
       steps {
         withSonarQubeEnv('SonarQube') {
           sh 'mvn sonar:sonar'
@@ -69,6 +70,7 @@ pipeline {
     }
     
     stage('Quality') {
+      when { not { branch 'dev' } }
       steps {
         sh 'sleep 30'
         timeout(time: 10, unit: 'SECONDS') {
