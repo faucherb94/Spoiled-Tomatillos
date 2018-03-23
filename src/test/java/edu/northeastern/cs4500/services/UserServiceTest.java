@@ -14,6 +14,9 @@ import edu.northeastern.cs4500.repositories.UserRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -111,6 +114,29 @@ public class UserServiceTest {
         when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
 
         userService.update(defaultUser.getId(), defaultUser);
+    }
+
+    @Test
+    public void delete_HappyPath() throws Exception {
+        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
+
+        User deletedUser = userService.delete(defaultUser.getId());
+
+        verify(userRepository, times(1)).findOne(defaultUser.getId());
+        verify(userRepository, times(1)).delete(defaultUser);
+        verifyNoMoreInteractions(userRepository);
+
+        assertThat(deletedUser).isEqualTo(defaultUser);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void delete_NotFound() throws Exception {
+        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
+
+        userService.delete(defaultUser.getId());
+
+        verify(userRepository, times(1)).findOne(defaultUser.getId());
+        verifyNoMoreInteractions(userRepository);
     }
 
 }

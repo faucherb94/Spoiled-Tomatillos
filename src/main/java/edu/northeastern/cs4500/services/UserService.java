@@ -53,4 +53,15 @@ public class UserService implements IUserService {
         return repository.save(currentUser);
     }
 
+    @Override
+    public User delete(int id) {
+        User userToDelete = repository.findOne(id);
+        if (userToDelete == null) {
+            throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
+        }
+
+        repository.delete(userToDelete);
+        return userToDelete;
+    }
+
 }
