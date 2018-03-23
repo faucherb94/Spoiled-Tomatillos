@@ -15,13 +15,15 @@
     <script src="js/login.js"></script>
 </head>
 <body>
-<div class="g-signin2" data-onsuccess="onSignIn"></div>
     <div class="container">
         <h1>Spoiled Tomatillos - User Login</h1><br>
         <input type="text" id="uname" placeholder="Username"/><br>
         <div id="error" style="color:red"></div>
         <div id="create" style="padding:10px"> </div>
-        <button class="btn btn-primary" style="margin:10px" onclick="loginClick()">Login</button>
+<!-->        
+<button class="btn btn-primary" style="margin:10px" onclick="loginClick()">Login</button>
+<-->
+		<div class="g-signin2" data-onsuccess="onSignIn"></div>
         <button class="btn btn-primary" style="margin:10px" onclick="showCreate()">New User? Register!</button><br>
     </div>
 </body>
