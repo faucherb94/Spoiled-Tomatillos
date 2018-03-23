@@ -2,6 +2,7 @@ package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -64,6 +65,15 @@ public class UserController {
                                            @Valid @RequestBody User u) {
         User updatedUser = service.update(id, u);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    /**
+     * Delete user
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "id") int id) {
+        User deletedUser = service.delete(id);
+        return ResponseEntity.ok(deletedUser);
     }
 
     /*********************************USER REVIEWS****************************************/
