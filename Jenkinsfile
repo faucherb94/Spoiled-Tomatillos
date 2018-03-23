@@ -61,6 +61,7 @@ pipeline {
     }
     
     stage('SonarQube') {
+      when { not { branch 'dev' } }
       steps {
         withSonarQubeEnv('SonarQube') {
           sh 'mvn sonar:sonar'
@@ -69,6 +70,7 @@ pipeline {
     }
     
     stage('Quality') {
+      when { not { branch 'dev' } }
       steps {
         sh 'sleep 30'
         timeout(time: 10, unit: 'SECONDS') {
@@ -80,6 +82,21 @@ pipeline {
               }
             }
           }
+        }
+      }
+    }
+
+    stage('Dev Deploy') {
+      when { branch 'dev' }
+      steps {
+        checkout scm
+        echo 'Deploying...'
+        withCredentials ([file(credentialsId: 'st_dev_deploy_pem', variable: 'PEM_PATH')]) {
+          sh 'apk add -U --no-cache openssh'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'./stopapp.sh > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'./rotate.sh > /dev/null 2>&1 &\''
+          sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/*.war ec2-user@dev.codersunltd.me:~/app/'
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@dev.codersunltd.me \'nohup ./startapp.sh\''
         }
       }
     }
