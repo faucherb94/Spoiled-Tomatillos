@@ -91,8 +91,8 @@ pipeline {
         echo 'Deploying...'
         withCredentials ([file(credentialsId: 'CS4500_AWS_PEM_File', variable: 'PEM_PATH')]) {
           sh 'apk add -U --no-cache openssh'
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'./stopapp.sh\''
-          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'mkdir -p app > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'./stopapp.sh > /dev/null 2>&1 &\''
+          sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'./rotate.sh > /dev/null 2>&1 &\''
           sh 'scp -o StrictHostKeyChecking=no -i $PEM_PATH $WORKSPACE/target/*.war ec2-user@app.codersunltd.me:~/app/'
           sh 'ssh -o StrictHostKeyChecking=no -i $PEM_PATH ec2-user@app.codersunltd.me \'nohup ./startapp.sh\''
         }
