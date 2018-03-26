@@ -117,4 +117,16 @@ public class UserController {
                                  @Valid @RequestBody MovieRating rating) {
         return ratingService.rateMovie(userID, movieID, rating);
     }
+
+    /**
+     * Update user movie rating
+     */
+    @PutMapping("/{id}/ratings/movies/{movie-id}")
+    public ResponseEntity<MovieRating> updateUserMovieRating(
+            @PathVariable(value = "id") int userID,
+            @PathVariable(value = "movie-id") String movieID,
+            @Valid @RequestBody MovieRating rating) {
+        MovieRating updatedRating = ratingService.updateUserMovieRating(movieID, userID, rating);
+        return ResponseEntity.ok(updatedRating);
+    }
 }

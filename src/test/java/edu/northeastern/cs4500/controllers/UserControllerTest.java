@@ -218,6 +218,19 @@ public class UserControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
     }
 
+    @Test
+    public void updateUserMovieRating_HappyPath() throws Exception {
+        when(ratingService.updateUserMovieRating(rating.getMovieID(), rating.getUserID(),
+                rating)).thenReturn(rating);
+
+        HttpEntity<MovieRating> entity = new HttpEntity<>(rating, new HttpHeaders());
+        ResponseEntity<MovieRating> response = restTemplate.exchange(
+                URI + "/{id}/ratings/movies/{movie-id}", HttpMethod.PUT,
+                entity, MovieRating.class, 1, rating.getMovieID());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
     /*********************************USER REVIEWS****************************************/
 
     @Test
