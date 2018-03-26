@@ -165,6 +165,30 @@ public class UserControllerTest {
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
     }
 
+    @Test
+    public void deleteUser_HappyPath() throws Exception {
+        when(userService.delete(mockUser.getId())).thenReturn(mockUser);
+
+        HttpEntity<User> entity = new HttpEntity<>(mockUser, new HttpHeaders());
+        ResponseEntity<User> response = restTemplate.exchange(URI + "/{id}", HttpMethod.DELETE,
+                entity, User.class, mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void deleteUser_DBConflict() throws Exception {
+        when(userService.delete(anyInt()))
+                .thenThrow(new DataIntegrityViolationException("",
+                        new ConstraintViolationException("", new SQLException(), "")));
+
+        HttpEntity<User> entity = new HttpEntity<>(mockUser, new HttpHeaders());
+        ResponseEntity<User> response = restTemplate.exchange(URI + "/{id}", HttpMethod.DELETE,
+                entity, User.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+    }
+
     /*********************************USER RATINGS****************************************/
 
     @Test
