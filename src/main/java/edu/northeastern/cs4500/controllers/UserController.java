@@ -1,6 +1,7 @@
 package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 
@@ -74,6 +76,19 @@ public class UserController {
     public ResponseEntity<User> deleteUser(@PathVariable(value = "id") int id) {
         User deletedUser = userService.delete(id);
         return ResponseEntity.ok(deletedUser);
+    }
+
+    /**
+     * Upload user profile picture
+     */
+    @PostMapping("/{id}/picture/upload")
+    public ResponseEntity<Void> uploadProfilePicture(
+            @PathVariable(value = "id") int id,
+            @RequestParam(value = "file") MultipartFile file) {
+
+        userService.uploadProfilePicture(id, file);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     /*********************************USER REVIEWS****************************************/
