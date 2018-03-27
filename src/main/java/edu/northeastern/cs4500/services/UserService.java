@@ -2,10 +2,15 @@ package edu.northeastern.cs4500.services;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.repositories.UserRepository;
@@ -16,6 +21,8 @@ public class UserService implements IUserService {
 
     @Autowired
     private UserRepository repository;
+
+    private static final String DEFAULT_PICTURE_PATH = "static/img/default-profile-picture.png";
 
     @Override
     public User findByID(int id) {
@@ -37,6 +44,11 @@ public class UserService implements IUserService {
 
     @Override
     public User create(User u) {
+        byte[] bytes = getDefaultPictureBytes();
+        if (bytes.length > 0) {
+            u.setPicture(bytes);
+        }
+
         return repository.save(u);
     }
 
@@ -91,6 +103,22 @@ public class UserService implements IUserService {
         } catch (IOException ex) {
             throw new IllegalArgumentException();
         }
+    }
+
+    /**
+     * Gets the bytes of the default profile picture. Used in the user creation method.
+     */
+    private byte[] getDefaultPictureBytes() {
+        Resource resource = new ClassPathResource(DEFAULT_PICTURE_PATH);
+        try {
+            File defaultPicture = resource.getFile();
+            Path filePath = defaultPicture.toPath();
+            return Files.readAllBytes(filePath);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+        return new byte[]{};
     }
 
 }
