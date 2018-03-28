@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 @Service
 public class RatingService implements IRatingService {
 	
-	private final Logger log = LoggerFactory.getLogger(this.getClass());
+    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     private RatingRepository repository;
