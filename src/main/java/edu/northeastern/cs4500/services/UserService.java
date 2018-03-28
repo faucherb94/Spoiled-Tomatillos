@@ -105,6 +105,16 @@ public class UserService implements IUserService {
         }
     }
 
+    @Override
+    public byte[] getProfilePicture(int id) {
+        User currentUser = repository.findOne(id);
+        if (currentUser == null) {
+            throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
+        }
+
+        return currentUser.getPicture();
+    }
+
     /**
      * Gets the bytes of the default profile picture. Used in the user creation method.
      */

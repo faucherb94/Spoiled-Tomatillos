@@ -18,4 +18,6 @@ public interface IUserService {
 
     void uploadProfilePicture(int id, MultipartFile picture);
 
+    byte[] getProfilePicture(int id);
+
 }

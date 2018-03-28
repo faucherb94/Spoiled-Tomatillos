@@ -179,4 +179,21 @@ public class UserServiceTest {
         verifyNoMoreInteractions(userRepository);
     }
 
+    @Test
+    public void getProfilePicture_HappyPath() throws Exception {
+        defaultUser.setPicture("bytes bytes bytes".getBytes());
+        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
+
+        byte[] picture = userService.getProfilePicture(defaultUser.getId());
+
+        assertThat(picture).isEqualTo(defaultUser.getPicture());
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void getProfilePicture_UserNotFound() throws Exception {
+        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
+
+        userService.getProfilePicture(defaultUser.getId());
+    }
+
 }
