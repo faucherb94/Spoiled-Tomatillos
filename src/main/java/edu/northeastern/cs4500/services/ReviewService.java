@@ -32,7 +32,7 @@ public class ReviewService implements IReviewService {
     public MovieReview getUserMovieReview(String movieID, int userID) {
         MovieReview review = repository.findByMovieIDAndUserID(movieID, userID);
         if (review == null) {
-			log.error("user id " + userID " movie review with id " + movieID + " not found");
+			log.error("user id " + userID + " movie review with id " + movieID + " not found");
             throw new ResourceNotFoundException(MovieReview.class,
                     "movieID", movieID,
                     "userID", Integer.toString(userID));
