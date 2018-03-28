@@ -24,7 +24,7 @@
         	<!-- paths to exclude from all sonar analysis -->
         </sonar.exclusions>
         <sonar.coverage.exclusions>
-            **edu.northeastern.cs4500/models/*,
+            **edu/northeastern/cs4500/models/*,
             **/*Serializer.java
         </sonar.coverage.exclusions>
         <sonar.verbose>true</sonar.verbose>
