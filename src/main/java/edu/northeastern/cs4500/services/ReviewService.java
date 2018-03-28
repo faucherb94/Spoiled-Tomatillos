@@ -24,7 +24,7 @@ public class ReviewService implements IReviewService {
     public MovieReview reviewMovie(int userID, String movieID, MovieReview review) {
         review.setUserID(userID);
         review.setMovieID(movieID);
-        log.info("user with id " + userID + " reviewed movie " + movieID + " with the following review " + review);
+        log.info("user with id " + userID + " reviewed movie " + movieID + " with the following review " + review.getReview());
         return repository.save(review);
     }
 

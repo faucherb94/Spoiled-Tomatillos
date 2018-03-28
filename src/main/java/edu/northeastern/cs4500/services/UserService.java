@@ -57,7 +57,7 @@ public class UserService implements IUserService {
         if (bytes.length > 0) {
             u.setPicture(bytes);
         }
-      log.info("created user " + u);
+      log.info("created user " + u.getUsername());
       return repository.save(u);
     }
 
@@ -76,7 +76,7 @@ public class UserService implements IUserService {
         currentUser.setRole(u.getRole());
         currentUser.setHometown(u.getHometown());
         
-        log.info("Updated user " + u + " with id " + id);
+        log.info("updated user " + u.getUsername() + " with id " + id);
         return repository.save(currentUser);
     }
 

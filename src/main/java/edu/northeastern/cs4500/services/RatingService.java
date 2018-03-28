@@ -22,7 +22,7 @@ public class RatingService implements IRatingService {
     public MovieRating rateMovie(int userID, String movieID, MovieRating rating) {
         rating.setUserID(userID);
         rating.setMovieID(movieID);
-        log.info("user id " + userID + "rated movie " + movieID + " with a " + rating + " rating");
+        log.info("user id " + userID + " rated movie " + movieID + " with a " + rating.getRating() + " rating");
         return repository.save(rating);
     }
 
@@ -52,7 +52,7 @@ public class RatingService implements IRatingService {
         currentRating.setMovieID(movieID);
         currentRating.setUserID(userID);
         currentRating.setRating(rating.getRating());
-        log.info("user id " + userID + " rating for movie with id " + movieID + " updated with a " + rating);
+        log.info("user id " + userID + " rating for movie with id " + movieID + " updated with a " + rating.getRating());
         return repository.save(currentRating);
     }
 
