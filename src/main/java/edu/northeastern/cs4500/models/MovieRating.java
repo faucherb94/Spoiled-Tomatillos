@@ -52,14 +52,14 @@ public class MovieRating {
     @CreatedDate
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonSerialize(using = DateTimestampSerializer.class)
-    @Getter
+    @Getter @Setter
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @JsonSerialize(using = DateTimestampSerializer.class)
-    @Getter
+    @Getter @Setter
     private Date updatedAt;
 
     public MovieRating(String movieID, int userID, int rating) {
