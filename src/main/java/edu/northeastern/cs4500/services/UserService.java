@@ -44,10 +44,8 @@ public class UserService implements IUserService {
         }
 
         currentUser.setUsername(u.getUsername());
-        currentUser.setEmail(u.getEmail());
         currentUser.setFirstName(u.getFirstName());
         currentUser.setLastName(u.getLastName());
-        currentUser.setRole(u.getRole());
         currentUser.setHometown(u.getHometown());
 
         return repository.save(currentUser);
