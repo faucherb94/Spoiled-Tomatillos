@@ -222,6 +222,17 @@ public class UserControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    public void getProfilePicture_HappyPath() throws Exception {
+        when(userService.getProfilePicture(mockUser.getId()))
+                .thenReturn("a random array of bytes".getBytes());
+
+        ResponseEntity<byte[]> response = restTemplate.exchange(URI + "/{id}/picture",
+                HttpMethod.GET, null, byte[].class, mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
     /*********************************USER RATINGS****************************************/
 
     @Test

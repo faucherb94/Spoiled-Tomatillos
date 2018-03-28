@@ -1,6 +1,8 @@
 package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -89,6 +91,19 @@ public class UserController {
         userService.uploadProfilePicture(id, file);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Get user profile picture
+     */
+    @GetMapping("/{id}/picture")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable(value = "id") int id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+
+        byte[] pictureBytes = userService.getProfilePicture(id);
+
+        return new ResponseEntity<>(pictureBytes, headers, HttpStatus.OK);
     }
 
     /*********************************USER REVIEWS****************************************/
