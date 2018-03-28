@@ -30,6 +30,7 @@ public class RatingService implements IRatingService {
     public MovieRating getUserMovieRating(String movieID, int userID) {
         MovieRating rating = repository.findByMovieIDAndUserID(movieID, userID);
         if (rating == null) {
+			log.error("user with id " + userID + " rating of movie with id " + movieID + " not found");
             throw new ResourceNotFoundException(MovieRating.class,
                     "movieID", movieID,
                     "userID", Integer.toString(userID));
@@ -42,6 +43,7 @@ public class RatingService implements IRatingService {
     public MovieRating updateUserMovieRating(String movieID, int userID, MovieRating rating) {
         MovieRating currentRating = repository.findByMovieIDAndUserID(movieID, userID);
         if (currentRating == null) {
+			log.error("user with id " + userID + " rating of movie with id " + movieID + " not found");
             throw new ResourceNotFoundException(MovieRating.class,
                     "movieID", movieID,
                     "userID", Integer.toString(userID));
