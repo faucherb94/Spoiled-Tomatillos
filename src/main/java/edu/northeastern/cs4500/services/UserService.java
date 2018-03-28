@@ -33,7 +33,7 @@ public class UserService implements IUserService {
     public User findByUsername(String username) {
         User user = repository.findByUsername(username);
         if (user == null) {
-			log.error("user with username " + username " not found");
+			log.error("user with username " + username + " not found");
             throw new ResourceNotFoundException(User.class, "username", username);
         }
         log.info("found user with username " + username);
