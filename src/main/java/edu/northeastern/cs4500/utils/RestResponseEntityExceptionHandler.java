@@ -34,6 +34,19 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIllegalArgument(
+            IllegalArgumentException ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.BAD_REQUEST,
+                ex.getMessage(), ex.getCause()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    protected ResponseEntity<Object> handleUnknown(
+            Exception ex) {
+        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    }
+
     private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
         return new ResponseEntity<>(apiError, apiError.getStatus());
     }
