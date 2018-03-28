@@ -22,6 +22,7 @@ public class UserService implements IUserService {
     public User findByID(int id) {
         User user = repository.findOne(id);
         if (user == null) {
+			log.error("user with id " + id + " not found");
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
         log.info("found user with id " + id);
@@ -32,6 +33,7 @@ public class UserService implements IUserService {
     public User findByUsername(String username) {
         User user = repository.findByUsername(username);
         if (user == null) {
+			log.error("user with username " + username " not found");
             throw new ResourceNotFoundException(User.class, "username", username);
         }
         log.info("found user with username " + username);
@@ -48,6 +50,7 @@ public class UserService implements IUserService {
     public User update(int id, User u) {
         User currentUser = repository.findOne(id);
         if (currentUser == null) {
+			log.error("user with id " + id + " not found");
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
         
@@ -66,6 +69,7 @@ public class UserService implements IUserService {
     public User delete(int id) {
         User userToDelete = repository.findOne(id);
         if (userToDelete == null) {
+			log.error("user with id " + id + " not found");
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
         log.info("deleted user with id " + id);
