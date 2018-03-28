@@ -3,6 +3,7 @@ package edu.northeastern.cs4500.utils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.exceptions.base.MockitoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -65,6 +66,28 @@ public class RestResponseEntityExceptionHandlerTest {
                 new User(), User.class);
 
         assertThat(user.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @Test
+    public void handleIllegalArgument() throws Exception {
+        when(userService.findByID(anyInt()))
+                .thenThrow(new IllegalArgumentException("illegal"));
+
+        ResponseEntity<User> response = restTemplate.getForEntity("/api/users/{id}",
+                User.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void handleUnknownException() throws Exception {
+        when(userService.findByID(anyInt()))
+                .thenThrow(new MockitoException("random message"));
+
+        ResponseEntity<User> response = restTemplate.getForEntity("/api/users/{id}",
+                User.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
