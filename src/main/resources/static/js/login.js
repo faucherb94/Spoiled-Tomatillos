@@ -37,14 +37,15 @@ function createUser(newuser) {
 
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
-    /**var fname = profile.getGivenName();
-    var lname = profile.getFamilyName();
-    var propic = profile.getImageUrl();
+    /**var
     var email = profile.getEmail();
     var username = email.split("@")[0];
     var user = {
-
-
+        firstName: profile.getGivenName(),
+        lastName: profile.getFamilyName(),
+        propic: profile.getImageUrl(),
+        email: email,
+        username: username
     } **/
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
