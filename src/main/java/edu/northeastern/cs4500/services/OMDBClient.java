@@ -13,6 +13,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,6 +27,7 @@ import edu.northeastern.cs4500.models.Movie;
 import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.utils.OMDBException;
 
+@Service
 public class OMDBClient {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
