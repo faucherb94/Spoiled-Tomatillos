@@ -14,6 +14,18 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
+    @ExceptionHandler(OMDBException.class)
+    protected ResponseEntity<Object> handleOMDBException(OMDBException ex) {
+        String msg = ex.getLocalizedMessage();
+        if (msg.toLowerCase().contains("not found") || msg.toLowerCase().contains("incorrect")) {
+            ApiError apiError = new ApiError(HttpStatus.NOT_FOUND);
+            apiError.setMessage(msg);
+            return buildResponseEntity(apiError);
+        }
+
+        return buildResponseEntity(new ApiError(HttpStatus.INTERNAL_SERVER_ERROR, ex));
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     protected ResponseEntity<Object> handleResourceNotFound(
             ResourceNotFoundException ex) {
