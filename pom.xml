@@ -24,8 +24,10 @@
         	<!-- paths to exclude from all sonar analysis -->
         </sonar.exclusions>
         <sonar.coverage.exclusions>
-            **edu/northeastern/cs4500/models/*,
-            **/*Serializer.java
+            src/main/java/edu/northeastern/cs4500/Cs4500Spring2018Team26Application.java,
+        	src/main/java/edu/northeastern/cs4500/models/*,
+        	src/main/java/edu/northeastern/cs4500/ServletInitializer.java,
+            src/main/java/edu/northeastern/cs4500/utils/DateTimestampSerializer.java
         </sonar.coverage.exclusions>
         <sonar.verbose>true</sonar.verbose>
         <sonar.showProfiling>true</sonar.showProfiling>
