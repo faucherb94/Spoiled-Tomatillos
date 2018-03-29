@@ -1,7 +1,7 @@
 package edu.northeastern.cs4500.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -28,6 +28,7 @@ import lombok.Setter;
 @Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
 @JsonIgnoreProperties(value = {"createdAt", "updatedAt"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User {
 
     @Id

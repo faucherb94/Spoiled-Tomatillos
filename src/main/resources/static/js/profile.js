@@ -6,8 +6,8 @@ function loadProfile(profile) {
         $("#username").html(json.username);
         $("#hometown").html(json.hometown ? json.hometown : "No hometown set");
         $("#profpic").attr('src', `data:image/png;base64,${json.picture}`);
-    }).fail(function (jqxhr, err, resp) {
-        console.log(resp);
+    }).fail(function (jqxhr, status, err) {
+        console.log(err);
     });
 }
 
@@ -21,15 +21,16 @@ function allowEdit() {
 }
 
 function editUserForm() {
+    $("#editbutton").attr("disabled", "disabled");
     var form = $("#buttons").append("<div id='formdiv'></div>");
     $("#formdiv").append("<input id='firstname-input' type='text'/>");
-    $("#firstname-input").attr("placeholder", $("#fullname").html().split(" ")[0]);
+    $("#firstname-input").val($("#fullname").html().split(" ")[0]);
     $("#formdiv").append("<br>");
     $("#formdiv").append("<input id='lastname-input' type='text'/>");
-    $("#lastname-input").attr("placeholder", $("#fullname").html().split(" ")[1]);
+    $("#lastname-input").val($("#fullname").html().split(" ")[1]);
     $("#formdiv").append("<br>");
     $("#formdiv").append("<input id='hometown-input' type='text'/>");
-    $("#hometown-input").attr("placeholder", $("#hometown").html());
+    $("#hometown-input").val($("#hometown").html());
     $("#formdiv").append("<button id='submit-edit' type='text'>Submit</button>")
     $("#submit-edit").addClass("btn btn-secondary");
     $("#submit-edit").click(editUser);
@@ -51,13 +52,23 @@ function editUser() {
         $("#formdiv").remove();
         location.reload();
     }).fail(function(jqxhr, status, err) {
-        console.log(resp);
+        console.log(err);
     });
 }
 
 function deleteUser() {
     var del = confirm("Are you sure you want to delete your profile?");
-    if (del) { //TODO delete
-         }
+    if (del) {
+        $.ajax({
+            url: "/api/users/" + Cookies.get("uid"),
+            type: "DELETE"
+        }).done(function(json) {
+            Cookies.remove("uid");
+            Cookies.remove("username");
+            window.location.assign("index.html");
+        }).fail(function(jqxhr, status, err) {
+            console.log(err);
+        });
+    }
 
 }
