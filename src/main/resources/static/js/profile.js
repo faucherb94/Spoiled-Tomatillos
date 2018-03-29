@@ -1,11 +1,16 @@
 function loadProfile(profile) {
-    console.log(profile);
     $.getJSON("/api/users/?name=" + profile)
     .done(function(json) {
         $("#fullname").html(json.firstName + " " + json.lastName);
         $("#username").html(json.username);
         $("#hometown").html(json.hometown ? json.hometown : "No hometown set");
-        $("#profpic").attr('src', `data:image/png;base64,${json.picture}`);
+        $.ajax({
+            url: `/api/users/${json.id}/picture`,
+            type: "GET",
+            contentType: "text/plain"
+        }).done(function(json2) {
+            $("#profpic").attr("src", `data:image/png;base64,${json2}`);
+        });
     }).fail(function (jqxhr, status, err) {
         console.log(err);
     });
