@@ -1,7 +1,5 @@
 package edu.northeastern.cs4500.controllers;
 
-import com.mashape.unirest.http.exceptions.UnirestException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,13 +43,8 @@ public class MovieController {
             return ResponseEntity.badRequest().build();
         }
 
-        try {
-            List<SearchResult> results = omdbClient.searchMovie(query);
-            return ResponseEntity.ok(results);
-        } catch (UnirestException e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
+        List<SearchResult> results = omdbClient.searchMovie(query);
+        return ResponseEntity.ok(results);
     }
 
     /*********************************GET MOVIES*************************************/

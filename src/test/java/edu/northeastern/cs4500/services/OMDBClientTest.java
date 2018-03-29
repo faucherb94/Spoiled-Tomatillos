@@ -23,6 +23,7 @@ import java.util.List;
 
 import edu.northeastern.cs4500.models.CriticRating;
 import edu.northeastern.cs4500.models.Movie;
+import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.utils.OMDBException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +42,11 @@ public class OMDBClientTest {
 
     private Movie movie;
 
-    private String jsonString;
+    private String movieJsonString;
+
+    private List<SearchResult> searchResults;
+
+    private String searchJsonString;
 
     @Before
     public void setUp() throws ParseException {
@@ -49,10 +54,37 @@ public class OMDBClientTest {
         mockStatic(Unirest.class);
         client = new OMDBClient();
         buildMovieAndJSON();
+        buildSearchAndJSON();
+    }
+
+    private void buildSearchAndJSON() {
+        searchJsonString = new JSONObject()
+                .put("Search", new JSONArray()
+                        .put(new JSONObject()
+                                .put("Title", "Shrek")
+                                .put("Year", "2001")
+                                .put("imdbID", "tt0126029")
+                                .put("Type", "movie")
+                                .put("Poster", "http://poster.jpg"))
+                        .put(new JSONObject()
+                                .put("Title", "Shrek 2")
+                                .put("Year", "2004")
+                                .put("imdbID", "tt0298148")
+                                .put("Type", "movie")
+                                .put("Poster", "http://poster2.jpg")))
+                .put("Response", "True").toString();
+
+        searchResults = new ArrayList<>();
+        SearchResult sr1 = new SearchResult(
+                "Shrek", "2001", "tt0126029", "movie", "http://poster.jpg");
+        searchResults.add(sr1);
+        SearchResult sr2 = new SearchResult(
+                "Shrek 2", "2004", "tt0298148", "movie", "http://poster2.jpg");
+        searchResults.add(sr2);
     }
 
     private void buildMovieAndJSON() throws ParseException {
-        jsonString = new JSONObject()
+        movieJsonString = new JSONObject()
             .put("Title", "Ocean's 30")
             .put("Year", "2025")
             .put("Rated", "PG-13")
@@ -128,9 +160,47 @@ public class OMDBClientTest {
     }
 
     @Test
-    public void getMovieByID_HappyPath() throws Exception {
+    public void searchMovie_HappyPath() throws Exception {
+        com.mashape.unirest.http.JsonNode jsonNode =
+                new com.mashape.unirest.http.JsonNode(searchJsonString);
+
+        HttpResponse<com.mashape.unirest.http.JsonNode> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(jsonNode);
+
+        GetRequest getRequest = mock(GetRequest.class);
+        PowerMockito.doReturn(getRequest).when(Unirest.class, "get", anyString());
+        PowerMockito.when(getRequest.queryString(anyMap())).thenReturn(getRequest);
+        PowerMockito.when(getRequest.queryString(anyString(), anyString())).thenReturn(getRequest);
+        PowerMockito.doReturn(mockResponse).when(getRequest).asJson();
+
+        List<SearchResult> searchResults = client.searchMovie("tt47982");
+        assertThat(searchResults).isEqualTo(this.searchResults);
+    }
+
+    @Test(expected = OMDBException.class)
+    public void searchMovie_ErrorResponse() throws Exception {
+        String jsonString = "{\"Response\":\"False\",\"Error\":\"Not Found\"}";
         com.mashape.unirest.http.JsonNode jsonNode =
                 new com.mashape.unirest.http.JsonNode(jsonString);
+
+        HttpResponse<com.mashape.unirest.http.JsonNode> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(jsonNode);
+
+        GetRequest getRequest = mock(GetRequest.class);
+        PowerMockito.doReturn(getRequest).when(Unirest.class, "get", anyString());
+        PowerMockito.when(getRequest.queryString(anyMap())).thenReturn(getRequest);
+        PowerMockito.when(getRequest.queryString(anyString(), anyString())).thenReturn(getRequest);
+        PowerMockito.doReturn(mockResponse).when(getRequest).asJson();
+
+        client.searchMovie("falskj");
+    }
+
+    @Test
+    public void getMovieByID_HappyPath() throws Exception {
+        com.mashape.unirest.http.JsonNode jsonNode =
+                new com.mashape.unirest.http.JsonNode(movieJsonString);
 
         HttpResponse<com.mashape.unirest.http.JsonNode> mockResponse = mock(HttpResponse.class);
         when(mockResponse.getStatus()).thenReturn(200);

@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.ObjectMapper;
 import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
@@ -42,28 +41,11 @@ public class OMDBClient {
         initializeDefaultParams();
         this.gson = new Gson();
         Unirest.setTimeouts(3000, 10000);
-        Unirest.setObjectMapper(new ObjectMapper() {
-
-            @Override
-            public <T> T readValue(String value, Class<T> valueType) {
-                try {
-                    return gson.fromJson(value, valueType);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public String writeValue(Object o) {
-                try {
-                    return gson.toJson(o);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
     }
 
+    /**
+     * Initialize the default parameters for an OMDB request
+     */
     private void initializeDefaultParams() {
         this.defaultParams = new HashMap<>();
         this.defaultParams.put("apikey", apiKey);
@@ -71,22 +53,46 @@ public class OMDBClient {
         this.defaultParams.put("type", "movie");
     }
 
+    /**
+     * Determine if the response from OMDB is valid or an error
+     */
     private boolean validResponse(JSONObject obj) {
         return obj.getString("Response").equals("True");
     }
 
-    public List<SearchResult> searchMovie(String query) throws UnirestException {
-        HttpResponse<JsonNode> response = Unirest.get(URI)
-                .queryString(this.defaultParams)
-                .queryString("s", query)
-                .asJson();
-        JSONObject obj = response.getBody().getObject();
+    /**
+     * Generates a GET request using the specified params as well
+     * as the default parameters
+     */
+    private JSONObject getRequest(Map<String, Object> params) {
+        try {
+            HttpResponse<JsonNode> response = Unirest.get(URI)
+                    .queryString(this.defaultParams)
+                    .queryString(params)
+                    .asJson();
+            return response.getBody().getObject();
+        } catch (UnirestException ex) {
+            log.error(ex.toString());
+            throw new OMDBException(ex.getMessage());
+        }
+    }
+
+    /**
+     * Search for a list of movies on OMDB
+     */
+    public List<SearchResult> searchMovie(String query) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("s", query);
+
+        JSONObject obj = getRequest(params);
+
         if (validResponse(obj)) {
             JSONArray arr = obj.getJSONArray("Search");
             return Arrays.asList(this.gson.fromJson(arr.toString(), SearchResult[].class));
         } else {
             String error = obj.getString("Error");
-            throw new UnirestException(error); // TODO: make custom exception type
+            log.error("Error received from OMDB client: {}", error);
+            throw new OMDBException(error);
         }
     }
 
@@ -94,22 +100,17 @@ public class OMDBClient {
      * Get a movie by its ID
      */
     public Movie getMovieByID(String movieID) {
-        try {
-            HttpResponse<JsonNode> response = Unirest.get(URI)
-                    .queryString(this.defaultParams)
-                    .queryString("plot", "full")
-                    .queryString("i", movieID)
-                    .asJson();
-            JSONObject obj = response.getBody().getObject();
-            if (validResponse(obj)) {
-                return buildMovieObject(obj);
-            } else {
-                String error = obj.getString("Error");
-                throw new OMDBException(error);
-            }
-        } catch (UnirestException ex) {
-            log.error(ex.toString());
-            throw new OMDBException(ex.getMessage());
+        Map<String, Object> params = new HashMap<>();
+        params.put("plot", "full");
+        params.put("i", movieID);
+
+        JSONObject obj = getRequest(params);
+        if (validResponse(obj)) {
+            return buildMovieObject(obj);
+        } else {
+            String error = obj.getString("Error");
+            log.error("Error received from OMDB client: {}", error);
+            throw new OMDBException(error);
         }
     }
 
@@ -155,6 +156,9 @@ public class OMDBClient {
         return movie;
     }
 
+    /**
+     * Gets a specified string from the JSONObject
+     */
     private String getString(JSONObject obj, String str) {
         try {
             return obj.getString(str).replaceAll("\\\\", "");
@@ -165,6 +169,9 @@ public class OMDBClient {
         }
     }
 
+    /**
+     * Converts a specified string to a List using a "," as a delimiter
+     */
     private List<String> stringToList(JSONObject obj, String str) {
         String s = obj.getString(str);
         return Arrays.asList(s.split(", "));

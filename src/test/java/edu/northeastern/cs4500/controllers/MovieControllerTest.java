@@ -18,6 +18,7 @@ import java.util.List;
 
 import edu.northeastern.cs4500.models.Movie;
 import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.OMDBClient;
 
@@ -60,6 +61,26 @@ public class MovieControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(reviewList.size());
+    }
+
+    @Test
+    public void searchMovie_HappyPath() throws Exception {
+        List<SearchResult> results = new ArrayList<>();
+        when(omdbClient.searchMovie(anyString()))
+                .thenReturn(results);
+
+        ResponseEntity<List<SearchResult>> response = restTemplate.exchange(URI + "/search?q=shrek",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<SearchResult>>() {});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void searchMovie_EmptyQuery() throws Exception {
+        ResponseEntity<List<SearchResult>> response = restTemplate.exchange(URI + "/search?q=",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<SearchResult>>() {});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
