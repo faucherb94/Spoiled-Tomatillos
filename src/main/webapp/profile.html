@@ -6,39 +6,51 @@
     <title>Spoiled Tomatillos - Coders Unlimited</title>
     <meta name="viewport" content="width=device-width"/>
     <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <link rel="stylesheet" media="all" href="css/star-rating.css">
+    <link href="krajee-svg/theme.css" media="all" rel="stylesheet" type="text/css" />
     <script src="js/imports/jquery-3.3.1.min.js"></script>
     <script src="js/imports/popper.min.js"></script>
     <script src="js/bootstrap/bootstrap.min.js"></script>
     <script src="js/imports/js.cookie.js"></script>
+    <script src="js/imports/star-rating.js"></script>
+    <script src="krajee-svg/theme.js"></script>
+    <script src="js/profile.js"></script>
 </head>
 <body>
 <div class="header" id="navdiv"></div>
 <div class="container">
     <div class="row">
         <div class="col-2">
-            <img class="img-responsive" src="img/P1070724_edit.jpg" id="profpic" style="max-width:100%; margin:10px"/>
+            <img class="img-responsive" id="profpic" style="max-width:100%; margin:10px"/>
         </div>
         <div class="col-4">
-            <h1 id="name">Your name</h1><br>
+            <h1 id="fullname">Your name</h1><br>
+            <h3 id="username">Username</h3>
             <h2 id="hometown">Your hometown</h2>
         </div>
-        <div class="col-6">
-            <span id="friends">100 Friends</span>
+        <div class="col-3">
+            <span id="friends"></span>
+        </div>
+        <div id="buttons" class="col-3">
+
         </div>
     </div>
     <div class="row" id="feed">
-        <!--TODO make cards-->
-        Nothing to show here yet!
     </div>
 
 </div>
 <script>
     $(document).ready(function(){
         $('#navdiv').load('navbar.html');
-        if (loggedinuname) {
-            console.log(loggedinuname);
-        }
         $('#nav-profile').addClass('active');
+        var urlParams = new URLSearchParams(window.location.search);
+
+        if (urlParams.get('id')) { loadProfile(urlParams.get('id')); }
+        else {
+            loadProfile(Cookies.get("username"));
+            allowEdit();
+        }
     });
 </script>
 </body>
