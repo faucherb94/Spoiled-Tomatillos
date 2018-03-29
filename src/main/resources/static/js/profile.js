@@ -4,6 +4,7 @@ function loadProfile(profile) {
         $("#fullname").html(json.firstName + " " + json.lastName);
         $("#username").html(json.username);
         $("#hometown").html(json.hometown ? json.hometown : "No hometown set");
+        showActivity(json.id);
         $.ajax({
             url: `/api/users/${json.id}/picture`,
             type: "GET",
@@ -78,5 +79,47 @@ function deleteUser() {
             console.log(err);
         });
     }
+}
 
+function showActivity(uid) {
+    $.getJSON(`/api/users/${uid}/activity`)
+        .done(function(json) {
+            $.each(json, function(i, activity) {
+                var renderStars = function() {
+                    $('#rating-' + i).rating({
+                        theme: 'krajee-svg',
+                        size: 'sm',
+                        step: '1',
+                        showClear: false,
+                        readonly: true
+                    })
+                };
+                // TODO $.getJSON() for movie info
+                var rating = (activity.type == "rating") ? activity.rating : "Not Rated";
+                var review = (activity.type == "review") ? activity.review : "Not reviewed";
+                $("#feed").append(buildActivityCard(activity.movieID, i, rating, review));
+                renderStars();
+            });
+
+        }).fail(function(jqxhr, err, status) {
+            console.log(err);
+    });
+
+}
+
+function buildActivityCard(movieid, i, rating, review) {
+    if (rating == "Not Rated") {rating = 0};
+    var card = "<div id='" + movieid + "' class='card border-light'>" +
+        "<h5 class='card-header'>" + movieid + "</h5>" +
+        "<div class='card-body'>" +
+        "<div><a href='" + "Poster" + "'>" +
+        "<img class='card-img-left card-float-left' src='" + "Poster" +
+        "'/></a></div>" +
+        "<div class='card-float-left'><h4 class='card-title'>" + "Year" + "</h4>" +
+        "<p class='card-text'>Description - Coming Soon!!</p>" +
+        "<input id='rating-" + i + "' name='rating-" + i + "' value='" + rating + "'><br>" +
+        "<p><strong>Review: </strong> " + review + "</p>" +
+        "</div>" +
+        "</div>";
+    return card;
 }
