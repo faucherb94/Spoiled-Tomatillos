@@ -7,7 +7,7 @@ function loginClick(user) {
         window.location.href = "index.html";
     })
     .fail(function(jqxhr, status, err) {
-        createUser(user)
+        createUser(user);
     });
 
 }
@@ -29,7 +29,7 @@ function createUser(newuser) {
         contentType: "application/json",
         dataType: "json"
     }).done(function(json) {
-        loginClick();
+        loginClick(newuser);
     }).fail(function(jqxhr, status, err) {
         $("#error").html("User already exists - try a different username or email");
     });
