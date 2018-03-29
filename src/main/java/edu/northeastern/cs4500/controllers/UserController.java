@@ -1,7 +1,11 @@
 package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.CacheControl;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,11 +14,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
@@ -27,14 +35,14 @@ public class UserController {
     /*********************************USER MANAGEMENT****************************************/
 
     @Autowired
-    private IUserService service;
+    private IUserService userService;
 
     /**
      * Create a new user
      */
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        return service.create(user);
+        return userService.create(user);
     }
 
     /**
@@ -42,7 +50,7 @@ public class UserController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUserByID(@PathVariable(value = "id") int id) {
-        User user = service.findByID(id);
+        User user = userService.findByID(id);
         return ResponseEntity.ok(user);
     }
 
@@ -52,7 +60,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<User> getUserByUsername(
             @RequestParam(value = "name") String username) {
-        User user = service.findByUsername(username);
+        User user = userService.findByUsername(username);
         return ResponseEntity.ok(user);
     }
 
@@ -62,8 +70,43 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable(value = "id") int id,
                                            @Valid @RequestBody User u) {
-        User updatedUser = service.update(id, u);
+        User updatedUser = userService.update(id, u);
         return ResponseEntity.ok(updatedUser);
+    }
+
+    /**
+     * Delete user
+     */
+    @DeleteMapping("/{id}")
+    public ResponseEntity<User> deleteUser(@PathVariable(value = "id") int id) {
+        User deletedUser = userService.delete(id);
+        return ResponseEntity.ok(deletedUser);
+    }
+
+    /**
+     * Upload user profile picture
+     */
+    @PostMapping("/{id}/picture/upload")
+    public ResponseEntity<Void> uploadProfilePicture(
+            @PathVariable(value = "id") int id,
+            @RequestParam(value = "file") MultipartFile file) {
+
+        userService.uploadProfilePicture(id, file);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Get user profile picture
+     */
+    @GetMapping("/{id}/picture")
+    public ResponseEntity<byte[]> getProfilePicture(@PathVariable(value = "id") int id) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setCacheControl(CacheControl.noCache().getHeaderValue());
+
+        byte[] pictureBytes = userService.getProfilePicture(id);
+
+        return new ResponseEntity<>(pictureBytes, headers, HttpStatus.OK);
     }
 
     /*********************************USER REVIEWS****************************************/
@@ -116,5 +159,28 @@ public class UserController {
                                  @PathVariable(value = "movie-id") String movieID,
                                  @Valid @RequestBody MovieRating rating) {
         return ratingService.rateMovie(userID, movieID, rating);
+    }
+
+    /**
+     * Update user movie rating
+     */
+    @PutMapping("/{id}/ratings/movies/{movie-id}")
+    public ResponseEntity<MovieRating> updateUserMovieRating(
+            @PathVariable(value = "id") int userID,
+            @PathVariable(value = "movie-id") String movieID,
+            @Valid @RequestBody MovieRating rating) {
+        MovieRating updatedRating = ratingService.updateUserMovieRating(movieID, userID, rating);
+        return ResponseEntity.ok(updatedRating);
+    }
+
+    /*********************************USER RATINGS AND REVIEWS*****************************/
+
+    /**
+     * Get all user ratings and reviews
+     */
+    @GetMapping("/{id}/activity")
+    public ResponseEntity<List<Snippet>> getUserActivity(@PathVariable(value = "id") int userID) {
+        List<Snippet> snippets = userService.getUserActivity(userID);
+        return ResponseEntity.ok(snippets);
     }
 }

@@ -14,13 +14,6 @@ function loginClick() {
 
 }
 
-// Function which is invoked when clicking on the google signin button
-
-function OnSignIn(googleUser) {
-	var profile = googleUser.getBasicProfile();
-	console.log('Email: ' profile.getEmail();
-			}
-
 function showCreate() {
     $("#create").html(
     "<input style='margin-bottom:15px;' type='text' placeholder='email' id='new_email'/><br>" +

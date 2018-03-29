@@ -1,9 +1,8 @@
 package edu.northeastern.cs4500.models;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -22,13 +21,13 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import edu.northeastern.cs4500.utils.DateTimestampSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Table
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"updatedAt"})
 public class MovieReview {
 
     @Id
@@ -51,13 +50,15 @@ public class MovieReview {
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy hh:mm:ss")
-    @Getter
+    @JsonSerialize(using = DateTimestampSerializer.class)
+    @Getter @Setter
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
-    @Getter
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @JsonSerialize(using = DateTimestampSerializer.class)
+    @Getter @Setter
     private Date updatedAt;
 
     public MovieReview(String movieID, int userID, String review) {
