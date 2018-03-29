@@ -27,8 +27,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"createdAt", "updatedAt"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(value = {"picture", "createdAt", "updatedAt"})
 public class User {
 
     @Id
