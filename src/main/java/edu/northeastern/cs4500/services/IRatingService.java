@@ -7,4 +7,6 @@ public interface IRatingService {
     MovieRating rateMovie(int userID, String movieID, MovieRating rating);
 
     MovieRating getUserMovieRating(String movieID, int userID);
+
+    MovieRating updateUserMovieRating(String movieID, int userID, MovieRating rating);
 }

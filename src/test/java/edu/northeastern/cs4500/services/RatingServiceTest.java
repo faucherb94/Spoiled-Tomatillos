@@ -14,6 +14,8 @@ import edu.northeastern.cs4500.repositories.RatingRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -78,6 +80,24 @@ public class RatingServiceTest {
                 .thenReturn(null);
 
         movieRatingService.getUserMovieRating("", badUserID);
+    }
+
+    @Test
+    public void updateUserMovieRating_HappyPath() throws Exception {
+        when(repository.findByMovieIDAndUserID(anyString(), anyInt())).thenReturn(rating);
+        when(repository.save(rating)).thenReturn(rating);
+
+        MovieRating updatedRating = movieRatingService.updateUserMovieRating(
+                rating.getMovieID(), rating.getUserID(), rating);
+        assertThat(updatedRating).isEqualTo(rating);
+    }
+
+    @Test(expected = ResourceNotFoundException.class)
+    public void updateUserMovieRating_NotFound() throws Exception {
+        when(repository.findByMovieIDAndUserID(anyString(), anyInt()))
+                .thenReturn(null);
+
+        movieRatingService.updateUserMovieRating("", 423423, rating);
     }
 
 }

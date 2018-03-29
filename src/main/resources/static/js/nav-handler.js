@@ -5,4 +5,11 @@ var loggedinuname = Cookies.get("username");
         );
     }
 
-function logoutClick() { Cookies.remove("username"); Cookies.remove("uid"); window.location.href="login.html"; }
+function logoutClick() {
+    Cookies.remove("username"); Cookies.remove("uid");
+    var auth2 = gapi.auth2.getAuthInstance();
+    auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+    window.location.href="login.html";
+}

@@ -64,6 +64,7 @@ pipeline {
       when { not { branch 'dev' } }
       steps {
         withSonarQubeEnv('SonarQube') {
+          sh 'mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=false'
           sh 'mvn sonar:sonar'
         }
       }
