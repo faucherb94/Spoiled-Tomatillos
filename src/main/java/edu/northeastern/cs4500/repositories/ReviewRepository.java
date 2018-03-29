@@ -14,4 +14,6 @@ public interface ReviewRepository extends JpaRepository<MovieReview, Integer> {
 
     List<MovieReview> findByMovieID(String movieID);
 
+    List<MovieReview> findByUserIDOrderByUpdatedAtDesc(int userID);
+
 }

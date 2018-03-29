@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
@@ -168,5 +171,16 @@ public class UserController {
             @Valid @RequestBody MovieRating rating) {
         MovieRating updatedRating = ratingService.updateUserMovieRating(movieID, userID, rating);
         return ResponseEntity.ok(updatedRating);
+    }
+
+    /*********************************USER RATINGS AND REVIEWS*****************************/
+
+    /**
+     * Get all user ratings and reviews
+     */
+    @GetMapping("/{id}/activity")
+    public ResponseEntity<List<Snippet>> getUserActivity(@PathVariable(value = "id") int userID) {
+        List<Snippet> snippets = userService.getUserActivity(userID);
+        return ResponseEntity.ok(snippets);
     }
 }

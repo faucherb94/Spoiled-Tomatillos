@@ -11,8 +11,18 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import edu.northeastern.cs4500.models.MovieRating;
+import edu.northeastern.cs4500.models.MovieRatingSnippet;
+import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.MovieReviewSnippet;
+import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.repositories.RatingRepository;
+import edu.northeastern.cs4500.repositories.ReviewRepository;
 import edu.northeastern.cs4500.repositories.UserRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
@@ -141,6 +151,42 @@ public class UserService implements IUserService {
         }
 
         return new byte[]{};
+    }
+
+    @Autowired
+    private RatingRepository ratingRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Override
+    public List<Snippet> getUserActivity(int id) {
+        List<MovieRating> ratings = ratingRepository.findByUserIDOrderByUpdatedAtDesc(id);
+
+        List<Snippet> ratingSnippets = new ArrayList<>();
+        for (MovieRating r : ratings) {
+            Snippet mrs = new MovieRatingSnippet(r);
+            ratingSnippets.add(mrs);
+        }
+
+        List<MovieReview> reviews = reviewRepository.findByUserIDOrderByUpdatedAtDesc(id);
+
+        List<Snippet> reviewSnippets = new ArrayList<>();
+        for (MovieReview r : reviews) {
+            Snippet mrs = new MovieReviewSnippet(r);
+            reviewSnippets.add(mrs);
+        }
+
+        List<Snippet> snippets = new ArrayList<>(ratingSnippets);
+        snippets.addAll(reviewSnippets);
+
+        Collections.sort(snippets, (o1, o2) -> {
+            if(o1.getUpdatedAt().before(o2.getUpdatedAt()))
+                return 1;
+            return o1.getUpdatedAt().after(o2.getUpdatedAt()) ? -1 : 0;
+        });
+
+        return snippets;
     }
 
 }

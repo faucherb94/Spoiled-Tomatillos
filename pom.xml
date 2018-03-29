@@ -24,7 +24,10 @@
         	<!-- paths to exclude from all sonar analysis -->
         </sonar.exclusions>
         <sonar.coverage.exclusions>
-        	<!-- paths to files to exclude only from coverage analysis -->
+            src/main/java/edu/northeastern/cs4500/Cs4500Spring2018Team26Application.java,
+        	src/main/java/edu/northeastern/cs4500/models/*,
+        	src/main/java/edu/northeastern/cs4500/ServletInitializer.java,
+            src/main/java/edu/northeastern/cs4500/utils/DateTimestampSerializer.java
         </sonar.coverage.exclusions>
         <sonar.verbose>true</sonar.verbose>
         <sonar.showProfiling>true</sonar.showProfiling>
@@ -120,12 +123,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>nl.jqno.equalsverifier</groupId>
-            <artifactId>equalsverifier</artifactId>
-            <version>2.4.4</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
@@ -23,9 +24,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.cs4500.models.MovieRating;
+import edu.northeastern.cs4500.models.MovieRatingSnippet;
 import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.MovieReviewSnippet;
+import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
@@ -350,6 +356,25 @@ public class UserControllerTest {
                 MovieReview.class, review.getUserID(), review.getUserID());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    /*********************************USER RATINGS AND REVIEWS*****************************/
+
+    @Test
+    public void getUserActivity_HappyPath() throws Exception {
+        List<Snippet> snippets = new ArrayList<>();
+        snippets.add(new MovieRatingSnippet(new MovieRating()));
+        snippets.add(new MovieReviewSnippet(new MovieReview()));
+        snippets.add(new MovieRatingSnippet(new MovieRating()));
+        snippets.add(new MovieReviewSnippet(new MovieReview()));
+        when(userService.getUserActivity(mockUser.getId()))
+                .thenReturn(snippets);
+
+        ResponseEntity<List<Snippet>> response = restTemplate.exchange(URI + "/{id}/activity",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<Snippet>>() {},
+                mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
 }
