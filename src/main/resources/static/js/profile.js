@@ -42,6 +42,7 @@ function editUser() {
     if ($("#firstname-input").val()) { userpkg.firstName=$("#firstname-input").val() };
     if ($("#lastname-input").val()) { userpkg.lastName=$("#lastname-input").val() };
     if ($("#hometown-input").val()) { userpkg.hometown=$("#hometown-input").val() };
+    userpkg.username = Cookies.get("username");
     $.ajax({
         url: "/api/users/" + Cookies.get("uid"),
         type: "PUT",
@@ -53,6 +54,8 @@ function editUser() {
         location.reload();
     }).fail(function(jqxhr, status, err) {
         console.log(err);
+        $("#formdiv").append("<div id='formerr' style='color:red'></div>")
+        $("#formerr").html("Make sure you have entries for all fields.")
     });
 }
 
