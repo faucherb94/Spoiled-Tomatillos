@@ -105,8 +105,10 @@ function submitReview(b) {
         contentType: "application/json",
         dataType: "json"
     }).done(function(json) {
-        $("#review" + i).text($("#review" + $(b).attr("iter")).val());
-        $("#reviewbtn" + i).remove();
+        $.each(json, function(movie, i) {
+            $("#review" + i).text($("#review" + $(b).attr("iter")).val());
+            $("#reviewbtn" + i).remove();
+        });
     }).fail(function(jqxhr, status, err) {
         $("#error").html("Failed review");
     });

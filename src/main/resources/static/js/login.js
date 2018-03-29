@@ -1,6 +1,5 @@
-function loginClick() {
-    let username = $("#uname").val();
-    $.getJSON(`/api/users?name=${username}`)
+function loginClick(user) {
+    $.getJSON(`/api/users?name=${user.username}`)
     .done(function(json) {
         console.log(json);
         Cookies.set("username", json.username);
@@ -8,38 +7,49 @@ function loginClick() {
         window.location.href = "index.html";
     })
     .fail(function(jqxhr, status, err) {
-        $("#error").html("Account not found. Please register!");
-        showCreate();
+        createUser(user);
     });
 
 }
 
-function showCreate() {
+/** function showCreate() {
     $("#create").html(
     "<input style='margin-bottom:15px;' type='text' placeholder='email' id='new_email'/><br>" +
     "<input style='margin-bottom:15px;' type='text' placeholder='First name' id='fn'/><br>" +
     "<input style='margin-bottom:15px;' type='text' placeholder='Last name' id='ln'/><br>" +
     "<button class='btn btn-secondary btn-sm' onclick='createUser()'>Register</button>"
     );
-}
+} **/
 
-function createUser() {
-    var user = {
-        username: $("#uname").val(),
-        firstName: $("#fn").val(),
-        lastName: $("#ln").val(),
-        email: $("#new_email").val(),
-        role: "default"
-    };
+function createUser(newuser) {
     $.ajax({
         url: "/api/users",
         type: "POST",
-        data: JSON.stringify(user),
+        data: JSON.stringify(newuser),
         contentType: "application/json",
         dataType: "json"
     }).done(function(json) {
-        loginClick();
+        loginClick(newuser);
     }).fail(function(jqxhr, status, err) {
         $("#error").html("User already exists - try a different username or email");
     });
+}
+
+function onSignIn(googleUser) {
+    var profile = googleUser.getBasicProfile();
+
+    var email = profile.getEmail();
+    var username = email.split("@")[0];
+    var user = {
+        firstName: profile.getGivenName(),
+        lastName: profile.getFamilyName(),
+        propic: profile.getImageUrl(),
+        email: email,
+        username: username
+    }
+    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+    console.log('Name: ' + profile.getName());
+    console.log('Image URL: ' + profile.getImageUrl());
+    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    loginClick(user);
 }
