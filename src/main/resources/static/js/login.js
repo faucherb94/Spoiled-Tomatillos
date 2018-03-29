@@ -31,7 +31,12 @@ function createUser(newuser) {
     }).done(function(json) {
         loginClick();
     }).fail(function(jqxhr, status, err) {
-        $("#error").html("User already exists - try a different username or email");
+        if (jqxhr.responseJSON.apierror.status == "INTERNAL_SERVER_ERROR") {
+            $("#error").html("Server error - contact administrator");
+        }
+        else {
+            $("#error").html("User already exists - try a different username or email");
+        }
     });
 }
 
