@@ -125,13 +125,16 @@ public class OMDBClientTest {
         movie.setActors(actors);
 
         movie.setAwards("14837 awards");
-        movie.setCountry("USA");
         movie.setPlot("Something happens");
         movie.setYear(2025);
         movie.setPoster("http://poster.jpg");
         movie.setRuntime("100 min");
         movie.setTitle("Ocean's 30");
         movie.setReleased(new SimpleDateFormat("dd MMM yyyy").parse("06 Apr 2025"));
+
+        List<String> countries = new ArrayList<>();
+        countries.add("USA");
+        movie.setCountries(countries);
 
         List<String> directors = new ArrayList<>();
         directors.add("Director1");

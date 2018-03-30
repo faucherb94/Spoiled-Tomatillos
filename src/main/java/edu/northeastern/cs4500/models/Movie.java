@@ -49,7 +49,7 @@ public class Movie {
     private List<String> languages;
 
     @Getter @Setter
-    private String country;
+    private List<String> countries;
 
     @Getter @Setter
     private String awards;
@@ -92,7 +92,7 @@ public class Movie {
                 Objects.equals(actors, that.getActors()) &&
                 Objects.equals(plot, that.getPlot()) &&
                 Objects.equals(languages, that.getLanguages()) &&
-                Objects.equals(country, that.getCountry()) &&
+                Objects.equals(countries, that.getCountries()) &&
                 Objects.equals(awards, that.getAwards()) &&
                 Objects.equals(poster, that.getPoster()) &&
                 Objects.equals(ratings, that.getRatings()) &&

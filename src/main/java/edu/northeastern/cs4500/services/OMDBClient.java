@@ -143,7 +143,7 @@ public class OMDBClient {
         movie.setActors(stringToList(obj, "Actors"));
         movie.setPlot(getString(obj, "Plot"));
         movie.setLanguages(stringToList(obj, "Language"));
-        movie.setCountry(getString(obj, "Country"));
+        movie.setCountries(stringToList(obj, "Country"));
         movie.setAwards(getString(obj, "Awards"));
         movie.setPoster(getString(obj, "Poster"));
         movie.setRatings(Arrays.asList(this.gson.fromJson(obj.getJSONArray("Ratings").toString(),
