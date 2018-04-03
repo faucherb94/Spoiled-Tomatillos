@@ -77,6 +77,9 @@ var updateRating = function(event, value, caption) {
     var updateSuccess = function(resp) {
         console.log("rating updated successfully for movie " + imdbID);
         $(elementId).rating('update', resp.rating);
+        if (elementId === "rating-"+imdbID+"-modal") {
+            $("#rating-"+imdbID).rating('update', resp.rating);
+        }
     };
 
     var updateFailure = function(req, status, err) {

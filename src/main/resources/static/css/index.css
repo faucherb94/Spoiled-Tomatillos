@@ -48,3 +48,22 @@
     font-weight: bold;
     display: inline;
 }
+
+.img-valign {
+    vertical-align: middle;
+    margin-bottom: .75rem;
+}
+
+#rtImg, #imdbImg, #metacriticImg {
+    max-width: 40px;
+}
+
+.critic-rating {
+    font-weight: bold;
+    font-size: large;
+}
+
+.ratings-row .col-sm-3 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
