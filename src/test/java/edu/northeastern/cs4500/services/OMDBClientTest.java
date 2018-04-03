@@ -271,9 +271,9 @@ public class OMDBClientTest {
 
         Movie movie = client.getMovieByID("alksdjf");
         assertThat(movie.getYear()).isEqualTo(0);
-        assertThat(movie.getProduction()).isEqualTo("Production Unavailable");
+        assertThat(movie.getProduction()).isEqualTo("Unavailable");
         assertThat(movie.getReleased()).isNull();
-        assertThat(movie.getActors().get(0)).isEqualTo("Actors Unavailable");
+        assertThat(movie.getActors().get(0)).isEqualTo("Unavailable");
     }
 
     @Test
@@ -293,7 +293,7 @@ public class OMDBClientTest {
         PowerMockito.doReturn(mockResponse).when(getRequest).asJson();
 
         Movie movie = client.getMovieByID("tt342987");
-        assertThat(movie.getPoster()).isEqualTo("Poster Unavailable");
+        assertThat(movie.getPoster()).isEqualTo("Unavailable");
     }
 
 }
