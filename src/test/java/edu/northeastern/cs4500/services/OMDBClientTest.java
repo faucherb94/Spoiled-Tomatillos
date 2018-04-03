@@ -250,11 +250,15 @@ public class OMDBClientTest {
         client.getMovieByID("fasldj");
     }
 
-    @Test(expected = OMDBException.class)
-    public void getMovieByID_ParseDateError() throws Exception {
-        String jsonString = "{\"Response\":\"True\",\"Released\":\"bad date format\"}";
+    @Test
+    public void getMovieByID_UnavailableData() throws Exception {
         com.mashape.unirest.http.JsonNode jsonNode =
-                new com.mashape.unirest.http.JsonNode(jsonString);
+                new com.mashape.unirest.http.JsonNode(
+                        new JSONObject(movieJsonString)
+                                .put("Year", "N/A")
+                                .put("Production", "N/A")
+                                .put("Released", "bad date")
+                                .put("Actors", "N/A").toString());
 
         HttpResponse<com.mashape.unirest.http.JsonNode> mockResponse = mock(HttpResponse.class);
         when(mockResponse.getStatus()).thenReturn(200);
@@ -265,7 +269,31 @@ public class OMDBClientTest {
         PowerMockito.when(getRequest.queryString(anyString(), anyString())).thenReturn(getRequest);
         PowerMockito.doReturn(mockResponse).when(getRequest).asJson();
 
-        client.getMovieByID("alksdjf");
+        Movie movie = client.getMovieByID("alksdjf");
+        assertThat(movie.getYear()).isEqualTo(0);
+        assertThat(movie.getProduction()).isEqualTo("Production Unavailable");
+        assertThat(movie.getReleased()).isNull();
+        assertThat(movie.getActors().get(0)).isEqualTo("Actors Unavailable");
+    }
+
+    @Test
+    public void getMovieByID_FieldNotReturned() throws Exception {
+        String jsonString = "{\"Response\":\"True\", \"Ratings\":[]}";
+        com.mashape.unirest.http.JsonNode jsonNode =
+                new com.mashape.unirest.http.JsonNode(jsonString);
+
+        HttpResponse<com.mashape.unirest.http.JsonNode> mockResponse = mock(HttpResponse.class);
+        when(mockResponse.getStatus()).thenReturn(200);
+        when(mockResponse.getBody()).thenReturn(jsonNode);
+
+        GetRequest getRequest = mock(GetRequest.class);
+        PowerMockito.doReturn(getRequest).when(Unirest.class, "get", anyString());
+        PowerMockito.when(getRequest.queryString(anyMap())).thenReturn(getRequest);
+        PowerMockito.when(getRequest.queryString(anyString(), anyString())).thenReturn(getRequest);
+        PowerMockito.doReturn(mockResponse).when(getRequest).asJson();
+
+        Movie movie = client.getMovieByID("tt342987");
+        assertThat(movie.getPoster()).isEqualTo("Poster Unavailable");
     }
 
 }

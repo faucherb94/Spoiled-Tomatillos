@@ -8,7 +8,6 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -32,6 +32,7 @@ public class OMDBClient {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String URI = "https://www.omdbapi.com/";
+    private static final String UNAVAILABLE = "Unavailable";
     private String apiKey;
     private Map<String, Object> defaultParams;
     private Gson gson;
@@ -123,15 +124,17 @@ public class OMDBClient {
         try {
             movie.setYear(Integer.parseInt(getString(obj, "Year")));
         } catch (NumberFormatException ex) {
-            log.error("Year returned by OMDB cannot be parsed into an int: " +
+            log.warn("Year returned by OMDB cannot be parsed into an int: {}",
                     ex.getLocalizedMessage());
         }
 
+        String released = getString(obj, "Released");
         try {
             movie.setReleased(new SimpleDateFormat("dd MMM yyyy")
-                    .parse(getString(obj, "Released")));
+                    .parse(released));
         } catch (ParseException ex) {
-            throw new OMDBException(ex.getMessage());
+            log.warn("Released date returned by OMDB cannot be parsed into the date format");
+            movie.setReleased(null);
         }
 
         movie.setTitle(getString(obj, "Title"));
@@ -160,20 +163,39 @@ public class OMDBClient {
      * Gets a specified string from the JSONObject
      */
     private String getString(JSONObject obj, String str) {
-        try {
-            return obj.getString(str).replaceAll("\\\\", "");
-        } catch (JSONException ex) {
-            log.warn("The " + str + " movie field was not returned by OMDB." +
-                    "Setting value to be empty.");
-            return "";
+        String jsonStr;
+        if (obj.has(str)) {
+            jsonStr = obj.getString(str).replace("\\\\", "");
+            if (isUnavailableData(jsonStr)) {
+                log.warn("Unavailable data returned for the {} field", str);
+                jsonStr = UNAVAILABLE;
+            }
+        } else {
+            log.warn("The {} movie field was not returned by OMDB.", str);
+            jsonStr = UNAVAILABLE;
         }
+
+        return jsonStr;
     }
 
     /**
      * Converts a specified string to a List using a "," as a delimiter
      */
     private List<String> stringToList(JSONObject obj, String str) {
-        String s = obj.getString(str);
-        return Arrays.asList(s.split(", "));
+        String s = getString(obj, str);
+        if (!s.contains(UNAVAILABLE)) {
+            return Arrays.asList(s.split(", "));
+        }
+        List<String> x = new ArrayList<>();
+        x.add(s);
+        return x;
+    }
+
+
+    /**
+     * Checks if N/A is returned
+     */
+    private boolean isUnavailableData(String s) {
+        return s.equals("N/A");
     }
 }

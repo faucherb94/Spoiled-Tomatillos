@@ -24,7 +24,7 @@ public class Movie {
     private String rated;
 
     @Getter @Setter
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd MMMM yyyy")
     private Date released;
 
     @Getter @Setter
