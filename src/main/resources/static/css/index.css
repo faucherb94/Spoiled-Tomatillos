@@ -10,3 +10,41 @@
 .card-float-left {
     float: left;
 }
+
+#posterImg {
+    width: 100%;
+}
+
+.modal-header {
+    padding: .5rem .5rem .25rem .5rem;
+}
+
+.modal-header .ghost {
+    color: #888888;
+    margin: 0 .5em;
+}
+
+.modal-header .subtext {
+    font-size: 12px;
+}
+
+.modal-header .close {
+    margin: -1rem;
+}
+
+.modal-body .movie-info {
+    line-height: 1.25;
+    max-height: 350px;
+    overflow-y: scroll;
+}
+
+.modal-body .movie-info .modal-form-group {
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+}
+
+.col-form-label {
+    padding-right: 1rem;
+    font-weight: bold;
+    display: inline;
+}
