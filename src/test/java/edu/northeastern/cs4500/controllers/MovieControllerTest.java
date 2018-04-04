@@ -16,10 +16,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.northeastern.cs4500.models.Movie;
 import edu.northeastern.cs4500.models.MovieReview;
+import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.services.IReviewService;
+import edu.northeastern.cs4500.services.OMDBClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -31,6 +35,9 @@ public class MovieControllerTest {
 
     @MockBean
     private IReviewService reviewService;
+
+    @MockBean
+    private OMDBClient omdbClient;
 
     private final String URI = "/api/movies";
     private MovieReview review;
@@ -54,6 +61,37 @@ public class MovieControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(response.getBody().size()).isEqualTo(reviewList.size());
+    }
+
+    @Test
+    public void searchMovie_HappyPath() throws Exception {
+        List<SearchResult> results = new ArrayList<>();
+        when(omdbClient.searchMovie(anyString()))
+                .thenReturn(results);
+
+        ResponseEntity<List<SearchResult>> response = restTemplate.exchange(URI + "/search?q=shrek",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<SearchResult>>() {});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void searchMovie_EmptyQuery() throws Exception {
+        ResponseEntity<List<SearchResult>> response = restTemplate.exchange(URI + "/search?q=",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<SearchResult>>() {});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void getMovieByID_HappyPath() throws Exception {
+        when(omdbClient.getMovieByID(anyString()))
+                .thenReturn(new Movie());
+
+        ResponseEntity<Movie> response = restTemplate.getForEntity(URI + "/{id}",
+                Movie.class, "tt472389");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
 }

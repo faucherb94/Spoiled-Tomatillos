@@ -1,0 +1,115 @@
+<link rel="stylesheet" href="css/index.css"/>
+<script src="js/movie-modal.js"></script>
+<div class="modal fade" id="movieModal" tabindex="-1" role="dialog" aria-labelledby="title" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="max-width: 500px;">
+                    <h3 id="title-and-year" class="modal-title"></h3>
+                    <div class="subtext">
+                        <span id="rated"></span>
+                        <span class="ghost">|</span>
+                        <span id="runtime"></span>
+                        <span class="ghost">|</span>
+                        <span id="genres"></span>
+                        <span class="ghost">|</span>
+                        <span id="released"></span>
+                    </div>
+                </div>
+                <div id="rating-div-modal" style="margin: auto 1rem auto auto;"></div>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-4">
+                            <img src="" id="posterImg"/>
+                        </div>
+                        <div class="col-sm-8 movie-info">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <p id="plot"></p>
+                                </div>
+                            </div>
+                            <div class="row ratings-row">
+                                <div class="col-sm-2">
+                                    <label class="col-form-label">
+                                        Ratings:
+                                    </label>
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-valign" src="img/rt.jpg" id="rtImg" title="Rotten Tomatoes"/>
+                                    <span id="rotten-tomatoes" class="critic-rating form-control-static"></span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-valign" src="img/imdb.png" id="imdbImg" title="IMDB"/>
+                                    <span id="imdb" class="critic-rating form-control-static"></span>
+                                </div>
+                                <div class="col-sm-3">
+                                    <img class="img-valign" src="img/metacritic.png" id="metacriticImg" title="Metacritic"/>
+                                    <span id="metacritic" class="critic-rating form-control-static"></span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <form>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="directors">
+                                                Director(s):
+                                            </label>
+                                            <span id="directors" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="writers">
+                                                Writers:
+                                            </label>
+                                            <span id="writers" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="actors">
+                                                Actors:
+                                            </label>
+                                            <span id="actors" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="boxOffice">
+                                                Box Office:
+                                            </label>
+                                            <span id="boxOffice" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="production">
+                                                Production:
+                                            </label>
+                                            <span id="production" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="countries">
+                                                Countries:
+                                            </label>
+                                            <span id="countries" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="languages">
+                                                Languages:
+                                            </label>
+                                            <span id="languages" class="form-control-static"></span>
+                                        </div>
+                                        <div class="modal-form-group">
+                                            <label class="col-form-label" for="website">
+                                                Website:
+                                            </label>
+                                            <span id="website" class="form-control-static"></span>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
