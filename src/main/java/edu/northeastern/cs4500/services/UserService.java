@@ -1,6 +1,8 @@
 package edu.northeastern.cs4500.services;
 
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -26,9 +28,6 @@ import edu.northeastern.cs4500.repositories.ReviewRepository;
 import edu.northeastern.cs4500.repositories.UserRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 @Service
 public class UserService implements IUserService {
 
@@ -38,15 +37,16 @@ public class UserService implements IUserService {
     private UserRepository repository;
 
     private static final String DEFAULT_PICTURE_PATH = "static/img/default-profile-picture.png";
+    private static final String USER_NOT_FOUND = "user id {} not found";
 
     @Override
     public User findByID(int id) {
         User user = repository.findOne(id);
         if (user == null) {
-			log.error("user with id " + id + " not found");
+			log.error(USER_NOT_FOUND, id);
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
-        log.info("found user with id " + id);
+        log.info("user id {} retrieved", id);
         return user;
     }
 
@@ -54,10 +54,10 @@ public class UserService implements IUserService {
     public User findByUsername(String username) {
         User user = repository.findByUsername(username);
         if (user == null) {
-			log.error("user with username " + username + " not found");
+            log.error("user with username {} not found", username);
             throw new ResourceNotFoundException(User.class, "username", username);
         }
-        log.info("found user with username " + username);
+        log.info("user with username {} retrieved", username);
         return user;
     }
 
@@ -75,7 +75,7 @@ public class UserService implements IUserService {
     public User update(int id, User u) {
         User currentUser = repository.findOne(id);
         if (currentUser == null) {
-			log.error("user with id " + id + " not found");
+            log.error(USER_NOT_FOUND, id);
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
         
@@ -83,8 +83,8 @@ public class UserService implements IUserService {
         currentUser.setFirstName(u.getFirstName());
         currentUser.setLastName(u.getLastName());
         currentUser.setHometown(u.getHometown());
-        
-        log.info("updated user " + u.getUsername() + " with id " + id);
+
+        log.info("user id {} updated", id);
         return repository.save(currentUser);
     }
 
@@ -92,10 +92,10 @@ public class UserService implements IUserService {
     public User delete(int id) {
         User userToDelete = repository.findOne(id);
         if (userToDelete == null) {
-			log.error("user with id " + id + " not found");
+            log.error(USER_NOT_FOUND, id);
             throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
         }
-        log.info("deleted user with id " + id);
+        log.info("deleted user id {}", id);
         repository.delete(userToDelete);
         return userToDelete;
     }
@@ -145,7 +145,7 @@ public class UserService implements IUserService {
             Path filePath = defaultPicture.toPath();
             return Files.readAllBytes(filePath);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("error opening default profile picture from classpath", ex);
         }
 
         return new byte[]{};
