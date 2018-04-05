@@ -73,8 +73,6 @@ public class Movie {
     @Getter @Setter
     private String website;
 
-    public Movie() {}
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
