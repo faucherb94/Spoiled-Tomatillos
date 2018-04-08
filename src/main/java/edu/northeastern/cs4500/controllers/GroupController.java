@@ -2,10 +2,15 @@ package edu.northeastern.cs4500.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -31,6 +36,24 @@ public class GroupController {
 
         Group createdGroup = groupService.create(g);
         return ResponseEntity.ok(createdGroup);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Group> getGroupByID(@PathVariable(value = "id") int id) {
+        if (id == 0) {
+            throw new IllegalArgumentException("Group ID cannot be 0");
+        }
+
+        Group group = groupService.getByID(id);
+        return ResponseEntity.ok(group);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Group>> getGroupsByCreatorID(
+            @RequestParam(value = "creator-id") int creatorID) {
+
+        List<Group> groups = groupService.getByCreatorID(creatorID);
+        return ResponseEntity.ok(groups);
     }
 
 }
