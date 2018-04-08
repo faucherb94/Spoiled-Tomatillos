@@ -10,9 +10,12 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import edu.northeastern.cs4500.models.Group;
+import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.repositories.GroupRepository;
+import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 @Service
 public class GroupService implements IGroupService {
@@ -20,6 +23,7 @@ public class GroupService implements IGroupService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private static final String DEFAULT_GROUP_PICTURE_PATH = "static/img/image_missing.png";
+    private static final String GROUP_NOT_FOUND = "group id {} not found";
 
     @Autowired
     private GroupRepository groupRepository;
@@ -34,6 +38,29 @@ public class GroupService implements IGroupService {
         log.info("Group ID {} created by user ID {}",
                 createdGroup.getId(), createdGroup.getCreatorID());
         return createdGroup;
+    }
+
+    @Override
+    public Group getByID(int id) {
+        Group group = groupRepository.findOne(id);
+        if (group == null) {
+            log.error(GROUP_NOT_FOUND, id);
+            throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
+        }
+        log.info("group id {} retrieved", id);
+        return group;
+    }
+
+    @Override
+    public List<Group> getByCreatorID(int creatorID) {
+        log.info("user ID {}'s groups fetched", creatorID);
+        return groupRepository.findByCreatorID(creatorID);
+    }
+
+    @Override
+    public List<Group> getUserGroupMemberships(int userID) {
+        log.info("groups that user id {} is a member of fetched", userID);
+        return groupRepository.findByUserMembership(userID);
     }
 
     private byte[] getDefaultGroupPicture() {
