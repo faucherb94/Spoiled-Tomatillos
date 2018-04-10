@@ -13,10 +13,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.cs4500.models.Group;
+import edu.northeastern.cs4500.models.GroupMembership;
+import edu.northeastern.cs4500.repositories.GroupMembershipRepository;
 import edu.northeastern.cs4500.repositories.GroupRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -36,8 +39,12 @@ public class GroupServiceTest {
     @MockBean
     private GroupRepository groupRepository;
 
+    @MockBean
+    private GroupMembershipRepository groupMembershipRepository;
+
     private Group group;
     private List<Group> groups;
+    private GroupMembership groupMembership;
 
     @Before
     public void setUp() {
@@ -46,6 +53,8 @@ public class GroupServiceTest {
 
         groups = new ArrayList<>();
         groups.add(group);
+
+        groupMembership = new GroupMembership(1, 2);
     }
 
     @Test
@@ -89,6 +98,30 @@ public class GroupServiceTest {
         List<Group> retrievedGroups = groupService.getUserGroupMemberships(50);
 
         assertThat(retrievedGroups).isEqualTo(groups);
+    }
+
+    @Test
+    public void joinGroup_HappyPath() throws Exception {
+        List<Group> createdGroups = new ArrayList<>();
+        createdGroups.add(group);
+        when(groupMembershipRepository.save(any(GroupMembership.class)))
+                .thenReturn(groupMembership);
+        when(groupService.getByCreatorID(2)).thenReturn(createdGroups);
+
+        GroupMembership createdGM = groupService.joinGroup(1, 2);
+
+        assertThat(createdGM).isEqualTo(groupMembership);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void joinGroup_UserIsCreator() throws Exception {
+        List<Group> createdGroups = new ArrayList<>();
+        Group g = new Group(2, "", "");
+        g.setId(10);
+        createdGroups.add(g);
+        when(groupService.getByCreatorID(2)).thenReturn(createdGroups);
+
+        groupService.joinGroup(10, 2);
     }
 
 }

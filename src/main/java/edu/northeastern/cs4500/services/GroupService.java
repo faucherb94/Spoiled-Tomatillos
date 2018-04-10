@@ -13,7 +13,9 @@ import java.nio.file.Path;
 import java.util.List;
 
 import edu.northeastern.cs4500.models.Group;
+import edu.northeastern.cs4500.models.GroupMembership;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.repositories.GroupMembershipRepository;
 import edu.northeastern.cs4500.repositories.GroupRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
@@ -27,6 +29,9 @@ public class GroupService implements IGroupService {
 
     @Autowired
     private GroupRepository groupRepository;
+
+    @Autowired
+    private GroupMembershipRepository groupMembershipRepository;
 
     @Override
     public Group create(Group g) {
@@ -61,6 +66,19 @@ public class GroupService implements IGroupService {
     public List<Group> getUserGroupMemberships(int userID) {
         log.info("groups that user id {} is a member of fetched", userID);
         return groupRepository.findByUserMembership(userID);
+    }
+
+    @Override
+    public GroupMembership joinGroup(int groupID, int userID) {
+        List<Group> createdGroups = getByCreatorID(userID);
+        for (Group g : createdGroups) {
+            if (g.getId() == groupID) {
+                throw new IllegalArgumentException(
+                        "User " + userID + " is the creator of this group. Cannot join");
+            }
+        }
+        GroupMembership groupMembership = new GroupMembership(groupID, userID);
+        return groupMembershipRepository.save(groupMembership);
     }
 
     private byte[] getDefaultGroupPicture() {

@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.northeastern.cs4500.models.Group;
+import edu.northeastern.cs4500.models.GroupMembership;
 import edu.northeastern.cs4500.services.IGroupService;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -35,6 +37,7 @@ public class GroupControllerTest {
     private static final String URI = "/api/groups";
     private Group group;
     private List<Group> groups;
+    private GroupMembership groupMembership;
 
     @Before
     public void setUp() throws Exception {
@@ -43,6 +46,8 @@ public class GroupControllerTest {
 
         groups = new ArrayList<>();
         groups.add(group);
+
+        groupMembership = new GroupMembership(5, 10);
     }
 
     @Test
@@ -99,6 +104,16 @@ public class GroupControllerTest {
 
         ResponseEntity<List<Group>> response = restTemplate.exchange(URI + "?creator-id=10",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<Group>>() {});
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void joinGroup_HappyPath() throws Exception {
+        when(groupService.joinGroup(anyInt(), anyInt())).thenReturn(groupMembership);
+
+        ResponseEntity<GroupMembership> response = restTemplate.postForEntity(
+                URI + "/{id}/users/{user-id}", null, GroupMembership.class, 5, 10);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }

@@ -15,6 +15,7 @@ import java.util.List;
 import javax.validation.Valid;
 
 import edu.northeastern.cs4500.models.Group;
+import edu.northeastern.cs4500.models.GroupMembership;
 import edu.northeastern.cs4500.services.IGroupService;
 
 @RestController
@@ -54,6 +55,13 @@ public class GroupController {
 
         List<Group> groups = groupService.getByCreatorID(creatorID);
         return ResponseEntity.ok(groups);
+    }
+
+    @PostMapping("/{id}/users/{user-id}")
+    public ResponseEntity<GroupMembership> joinGroup(@PathVariable(value = "id") int groupID,
+                                                     @PathVariable(value = "user-id") int userID) {
+        GroupMembership groupMembership = groupService.joinGroup(groupID, userID);
+        return ResponseEntity.ok(groupMembership);
     }
 
 }
