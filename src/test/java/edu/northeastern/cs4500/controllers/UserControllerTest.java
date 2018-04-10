@@ -27,12 +27,14 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import edu.northeastern.cs4500.models.Group;
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.models.MovieRatingSnippet;
 import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.MovieReviewSnippet;
 import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.services.IGroupService;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.IUserService;
@@ -63,10 +65,14 @@ public class UserControllerTest {
     @MockBean
     private IReviewService reviewService;
 
+    @MockBean
+    private IGroupService groupService;
+
     private final String URI = "/api/users";
     private User mockUser;
     private MovieRating rating;
     private MovieReview review;
+    private List<Group> groups;
 
     @Before
     public void setUp() {
@@ -74,6 +80,9 @@ public class UserControllerTest {
         String movieID = "tt0266543";
         rating = new MovieRating(movieID, 1, 5);
         review = new MovieReview(movieID, 1, "an amazing review");
+
+        groups = new ArrayList<>();
+        groups.add(new Group(1, "test", "blah"));
     }
 
     /********************************USER MANAGEMENT*****************************************/
@@ -372,6 +381,20 @@ public class UserControllerTest {
 
         ResponseEntity<List<Snippet>> response = restTemplate.exchange(URI + "/{id}/activity",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<Snippet>>() {},
+                mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    /*********************************GROUPS************************************************/
+
+    @Test
+    public void getGroupMemberships_HappyPath() throws Exception {
+        when(groupService.getUserGroupMemberships(mockUser.getId()))
+                .thenReturn(groups);
+
+        ResponseEntity<List<Group>> response = restTemplate.exchange(URI + "/{id}/groups",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<Group>>() {},
                 mockUser.getId());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);

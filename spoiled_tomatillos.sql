@@ -18,35 +18,43 @@ CREATE TABLE UserAccount (
 
 DROP TABLE IF EXISTS Groups;
 CREATE TABLE Groups (
-		GroupID INT AUTO_INCREMENT,
-		UserID INT,
-		GroupName VARCHAR(75),
+        GroupID INT PRIMARY KEY AUTO_INCREMENT,
+        CreatorID INT NOT NULL,
+        Name VARCHAR(75) NOT NULL,
 		Description VARCHAR(500),
-		PRIMARY KEY (GroupID),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+		Picture LONGBLOB,
+		CreatedAt TIMESTAMP,
+		UpdatedAt TIMESTAMP,
+		FOREIGN KEY (CreatorID) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE
 		);
-	
+
 DROP TABLE IF EXISTS Relationships;
 CREATE TABLE Relationships (
-		UserID INT,
-		MemberID INT,
-		PRIMARY KEY (UserID, MemberID),
-		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID) 
+        RelationshipID INT PRIMARY KEY AUTO_INCREMENT,
+        UserID1 INT NOT NULL,
+		UserID2 INT NOT NULL,
+		CreatedAt TIMESTAMP,
+		UpdatedAt TIMESTAMP,
+		FOREIGN KEY (UserID1) REFERENCES UserAccount(UserID)
 		ON DELETE CASCADE ON UPDATE CASCADE,
-		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID) 
-		ON DELETE CASCADE ON UPDATE CASCADE
+		FOREIGN KEY (UserID2) REFERENCES UserAccount(UserID)
+		ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT unique_users UNIQUE (UserID1, UserID2)
 		);
 
 DROP TABLE IF EXISTS GroupMemberships;
 CREATE TABLE GroupMemberships (
-		GroupID INT,
-		MemberID INT,
-		PRIMARY KEY (GroupID, MemberID),
+        MembershipID INT PRIMARY KEY AUTO_INCREMENT,
+        GroupID INT NOT NULL,
+		UserID INT NOT NULL,
+        CreatedAt TIMESTAMP,
+        UpdatedAt TIMESTAMP,
 		FOREIGN KEY (GroupID) REFERENCES Groups(GroupID) 
 		ON DELETE CASCADE ON UPDATE CASCADE,
-		FOREIGN KEY (MemberID) REFERENCES UserAccount(UserID)
-		ON DELETE CASCADE ON UPDATE CASCADE
+		FOREIGN KEY (UserID) REFERENCES UserAccount(UserID)
+		ON DELETE CASCADE ON UPDATE CASCADE,
+		CONSTRAINT group_user_unique UNIQUE (GroupID, UserID)
 		);
 
 DROP TABLE IF EXISTS MovieRating;
@@ -121,7 +129,7 @@ CREATE PROCEDURE unfriend (remover INT, removee int)
 DROP PROCEDURE IF EXISTS create_group;
 CREATE PROCEDURE create_group (id INT, gname VARCHAR(75), gdesc VARCHAR(500))
 	INSERT INTO Groups (UserID, GroupName, Description) VALUES (id, gname, gdesc);
-	
+
 DROP PROCEDURE IF EXISTS add_to_group;
 CREATE PROCEDURE add_to_group (gid INT, addee INT)
 	INSERT INTO GroupMemberships (GroupID, MemberID) VALUES (gid, addee);
