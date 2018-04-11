@@ -24,5 +24,8 @@ public interface IUserService {
     byte[] getProfilePicture(int id);
 
     List<Snippet> getUserActivity(int id);
+    
+    List<User> getFriends(int id);
 
+    void followUser(int uID, int fID);
 }

@@ -81,6 +81,8 @@ public class UserServiceTest {
         review2 = new MovieReview("tt74983", 1, "bad");
         review2.setUpdatedAt(new Date(974231));
         defaultReviews.add(review2);
+        
+        
     }
 
     @Test
@@ -253,6 +255,18 @@ public class UserServiceTest {
         expected.add(new MovieReviewSnippet(review1));
 
         assertThat(userService.getUserActivity(1)).isEqualTo(expected);
+    }
+    
+    @Test
+    public void testGetFriends() {
+    	List<User> friends = new ArrayList<>();
+    	User user1 = userService.findByID(2);
+    	User user2 = userService.findByID(3);
+    	friends.add(user1);
+    	friends.add(user2);
+    	
+    	assertThat(userService.getFriends(1)).isEqualTo(friends);
+    	
     }
 
 }
