@@ -20,10 +20,12 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import edu.northeastern.cs4500.models.Group;
 import edu.northeastern.cs4500.models.MovieRating;
 import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.services.IGroupService;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.IUserService;
@@ -205,4 +207,18 @@ public class UserController {
 		return new ResponseEntity(HttpStatus.OK);
     	
     }	
+
+    /*********************************GROUPS*************************************************/
+
+    @Autowired
+    private IGroupService groupService;
+
+    /**
+     * Get groups that a user is a member of
+     */
+    @GetMapping("/{id}/groups")
+    public ResponseEntity<List<Group>> getGroupMemberships(@PathVariable(value = "id") int userID) {
+        List<Group> groups = groupService.getUserGroupMemberships(userID);
+        return ResponseEntity.ok(groups);
+    }
 }
