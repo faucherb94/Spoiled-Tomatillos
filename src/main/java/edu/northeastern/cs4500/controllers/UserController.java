@@ -183,4 +183,26 @@ public class UserController {
         List<Snippet> snippets = userService.getUserActivity(userID);
         return ResponseEntity.ok(snippets);
     }
+    
+    /*********************************USER FRIENDS*****************************/
+    
+    /**
+     * Get all friends of a user
+     */
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<User>> getFriends(@PathVariable(value = "id") int userID) {
+    	List<User> friendsList = userService.getFriends(userID);
+    			return ResponseEntity.ok(friendsList);
+    }
+    
+    /**
+     * Follow someone
+     */
+    @SuppressWarnings("rawtypes")
+	@PostMapping("/{id}/followers/{follower-id}")
+    public ResponseEntity followUser(@PathVariable(value = "id") int uID, @PathVariable(value = "follower-id") int fID) {
+    	this.userService.followUser(uID, fID);
+		return new ResponseEntity(HttpStatus.OK);
+    	
+    }	
 }
