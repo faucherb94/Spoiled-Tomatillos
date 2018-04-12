@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="css/app.css"/>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
+<div class="header" id="navdiv"></div>
 <body>
     <div class="container">
         <h1>Spoiled Tomatillos - User Login</h1><br>
@@ -25,5 +26,10 @@
 		<div class="g-signin2" style="padding:10px" data-onsuccess="onSignIn"></div>
        <!--  <button class="btn btn-primary" style="margin:10px" onclick="showCreate()">New User? Register!</button><br> -->
     </div>
+    <script>
+        $(document).ready(function(){
+            $('#navdiv').load('navbar.html');
+        });
+    </script>
 </body>
 </html>

@@ -15,7 +15,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.sql.SQLException;
 
+import edu.northeastern.cs4500.models.Movie;
 import edu.northeastern.cs4500.models.User;
+import edu.northeastern.cs4500.services.OMDBClient;
 import edu.northeastern.cs4500.services.UserService;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,6 +34,42 @@ public class RestResponseEntityExceptionHandlerTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private OMDBClient omdbClient;
+
+    @Test
+    public void handleOMDBException_NotFound() throws Exception {
+        when(userService.findByID(anyInt()))
+                .thenThrow(new OMDBException("not found"));
+
+        ResponseEntity<Movie> response = restTemplate.getForEntity("/api/users/{id}",
+                Movie.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void handleOMDBException_Incorrect() throws Exception {
+        when(userService.findByID(anyInt()))
+                .thenThrow(new OMDBException("incorrect"));
+
+        ResponseEntity<Movie> response = restTemplate.getForEntity("/api/users/{id}",
+                Movie.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void handleOMDBException_Other() throws Exception {
+        when(userService.findByID(anyInt()))
+                .thenThrow(new OMDBException("other"));
+
+        ResponseEntity<Movie> response = restTemplate.getForEntity("/api/users/{id}",
+                Movie.class, 1);
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 
     @Test
     public void handleResourceNotFound() throws Exception {

@@ -2,7 +2,7 @@
 
 
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h6 {
     font-family: 'Rubik', sans-serif;
     color: #1E1E1E;
 }
@@ -25,6 +25,20 @@ body {
 .btnpadding {
     margin-top: 10px;
     background-color: #32966F;
+    border: none;
+    color: #FFFFFF;
+}
+
+.profilebtn1 {
+    margin: 10px;
+    background-color: #32966F;
+    border: none;
+    color: #FFFFFF;
+}
+
+.profilebtn2 {
+    margin: 10px;
+    background-color: #0E0E0E;
     border: none;
     color: #FFFFFF;
 }
@@ -54,4 +68,66 @@ body {
 
 .navbar-brand, .nav-item{
     color:white;
+}
+
+#posterImg {
+    width: 100%;
+}
+
+.modal-header {
+    padding: .5rem .5rem .25rem .5rem;
+}
+
+.modal-header .ghost {
+    color: #888888;
+    margin: 0 .5em;
+}
+
+.modal-header .subtext {
+    font-size: 12px;
+}
+
+.modal-header .close {
+    margin: -1rem;
+}
+
+.modal-body .movie-info {
+    line-height: 1.25;
+    max-height: 350px;
+    overflow-y: scroll;
+}
+
+.modal-body .movie-info .modal-form-group {
+    margin-top: .25rem;
+    margin-bottom: .25rem;
+}
+
+.col-form-label {
+    padding-right: 1rem;
+    font-weight: bold;
+    display: inline;
+}
+
+.img-valign {
+    vertical-align: middle;
+    margin-bottom: .75rem;
+}
+
+#rtImg, #imdbImg, #metacriticImg {
+    max-width: 40px;
+}
+
+.critic-rating {
+    font-weight: bold;
+    font-size: large;
+}
+
+.ratings-row .col-sm-3 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.navbarbtn {
+    background-color: #1E1E1E;
+    margin-left:10px;
 }
