@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="google-signin-client_id" content="246872954668-epfd05oafbm2v0fhsiroqmp05e73rqf5.apps.googleusercontent.com"/>
+    <title>Spoiled Tomatillos - Coders Unlimited - Groups</title>
+    <meta name="viewport" content="width=device-width"/>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
+    <script src="https://use.fontawesome.com/releases/v5.0.8/js/all.js"></script>
+    <link rel="stylesheet" media="all" href="css/star-rating.css">
+    <link href="krajee-svg/theme.css" media="all" rel="stylesheet" type="text/css" />
+    <script src="js/imports/jquery-3.3.1.min.js"></script>
+    <script src="js/imports/popper.min.js"></script>
+    <script src="js/bootstrap/bootstrap.min.js"></script>
+    <script src="js/imports/js.cookie.js"></script>
+    <script src="js/imports/star-rating.js"></script>
+    <script src="krajee-svg/theme.js"></script>
+    <script src="js/groups.js"></script>
+    <link rel="stylesheet" href="css/app.css"/>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+</head>
+<body>
+    <div class="header" id="navdiv"></div>
+    <div class="container-fluid">
+        <button class="btn btnpadding" onclick="createGroup()">Create a Group</button>
+        <div class="row">
+            <div class="col-4" style="margin-top:20px; padding:10px">
+                <h2>Groups You Own</h2>
+                <div id="owned-groups-list"></div>
+                <h2>Groups You're Part Of</h2>
+                <div id="member-groups-list"></div>
+            </div>
+            <div class="col-8" id="show-group-div" style="background-color:white; margin-top:20px;padding:20px" hidden>
+                    <h4 id="gname">Group Name</h4><br>
+                    <p id="description"></p>
+                    <p id="createdby"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function(){
+            $('#navdiv').load('navbar.html');
+            $('#nav-groups').addClass('active');
+            showGroups();
+            var urlParams = new URLSearchParams(window.location.search);
+
+            if (urlParams.get('gid')) {
+                loadGroup(urlParams.get('gid'));
+            }
+        });
+    </script>
+</body>
+</html>
