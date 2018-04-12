@@ -9,19 +9,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -37,7 +31,6 @@ import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IGroupService;
 import edu.northeastern.cs4500.services.IRatingService;
 import edu.northeastern.cs4500.services.IReviewService;
-import edu.northeastern.cs4500.services.IUserService;
 import edu.northeastern.cs4500.services.UserService;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
@@ -45,8 +38,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -76,7 +67,8 @@ public class UserControllerTest {
 
     @Before
     public void setUp() {
-        mockUser = new User("un", "fn", "ln", "random@neu.edu", "default", "boston");
+        mockUser = new User("un", "fn", "ln", "random@neu.edu", "default", "boston",
+                "linktopic.com");
         String movieID = "tt0266543";
         rating = new MovieRating(movieID, 1, 5);
         review = new MovieReview(movieID, 1, "an amazing review");
@@ -211,41 +203,6 @@ public class UserControllerTest {
                 entity, User.class, 1);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
-    }
-
-    @Test
-    public void uploadProfilePicture_HappyPath() throws Exception {
-        mockUser.setId(427);
-        MultipartFile mockFile = new MockMultipartFile("example",
-                "test bytes".getBytes());
-        IUserService mockService = mock(UserService.class);
-        doNothing().when(mockService).uploadProfilePicture(mockUser.getId(), mockFile);
-
-        MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-        map.add("file", new ByteArrayResource(mockFile.getBytes()) {
-            @Override
-            public String getFilename() {
-                return mockFile.getName();
-            }
-        });
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(map, headers);
-        ResponseEntity<Void> response = restTemplate.exchange(URI + "/{id}/picture/upload",
-                HttpMethod.POST, entity, Void.class, mockUser.getId());
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    }
-
-    @Test
-    public void getProfilePicture_HappyPath() throws Exception {
-        when(userService.getProfilePicture(mockUser.getId()))
-                .thenReturn("a random array of bytes".getBytes());
-
-        ResponseEntity<byte[]> response = restTemplate.exchange(URI + "/{id}/picture",
-                HttpMethod.GET, null, byte[].class, mockUser.getId());
-
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
     /*********************************USER RATINGS****************************************/
