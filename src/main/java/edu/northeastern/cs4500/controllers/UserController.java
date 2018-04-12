@@ -186,28 +186,6 @@ public class UserController {
         return ResponseEntity.ok(snippets);
     }
     
-    /*********************************USER FRIENDS*****************************/
-    
-    /**
-     * Get all friends of a user
-     */
-/*    @GetMapping("/{id}/friends")
-    public ResponseEntity<List<User>> getFriends(@PathVariable(value = "id") int userID) {
-    	List<User> friendsList = userService.getFriends(userID);
-    			return ResponseEntity.ok(friendsList);
-    }
-  */  
-    /**
-     * Follow someone
-     */
-/*    @SuppressWarnings("rawtypes")
-	@PostMapping("/{id}/followers/{fid}")
-    public ResponseEntity followUser(@PathVariable(value = "id") int id, @PathVariable(value = "fid") int fid) {
-    	this.userService.followUser(id, fid);
-		return new ResponseEntity(HttpStatus.OK);
-    	
-    }	
-    */
     /*********************************GROUPS*************************************************/
 
     @Autowired
