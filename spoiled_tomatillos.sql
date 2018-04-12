@@ -10,7 +10,7 @@ CREATE TABLE UserAccount (
 		FirstName VARCHAR(50) NOT NULL,
 		LastName VARCHAR(50) NOT NULL,
 		Hometown VARCHAR(50),
-		DisplayPicture LONGBLOB,
+		DisplayPicture VARCHAR(100),
 		Role ENUM('default', 'group admin', 'admin', 'moderator'),
 		CreatedAt TIMESTAMP,
 		UpdatedAt TIMESTAMP

@@ -7,9 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -62,7 +60,7 @@ public class UserServiceTest {
     @Before
     public void setUp() {
         defaultUser = new User("defaultUN", "john", "doe",
-                "default@neu.edu", "defaultRole", "hometown");
+                "default@neu.edu", "defaultRole", "hometown", "linktopic.com");
         defaultUser.setId(4123);
 
         defaultRatings = new ArrayList<>();
@@ -174,61 +172,6 @@ public class UserServiceTest {
 
         verify(userRepository, times(1)).findOne(defaultUser.getId());
         verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    public void uploadProfilePicture_HappyPath() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
-        when(userRepository.save(defaultUser)).thenReturn(defaultUser);
-
-        String testString = "xyz";
-        MultipartFile file = new MockMultipartFile("mock", "mock.jpg", "", testString.getBytes());
-
-        userService.uploadProfilePicture(defaultUser.getId(), file);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void uploadProfilePicture_InvalidExtension() throws Exception {
-        MultipartFile mockFile = new MockMultipartFile("example.txt", "test".getBytes());
-
-        userService.uploadProfilePicture(defaultUser.getId(), mockFile);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void uploadProfilePicture_BadPhoto() throws Exception {
-        MultipartFile mockFile = new MockMultipartFile("example", "example.png", "", new byte[]{});
-
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
-
-        userService.uploadProfilePicture(defaultUser.getId(), mockFile);
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void uploadProfilePicture_UserNotFound() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
-
-        userService.uploadProfilePicture(defaultUser.getId(),
-                new MockMultipartFile("test", "test.jpg", "image/jpeg", new byte[]{}));
-
-        verify(userRepository, times(1)).findOne(defaultUser.getId());
-        verifyNoMoreInteractions(userRepository);
-    }
-
-    @Test
-    public void getProfilePicture_HappyPath() throws Exception {
-        defaultUser.setPicture("bytes bytes bytes".getBytes());
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
-
-        byte[] picture = userService.getProfilePicture(defaultUser.getId());
-
-        assertThat(picture).isEqualTo(defaultUser.getPicture());
-    }
-
-    @Test(expected = ResourceNotFoundException.class)
-    public void getProfilePicture_UserNotFound() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
-
-        userService.getProfilePicture(defaultUser.getId());
     }
 
     @MockBean
