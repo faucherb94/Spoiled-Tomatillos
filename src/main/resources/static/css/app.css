@@ -1,5 +1,46 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Rubik');
+
+
+
+h1, h2, h3, h6 {
+    font-family: 'Rubik', sans-serif;
+    color: #1E1E1E;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+    color: #0E0E0E;
+    background-color: #C0C0C0;
+}
+
+.feed {
+
+}
+
+.jumbotron {
+    background-color: #FFFFFF;
+
+}
+
 .btnpadding {
+    margin-top: 10px;
+    background-color: #32966F;
+    border: none;
+    color: #FFFFFF;
+}
+
+.profilebtn1 {
     margin: 10px;
+    background-color: #32966F;
+    border: none;
+    color: #FFFFFF;
+}
+
+.profilebtn2 {
+    margin: 10px;
+    background-color: #0E0E0E;
+    border: none;
+    color: #FFFFFF;
 }
 
 .card-img-left {
@@ -9,6 +50,24 @@
 
 .card-float-left {
     float: left;
+}
+
+.cardhdr {
+    background-color: #32966F;
+    color: #FFFFFF;
+}
+
+.cardbdy {
+    background-color: #FFFFFF;
+}
+
+.customnavbar {
+    background-color: #32966F;
+    color: #FFFFFF;
+}
+
+.navbar-brand, .nav-item{
+    color:white;
 }
 
 #posterImg {
@@ -66,4 +125,9 @@
 .ratings-row .col-sm-3 {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.navbarbtn {
+    background-color: #1E1E1E;
+    margin-left:10px;
 }

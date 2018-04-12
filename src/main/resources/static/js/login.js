@@ -31,7 +31,12 @@ function createUser(newuser) {
     }).done(function(json) {
         loginClick(newuser);
     }).fail(function(jqxhr, status, err) {
-        $("#error").html("User already exists - try a different username or email");
+        if (jqxhr.responseJSON.apierror.status == "INTERNAL_SERVER_ERROR") {
+            $("#error").html("Server error - contact administrator");
+        }
+        else {
+            $("#error").html("User already exists - try a different username or email");
+        }
     });
 }
 
@@ -47,6 +52,7 @@ function onSignIn(googleUser) {
         email: email,
         username: username
     }
+    Cookies.set("googleuser", googleUser)
     console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
     console.log('Name: ' + profile.getName());
     console.log('Image URL: ' + profile.getImageUrl());
