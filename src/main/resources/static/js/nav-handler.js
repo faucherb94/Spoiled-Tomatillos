@@ -16,4 +16,13 @@ function logoutClick() {
 
 function searchClick() {
     window.location.href=`profile.html?id=${$("#searchbox").val()}`;
+    /**
+     $.getJSON(`/api/users/search?q=${$("#searchbox").val()}`)
+     .done(function(json) {
+        $("#feed").html("");
+        for (var r=0; r<json.length; r++) {
+            $("#feed").append("<a href=profile.html?id=${json[r].username}>" + json[r].username + "</a>");
+        }
+     });
+     */
 }
