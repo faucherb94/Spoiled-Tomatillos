@@ -23,6 +23,7 @@ import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IGroupService;
 import edu.northeastern.cs4500.services.IRatingService;
+import edu.northeastern.cs4500.services.IRelationshipService;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.IUserService;
 
@@ -155,7 +156,7 @@ public class UserController {
         List<Snippet> snippets = userService.getUserActivity(userID);
         return ResponseEntity.ok(snippets);
     }
-
+    
     /*********************************GROUPS*************************************************/
 
     @Autowired
@@ -168,5 +169,28 @@ public class UserController {
     public ResponseEntity<List<Group>> getGroupMemberships(@PathVariable(value = "id") int userID) {
         List<Group> groups = groupService.getUserGroupMemberships(userID);
         return ResponseEntity.ok(groups);
+    }
+
+    /*********************************FRIENDS*************************************************/
+
+    @Autowired
+    private IRelationshipService relationshipService;
+
+    /**
+     * Get a user's friends
+     */
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<List<User>> getFriends(@PathVariable(value = "id") int userID) {
+        List<User> friends = relationshipService.getFriends(userID);
+        return ResponseEntity.ok(friends);
+    }
+
+    /**
+     * Search for other users
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam(value = "q") String query) {
+        List<User> users = userService.searchUsers(query);
+        return ResponseEntity.ok(users);
     }
 }

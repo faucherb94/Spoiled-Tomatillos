@@ -124,4 +124,9 @@ public class UserService implements IUserService {
         return snippets;
     }
 
+    @Override
+    public List<User> searchUsers(String query) {
+        return repository.findByUsernameContaining(query);
+    }
+
 }
