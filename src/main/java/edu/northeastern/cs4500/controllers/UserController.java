@@ -214,4 +214,13 @@ public class UserController {
         List<User> friends = relationshipService.getFriends(userID);
         return ResponseEntity.ok(friends);
     }
+
+    /**
+     * Search for other users
+     */
+    @GetMapping("/search")
+    public ResponseEntity<List<User>> searchUsers(@RequestParam(value = "q") String query) {
+        List<User> users = userService.searchUsers(query);
+        return ResponseEntity.ok(users);
+    }
 }

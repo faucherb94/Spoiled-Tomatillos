@@ -27,6 +27,7 @@ import edu.northeastern.cs4500.repositories.UserRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -54,6 +55,7 @@ public class UserServiceTest {
     private int BAD_USER_ID = 9999;
     private List<MovieRating> defaultRatings;
     private List<MovieReview> defaultReviews;
+    private List<User> userList;
 
     private MovieRating rating1;
     private MovieRating rating2;
@@ -86,6 +88,10 @@ public class UserServiceTest {
         review2 = new MovieReview("tt74983", 1, "bad");
         review2.setUpdatedAt(new Date(974231));
         defaultReviews.add(review2);
+
+        userList = new ArrayList<>();
+        userList.add(defaultUser0);
+        userList.add(defaultUser1);
     }
 
     @Test
@@ -257,5 +263,15 @@ public class UserServiceTest {
         expected.add(new MovieReviewSnippet(review1));
 
         assertThat(userService.getUserActivity(1)).isEqualTo(expected);
+    }
+
+    @Test
+    public void searchUsers_HappyPath() throws Exception {
+        when(userRepository.findByUsernameContaining(anyString()))
+                .thenReturn(userList);
+
+        List<User> users = userService.searchUsers("random");
+
+        assertThat(users).isEqualTo(userList);
     }
 }

@@ -421,4 +421,17 @@ public class UserControllerTest {
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    /*******************************SEARCH*************************************************/
+
+    @Test
+    public void searchUsers_HappyPath() throws Exception {
+        when(userService.searchUsers(anyString())).thenReturn(userList);
+
+        ResponseEntity<List<User>> response = restTemplate.exchange(URI + "/search?q=test",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {},
+                mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
 }

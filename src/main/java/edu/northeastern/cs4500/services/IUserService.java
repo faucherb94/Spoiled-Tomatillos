@@ -25,4 +25,6 @@ public interface IUserService {
 
     List<Snippet> getUserActivity(int id);
 
+    List<User> searchUsers(String query);
+
 }
