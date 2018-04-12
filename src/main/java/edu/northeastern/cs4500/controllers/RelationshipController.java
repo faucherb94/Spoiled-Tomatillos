@@ -16,7 +16,7 @@ import javax.validation.Valid;
 
 
 import edu.northeastern.cs4500.models.Relationship;
-import edu.northeastern.cs4500.services.IRelationshipService;
+import edu.northeastern.cs4500.services.IRelationshipService;	
 
 @RestController
 @RequestMapping("/api/friends")

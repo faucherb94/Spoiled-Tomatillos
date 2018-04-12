@@ -24,5 +24,5 @@ public interface IUserService {
     byte[] getProfilePicture(int id);
 
     List<Snippet> getUserActivity(int id);
-    
+
 }
