@@ -1,6 +1,7 @@
 function loadProfile(profile, isUsersPage) {
     $.getJSON("/api/users/?name=" + profile)
     .done(function(json) {
+        $("#profpic").attr("src", json.picture);
         $("#fullname").html(json.firstName + " " + json.lastName);
         $("#username").html(json.username);
         $("#hometown").html(json.hometown ? json.hometown : "No hometown set");
