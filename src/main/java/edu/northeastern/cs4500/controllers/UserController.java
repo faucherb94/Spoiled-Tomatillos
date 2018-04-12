@@ -183,4 +183,18 @@ public class UserController {
         List<Snippet> snippets = userService.getUserActivity(userID);
         return ResponseEntity.ok(snippets);
     }
+    
+    /*********************************GROUPS*************************************************/
+
+    @Autowired
+    private IGroupService groupService;
+
+    /**
+     * Get groups that a user is a member of
+     */
+    @GetMapping("/{id}/groups")
+    public ResponseEntity<List<Group>> getGroupMemberships(@PathVariable(value = "id") int userID) {
+        List<Group> groups = groupService.getUserGroupMemberships(userID);
+        return ResponseEntity.ok(groups);
+    }
 }
