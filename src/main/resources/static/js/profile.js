@@ -10,6 +10,7 @@ function loadProfile(profile, isUsersPage) {
             var friends = true;
             if (friends) {
                 showActivity(json.id);
+                // showRemoveFriendButton();
             } else {
                 showFriendButton();
             }
