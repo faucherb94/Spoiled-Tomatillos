@@ -35,7 +35,7 @@
                 <div id="buttons"></div>
             </div>
             <div class="col-4">
-                <span id="friends"></span>
+                <div class='friendslist' id="friends"></div>
             </div>
         </div>
     </div>
@@ -51,7 +51,7 @@
 
         if (urlParams.get('id')) { loadProfile(urlParams.get('id')); }
         else {
-            loadProfile(Cookies.get("username"));
+            loadProfile(Cookies.get("username"), true);
             allowEdit();
         }
     });

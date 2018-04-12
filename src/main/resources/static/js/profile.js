@@ -1,10 +1,29 @@
-function loadProfile(profile) {
+function loadProfile(profile, isUsersPage) {
     $.getJSON("/api/users/?name=" + profile)
     .done(function(json) {
         $("#fullname").html(json.firstName + " " + json.lastName);
         $("#username").html(json.username);
         $("#hometown").html(json.hometown ? json.hometown : "No hometown set");
-        showActivity(json.id);
+        $("#friends").html("Loading friends...");
+        if (!isUsersPage) {
+            // check if friends
+            var friends = true;
+            if (friends) {
+                showActivity(json.id);
+            } else {
+                showFriendButton();
+            }
+        } else {
+            showActivity(json.id);
+        }
+
+        /** $.ajax({
+            url: `/api/users/${json.id}/friends`,
+            type: "GET"
+        }).done(function(friendslist) {
+            $("#friends").html(friendslist);
+            Show friends as url to their page?
+        }); **/
         $.ajax({
             url: `/api/users/${json.id}/picture`,
             type: "GET",
@@ -109,9 +128,9 @@ function showActivity(uid) {
 
 function buildActivityCard(movieid, i, rating, review) {
     if (rating == "Not Rated") {rating = 0};
-    var card = "<div id='" + movieid + "' class='card border-light'>" +
-        "<h5 class='card-header'>" + movieid + "</h5>" +
-        "<div class='card-body'>" +
+    var card = "<div id='" + movieid + "' class='card border-light cardhdr'>" +
+        "<h5 class='card-header' style='color:white'>" + movieid + "</h5>" +
+        "<div class='card-body cardbdy'>" +
         "<div><a href='" + "Poster" + "'>" +
         "<img class='card-img-left card-float-left' src='" + "Poster" +
         "'/></a></div>" +
@@ -122,4 +141,12 @@ function buildActivityCard(movieid, i, rating, review) {
         "</div>" +
         "</div>";
     return card;
+}
+
+function showFriendButton() {
+    $("#feed").append("<button class='btn profilebtn1' onclick='addFriend()'>Add Friend</button>");
+}
+
+function addFriend() {
+    // need to add the post mapping here
 }
