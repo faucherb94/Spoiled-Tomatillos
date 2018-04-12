@@ -86,8 +86,6 @@ public class UserServiceTest {
         review2 = new MovieReview("tt74983", 1, "bad");
         review2.setUpdatedAt(new Date(974231));
         defaultReviews.add(review2);
-        
-        
     }
 
     @Test
@@ -246,7 +244,6 @@ public class UserServiceTest {
 
     @Test
     public void getUserActivity_HappyPath() throws Exception {
-
         when(ratingRepository.findByUserIDOrderByUpdatedAtDesc(1))
                 .thenReturn(defaultRatings);
 

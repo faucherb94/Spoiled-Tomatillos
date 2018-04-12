@@ -9,14 +9,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.northeastern.cs4500.models.Relationship;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.repositories.RelationshipRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.List;
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 public class RelationshipServiceTest {
@@ -38,6 +40,7 @@ public class RelationshipServiceTest {
     private User defaultUser0;
     private User defaultUser1;
     private Relationship r;
+    private List<User> userList;
     
     @Before
     public void setUp() {
@@ -50,12 +53,18 @@ public class RelationshipServiceTest {
         defaultUser1.setId(2);   
         r = new Relationship(1, 2);
         r.setRid(1);
+
+        userList = new ArrayList<>();
+        userList.add(defaultUser0);
+        userList.add(defaultUser1);
     }
 
     @Test
-    public void TestGetFriends() {
-    	this.rService.followUser(r);
-    	List<Relationship> friends = this.rRepository.getFriends(1);
-    	assertThat(friends.size() == 1);
+    public void getFriends_HappyPath() throws Exception {
+        when(rRepository.getFriends(anyInt())).thenReturn(userList);
+
+        List<User> users = rService.getFriends(10);
+
+        assertThat(users).isEqualTo(userList);
     }
 }
