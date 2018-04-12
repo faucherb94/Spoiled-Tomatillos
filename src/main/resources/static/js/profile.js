@@ -26,13 +26,6 @@ function loadProfile(profile, isUsersPage) {
             $("#friends").html(friendslist);
             Show friends as url to their page?
         }); **/
-        $.ajax({
-            url: `/api/users/${json.id}/picture`,
-            type: "GET",
-            contentType: "text/plain"
-        }).done(function(json2) {
-            $("#profpic").attr("src", `data:image/png;base64,${json2}`);
-        });
     }).fail(function (jqxhr, status, err) {
         console.log(err);
     });
