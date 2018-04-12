@@ -78,16 +78,16 @@ function searchByTitle() {
  * Return html scaffolding for the card
  */
 function buildMovieCard(movie, i, initialRating) {
-    var card = "<div id='" + movie.imdbID + "' class='card border-light'>" +
-          "<h5 class='card-header'>" + movie.title + "</h5>" +
-          "<div class='card-body'>" +
+    var card = "<div id='" + movie.imdbID + "' class='card border-light cardhdr'>" +
+          "<h5 class='card-header' style='color:white'>" + movie.title + "</h5>" +
+          "<div class='card-body cardbdy'>" +
             "<div><a href='" + movie.poster + "'>" +
             "<img class='card-img-left card-float-left' src='" + movie.poster +
             "'/></a></div>" +
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<input id='rating-" + i + "' name='rating-" + i + "' value='" + initialRating + "'><br>" +
-            "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br>" +
+            "<textarea id='review" + i +"' rows='4' columns='100' placeholder='Leave a review...'></textarea><br>" +
             "<button onclick='submitReview(this)' class='btn btn-secondary' id='reviewbtn" + i + "' movieid='" + movie.imdbID + "' iter='" + i + "'>Review</button></div>" +
           "</div>" +
         "</div>";
