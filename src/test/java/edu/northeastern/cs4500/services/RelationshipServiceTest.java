@@ -17,6 +17,7 @@ import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.repositories.RelationshipRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +33,10 @@ public class RelationshipServiceTest {
     }
 
     @Autowired
-    private IRelationshipService rService;
+    private IRelationshipService relationshipService;
 
     @MockBean
-    private RelationshipRepository rRepository;
+    private RelationshipRepository relationshipRepository;
 
     private User defaultUser0;
     private User defaultUser1;
@@ -52,7 +53,7 @@ public class RelationshipServiceTest {
                 "suplex-city@aol.com", "defaultRole", "Atlanta");
         defaultUser1.setId(2);   
         r = new Relationship(1, 2);
-        r.setRid(1);
+        r.setId(1);
 
         userList = new ArrayList<>();
         userList.add(defaultUser0);
@@ -61,10 +62,19 @@ public class RelationshipServiceTest {
 
     @Test
     public void getFriends_HappyPath() throws Exception {
-        when(rRepository.getFriends(anyInt())).thenReturn(userList);
+        when(relationshipRepository.getFriends(anyInt())).thenReturn(userList);
 
-        List<User> users = rService.getFriends(10);
+        List<User> users = relationshipService.getFriends(10);
 
         assertThat(users).isEqualTo(userList);
+    }
+
+    @Test
+    public void followUser_HappyPath() throws Exception {
+        when(relationshipRepository.save(any(Relationship.class))).thenReturn(r);
+
+        Relationship newRelationship = relationshipService.followUser(r);
+
+        assertThat(newRelationship).isEqualTo(r);
     }
 }

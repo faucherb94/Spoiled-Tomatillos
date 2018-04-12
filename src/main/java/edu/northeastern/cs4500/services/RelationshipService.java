@@ -17,16 +17,16 @@ public class RelationshipService implements IRelationshipService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
-    private RelationshipRepository rRepository;
+    private RelationshipRepository relationshipRepository;
 
     @Override
     public List<User> getFriends(int userID) {
-        return rRepository.getFriends(userID);
+        return relationshipRepository.getFriends(userID);
     }
 
 	@Override
 	public Relationship followUser(Relationship r) {
-	      log.info("user with id " + r.getUserid1() + " followed user with id " + r.getUserid2());
-	      return rRepository.save(r);
+        log.info("user id {} followed user id {}", r.getUserID1(), r.getUserID2());
+        return relationshipRepository.save(r);
 	}
 }

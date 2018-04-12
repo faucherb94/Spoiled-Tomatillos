@@ -16,14 +16,14 @@ import edu.northeastern.cs4500.services.IRelationshipService;
 public class RelationshipController {
 
 	@Autowired
-	private IRelationshipService rService;
+	private IRelationshipService relationshipService;
     
     /**
      * Follow someone
      */
 	@PostMapping
     public Relationship followUser(@Valid @RequestBody Relationship r) {
-		return this.rService.followUser(r);
+		return relationshipService.followUser(r);
     }	
     
 }

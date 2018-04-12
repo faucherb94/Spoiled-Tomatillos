@@ -31,16 +31,16 @@ public class Relationship {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "RelationshipID")
 	@Getter @Setter
-	private int rid;
+	private int id;
 	
     @Column(name = "UserID1")
     @Getter
     @Setter
-    private int userid1;
+    private int userID1;
 
     @Getter @Setter
     @Column(name = "UserID2")
-    private int userid2;
+    private int userID2;
 
     @Temporal(TemporalType.TIMESTAMP)
     @JsonSerialize(using = DateTimestampSerializer.class)
@@ -55,8 +55,8 @@ public class Relationship {
     private Date updatedAt;
 
     public Relationship(int uid1, int uid2) {
-        this.userid1 = uid1;
-        this.userid2 = uid2;
+        this.userID1 = uid1;
+        this.userID2 = uid2;
     }
 
     public Relationship() {}
