@@ -1,7 +1,7 @@
 package edu.northeastern.cs4500.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,6 +18,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import edu.northeastern.cs4500.utils.DateTimestampSerializer;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +28,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "UserAccount")
 @EntityListeners(AuditingEntityListener.class)
-@JsonIgnoreProperties(value = {"picture", "createdAt", "updatedAt"})
 public class User {
 
     @Id
@@ -56,26 +56,29 @@ public class User {
 
     @Column(name = "DisplayPicture")
     @Getter @Setter
-    private byte[] picture;
+    private String picture;
 
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate
+    @JsonSerialize(using = DateTimestampSerializer.class)
     @Getter
     private Date createdAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @LastModifiedDate
+    @JsonSerialize(using = DateTimestampSerializer.class)
     @Getter
     private Date updatedAt;
 
     public User(String username, String firstName, String lastName, String email,
-                String role, String hometown) {
+                String role, String hometown, String picture) {
         this.username = username;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.role = role;
         this.hometown = hometown;
+        this.picture = picture;
     }
 
     public User() {}
