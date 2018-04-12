@@ -46,11 +46,11 @@ public class RelationshipServiceTest {
     @Before
     public void setUp() {
     	defaultUser0 = new User("Notorious", "Connor", "McGregor",
-                "throwing-dollies@gmail.com", "defaultRole", "Dublin");
+                "throwing-dollies@gmail.com", "defaultRole", "Dublin", "linktopic.com");
         defaultUser0.setId(1);
         
         defaultUser1 = new User("DC", "Daniel", "Cormier",
-                "suplex-city@aol.com", "defaultRole", "Atlanta");
+                "suplex-city@aol.com", "defaultRole", "Atlanta", "linktopic.com");
         defaultUser1.setId(2);   
         r = new Relationship(1, 2);
         r.setId(1);
