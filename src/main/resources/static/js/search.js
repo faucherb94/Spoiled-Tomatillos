@@ -100,16 +100,16 @@ function buildMovieCard(movie, i) {
         posterImg = "img/image_missing.png";
     }
 
-    var card = "<div id='" + movie.imdbID + "' class='card border-light'>" +
-          "<h4 class='card-header'><a class='movie-link' data-id='" +
+    var card = "<div id='" + movie.imdbID + "' class='card border-light cardhdr'>" +
+          "<h4 class='card-header'><a style='color:white' class='movie-link' data-id='" +
           movie.imdbID + "' href=''>" + movie.title + "</a></h4>" +
-          "<div class='card-body'>" +
+          "<div class='card-body cardbdy'>" +
             "<div><img class='card-img-left card-float-left' src='" + posterImg +
             "' alt='Poster Unavailable'/></div>" +
             "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
             "<p class='card-text'>Description - Coming Soon!!</p>" +
             "<div id='rating-div-" + movie.imdbID + "'></div>" +
-            "<textarea id='review" + i +"' rows='4' columns='50' placeholder='Leave a review...'></textarea><br/>" +
+            "<textarea id='review" + i +"' rows='4' columns='100' placeholder='Leave a review...'></textarea><br/>" +
             "<button onclick='submitReview(this)' class='btn btn-secondary' id='reviewbtn" + i + "' movieid='" + movie.imdbID + "' iter='" + i + "'>Review</button></div>" +
           "</div>" +
         "</div>";

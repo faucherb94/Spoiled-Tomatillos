@@ -19,10 +19,10 @@ function loadProfile(profile) {
 
 /** If a user is on their page, let them edit their info **/
 function allowEdit() {
-    $("#buttons").append("<button id='editbutton' class='btn btn-primary'>Edit Your Info</button>");
+    $("#buttons").append("<button id='editbutton' class='btn profilebtn1'>Edit Your Info</button>");
     $("#editbutton").click(editUserForm);
 
-    $("#buttons").append("<button id='deletebutton' class='btn btn-error'>Delete Your Profile</button>");
+    $("#buttons").append("<button id='deletebutton' class='btn profilebtn2'>Delete Your Profile</button>");
     $("#deletebutton").click(deleteUser);
 }
 

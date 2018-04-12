@@ -17,7 +17,7 @@
     <script src="js/imports/js.cookie.js"></script>
     <script src="js/imports/star-rating.js"></script>
     <script src="krajee-svg/theme.js"></script>
-    <link rel="stylesheet" href="css/index.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
     <script src="js/search.js"></script>
     <script src="js/movie-modal.js"></script>
     <script src="https://apis.google.com/js/platform.js" async defer></script>
@@ -31,15 +31,15 @@
 <div class="header" id="navdiv"></div>
 <div class="container">
     <div class="jumbotron">
-        <h1>Search for a Movie</h1>
+        <h1 style="color:000000">Search for a Movie</h1>
         <div class="search-bar">
-            <i class="icon fa fa-search"></i>
+            <i class="icon fa fa-search" style="color:#343A40"></i>
             <input class="input-text" type="text" id="moviesearch" placeholder="Search by title...">
         </div>
-        <a class="btn btn-info btn-lg btnpadding" onclick="searchByTitle()" role="button">Search</a>
+        <button class="btn btn-info btn-lg btnpadding" onclick="searchByTitle()" >Search</button>
         <div id="modal-content"></div>
     </div>
-    <div id="feed"></div>
+    <div class="container feed" id="feed"></div>
 </div>
 </body>
 </html>

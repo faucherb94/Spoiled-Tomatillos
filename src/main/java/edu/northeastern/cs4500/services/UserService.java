@@ -1,18 +1,10 @@
 package edu.northeastern.cs4500.services;
 
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -36,7 +28,6 @@ public class UserService implements IUserService {
     @Autowired
     private UserRepository repository;
 
-    private static final String DEFAULT_PICTURE_PATH = "static/img/default-profile-picture.png";
     private static final String USER_NOT_FOUND = "user id {} not found";
 
     @Override
@@ -63,12 +54,9 @@ public class UserService implements IUserService {
 
     @Override
     public User create(User u) {
-        byte[] bytes = getDefaultPictureBytes();
-        if (bytes.length > 0) {
-            u.setPicture(bytes);
-        }
-      log.info("created user " + u.getUsername());
-      return repository.save(u);
+        u.setRole("default");
+        log.info("created user " + u.getUsername());
+        return repository.save(u);
     }
 
     @Override
@@ -98,57 +86,6 @@ public class UserService implements IUserService {
         log.info("deleted user id {}", id);
         repository.delete(userToDelete);
         return userToDelete;
-    }
-
-    @Override
-    public void uploadProfilePicture(int id, MultipartFile picture) {
-        String extension = FilenameUtils.getExtension(picture.getOriginalFilename());
-        if (!extension.equals("png") && !extension.equals("jpg") && !extension.equals("jpeg")) {
-            throw new IllegalArgumentException("Only PNG and JPG file types accepted");
-        }
-
-        User currentUser = repository.findOne(id);
-        if (currentUser == null) {
-            throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
-        }
-
-        if (picture.isEmpty()) {
-            throw new IllegalArgumentException("No file uploaded");
-        }
-
-        try {
-            byte[] pictureBytes = picture.getBytes();
-            currentUser.setPicture(pictureBytes);
-            repository.save(currentUser);
-        } catch (IOException ex) {
-            throw new IllegalArgumentException();
-        }
-    }
-
-    @Override
-    public byte[] getProfilePicture(int id) {
-        User currentUser = repository.findOne(id);
-        if (currentUser == null) {
-            throw new ResourceNotFoundException(User.class, "id", Integer.toString(id));
-        }
-
-        return currentUser.getPicture();
-    }
-
-    /**
-     * Gets the bytes of the default profile picture. Used in the user creation method.
-     */
-    private byte[] getDefaultPictureBytes() {
-        Resource resource = new ClassPathResource(DEFAULT_PICTURE_PATH);
-        try {
-            File defaultPicture = resource.getFile();
-            Path filePath = defaultPicture.toPath();
-            return Files.readAllBytes(filePath);
-        } catch (Exception ex) {
-            log.error("error opening default profile picture from classpath", ex);
-        }
-
-        return new byte[]{};
     }
 
     @Autowired
