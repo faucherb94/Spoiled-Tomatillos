@@ -25,6 +25,7 @@ import edu.northeastern.cs4500.repositories.UserRepository;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -47,10 +48,12 @@ public class UserServiceTest {
     @MockBean
     private UserRepository userRepository;
 
-    private User defaultUser;
+    private User defaultUser0;
+    private User defaultUser1;
     private int BAD_USER_ID = 9999;
     private List<MovieRating> defaultRatings;
     private List<MovieReview> defaultReviews;
+    private List<User> userList;
 
     private MovieRating rating1;
     private MovieRating rating2;
@@ -59,9 +62,13 @@ public class UserServiceTest {
 
     @Before
     public void setUp() {
-        defaultUser = new User("defaultUN", "john", "doe",
+        defaultUser0 = new User("defaultUN", "john", "doe",
                 "default@neu.edu", "defaultRole", "hometown", "linktopic.com");
-        defaultUser.setId(4123);
+        defaultUser0.setId(4123);
+        
+        defaultUser1 = new User("DC", "Daniel", "Cormier",
+                "suplex-city@aol.com", "defaultRole", "Salem", "linktopic.com");
+        defaultUser1.setId(1);
 
         defaultRatings = new ArrayList<>();
         rating1 = new MovieRating("tt42387", 1, 5);
@@ -79,20 +86,24 @@ public class UserServiceTest {
         review2 = new MovieReview("tt74983", 1, "bad");
         review2.setUpdatedAt(new Date(974231));
         defaultReviews.add(review2);
+
+        userList = new ArrayList<>();
+        userList.add(defaultUser0);
+        userList.add(defaultUser1);
     }
 
     @Test
     public void findByID_HappyPath() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
+        when(userRepository.findOne(defaultUser0.getId())).thenReturn(defaultUser0);
 
-        User foundUser = userService.findByID(defaultUser.getId());
+        User foundUser = userService.findByID(defaultUser0.getId());
 
-        assertThat(foundUser.getId()).isEqualTo(defaultUser.getId());
-        assertThat(foundUser.getUsername()).isEqualTo(defaultUser.getUsername());
-        assertThat(foundUser.getFirstName()).isEqualTo(defaultUser.getFirstName());
-        assertThat(foundUser.getLastName()).isEqualTo(defaultUser.getLastName());
-        assertThat(foundUser.getEmail()).isEqualTo(defaultUser.getEmail());
-        assertThat(foundUser.getRole()).isEqualTo(defaultUser.getRole());
+        assertThat(foundUser.getId()).isEqualTo(defaultUser0.getId());
+        assertThat(foundUser.getUsername()).isEqualTo(defaultUser0.getUsername());
+        assertThat(foundUser.getFirstName()).isEqualTo(defaultUser0.getFirstName());
+        assertThat(foundUser.getLastName()).isEqualTo(defaultUser0.getLastName());
+        assertThat(foundUser.getEmail()).isEqualTo(defaultUser0.getEmail());
+        assertThat(foundUser.getRole()).isEqualTo(defaultUser0.getRole());
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -104,16 +115,16 @@ public class UserServiceTest {
 
     @Test
     public void findByUsername_HappyPath() throws Exception {
-        when(userRepository.findByUsername(defaultUser.getUsername())).thenReturn(defaultUser);
+        when(userRepository.findByUsername(defaultUser0.getUsername())).thenReturn(defaultUser0);
 
-        User foundUser = userService.findByUsername(defaultUser.getUsername());
+        User foundUser = userService.findByUsername(defaultUser0.getUsername());
 
-        assertThat(foundUser.getId()).isEqualTo(defaultUser.getId());
-        assertThat(foundUser.getUsername()).isEqualTo(defaultUser.getUsername());
-        assertThat(foundUser.getFirstName()).isEqualTo(defaultUser.getFirstName());
-        assertThat(foundUser.getLastName()).isEqualTo(defaultUser.getLastName());
-        assertThat(foundUser.getEmail()).isEqualTo(defaultUser.getEmail());
-        assertThat(foundUser.getRole()).isEqualTo(defaultUser.getRole());
+        assertThat(foundUser.getId()).isEqualTo(defaultUser0.getId());
+        assertThat(foundUser.getUsername()).isEqualTo(defaultUser0.getUsername());
+        assertThat(foundUser.getFirstName()).isEqualTo(defaultUser0.getFirstName());
+        assertThat(foundUser.getLastName()).isEqualTo(defaultUser0.getLastName());
+        assertThat(foundUser.getEmail()).isEqualTo(defaultUser0.getEmail());
+        assertThat(foundUser.getRole()).isEqualTo(defaultUser0.getRole());
     }
 
     @Test(expected = ResourceNotFoundException.class)
@@ -126,51 +137,51 @@ public class UserServiceTest {
 
     @Test
     public void create_HappyPath() throws Exception {
-        when(userRepository.save(defaultUser)).thenReturn(defaultUser);
+        when(userRepository.save(defaultUser0)).thenReturn(defaultUser0);
 
-        User newUser = userService.create(defaultUser);
+        User newUser = userService.create(defaultUser0);
 
-        assertThat(newUser).isEqualTo(defaultUser);
+        assertThat(newUser).isEqualTo(defaultUser0);
     }
 
     @Test
     public void update_HappyPath() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
-        when(userRepository.save(defaultUser)).thenReturn(defaultUser);
+        when(userRepository.findOne(defaultUser0.getId())).thenReturn(defaultUser0);
+        when(userRepository.save(defaultUser0)).thenReturn(defaultUser0);
 
-        User updatedUser = userService.update(defaultUser.getId(), defaultUser);
+        User updatedUser = userService.update(defaultUser0.getId(), defaultUser0);
 
-        assertThat(updatedUser).isEqualTo(defaultUser);
+        assertThat(updatedUser).isEqualTo(defaultUser0);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void update_NotFound() throws Exception {
-        defaultUser.setId(BAD_USER_ID);
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
+        defaultUser0.setId(BAD_USER_ID);
+        when(userRepository.findOne(defaultUser0.getId())).thenReturn(null);
 
-        userService.update(defaultUser.getId(), defaultUser);
+        userService.update(defaultUser0.getId(), defaultUser0);
     }
 
     @Test
     public void delete_HappyPath() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(defaultUser);
+        when(userRepository.findOne(defaultUser0.getId())).thenReturn(defaultUser0);
 
-        User deletedUser = userService.delete(defaultUser.getId());
+        User deletedUser = userService.delete(defaultUser0.getId());
 
-        verify(userRepository, times(1)).findOne(defaultUser.getId());
-        verify(userRepository, times(1)).delete(defaultUser);
+        verify(userRepository, times(1)).findOne(defaultUser0.getId());
+        verify(userRepository, times(1)).delete(defaultUser0);
         verifyNoMoreInteractions(userRepository);
 
-        assertThat(deletedUser).isEqualTo(defaultUser);
+        assertThat(deletedUser).isEqualTo(defaultUser0);
     }
 
     @Test(expected = ResourceNotFoundException.class)
     public void delete_NotFound() throws Exception {
-        when(userRepository.findOne(defaultUser.getId())).thenReturn(null);
+        when(userRepository.findOne(defaultUser0.getId())).thenReturn(null);
 
-        userService.delete(defaultUser.getId());
+        userService.delete(defaultUser0.getId());
 
-        verify(userRepository, times(1)).findOne(defaultUser.getId());
+        verify(userRepository, times(1)).findOne(defaultUser0.getId());
         verifyNoMoreInteractions(userRepository);
     }
 
@@ -182,7 +193,6 @@ public class UserServiceTest {
 
     @Test
     public void getUserActivity_HappyPath() throws Exception {
-
         when(ratingRepository.findByUserIDOrderByUpdatedAtDesc(1))
                 .thenReturn(defaultRatings);
 
@@ -198,4 +208,13 @@ public class UserServiceTest {
         assertThat(userService.getUserActivity(1)).isEqualTo(expected);
     }
 
+    @Test
+    public void searchUsers_HappyPath() throws Exception {
+        when(userRepository.findByUsernameContaining(anyString()))
+                .thenReturn(userList);
+
+        List<User> users = userService.searchUsers("random");
+
+        assertThat(users).isEqualTo(userList);
+    }
 }

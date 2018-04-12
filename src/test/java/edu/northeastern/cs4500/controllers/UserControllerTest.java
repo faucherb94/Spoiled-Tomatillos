@@ -30,6 +30,7 @@ import edu.northeastern.cs4500.models.Snippet;
 import edu.northeastern.cs4500.models.User;
 import edu.northeastern.cs4500.services.IGroupService;
 import edu.northeastern.cs4500.services.IRatingService;
+import edu.northeastern.cs4500.services.IRelationshipService;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.UserService;
 import edu.northeastern.cs4500.utils.ResourceNotFoundException;
@@ -59,11 +60,15 @@ public class UserControllerTest {
     @MockBean
     private IGroupService groupService;
 
+    @MockBean
+    private IRelationshipService relationshipService;
+
     private final String URI = "/api/users";
     private User mockUser;
     private MovieRating rating;
     private MovieReview review;
     private List<Group> groups;
+    private List<User> userList;
 
     @Before
     public void setUp() {
@@ -75,6 +80,9 @@ public class UserControllerTest {
 
         groups = new ArrayList<>();
         groups.add(new Group(1, "test", "blah"));
+
+        userList = new ArrayList<>();
+        userList.add(mockUser);
     }
 
     /********************************USER MANAGEMENT*****************************************/
@@ -352,6 +360,32 @@ public class UserControllerTest {
 
         ResponseEntity<List<Group>> response = restTemplate.exchange(URI + "/{id}/groups",
                 HttpMethod.GET, null, new ParameterizedTypeReference<List<Group>>() {},
+                mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    /*******************************FRIENDS*************************************************/
+
+    @Test
+    public void getFriends_HappyPath() throws Exception {
+        when(relationshipService.getFriends(mockUser.getId())).thenReturn(userList);
+
+        ResponseEntity<List<User>> response = restTemplate.exchange(URI + "/{id}/friends",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {},
+                mockUser.getId());
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    /*******************************SEARCH*************************************************/
+
+    @Test
+    public void searchUsers_HappyPath() throws Exception {
+        when(userService.searchUsers(anyString())).thenReturn(userList);
+
+        ResponseEntity<List<User>> response = restTemplate.exchange(URI + "/search?q=test",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<User>>() {},
                 mockUser.getId());
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
