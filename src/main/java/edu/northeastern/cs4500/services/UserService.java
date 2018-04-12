@@ -150,17 +150,6 @@ public class UserService implements IUserService {
 
         return new byte[]{};
     }
-    
-	@Override
-	public List<User> getFriends(int id) {
-		List<User> friendsList = this.repository.getFriends(id);
-		return friendsList;
-	}
-	
-	@Override
-	public void followUser(int uID, int fID) {
-		this.repository.followUser(uID, fID);
-	}
 
     @Autowired
     private RatingRepository ratingRepository;

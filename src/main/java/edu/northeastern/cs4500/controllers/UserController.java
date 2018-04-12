@@ -191,23 +191,23 @@ public class UserController {
     /**
      * Get all friends of a user
      */
-    @GetMapping("/{id}/friends")
+/*    @GetMapping("/{id}/friends")
     public ResponseEntity<List<User>> getFriends(@PathVariable(value = "id") int userID) {
     	List<User> friendsList = userService.getFriends(userID);
     			return ResponseEntity.ok(friendsList);
     }
-    
+  */  
     /**
      * Follow someone
      */
-    @SuppressWarnings("rawtypes")
-	@PostMapping("/{id}/followers/{follower-id}")
-    public ResponseEntity followUser(@PathVariable(value = "id") int uID, @PathVariable(value = "follower-id") int fID) {
-    	this.userService.followUser(uID, fID);
+/*    @SuppressWarnings("rawtypes")
+	@PostMapping("/{id}/followers/{fid}")
+    public ResponseEntity followUser(@PathVariable(value = "id") int id, @PathVariable(value = "fid") int fid) {
+    	this.userService.followUser(id, fid);
 		return new ResponseEntity(HttpStatus.OK);
     	
     }	
-
+    */
     /*********************************GROUPS*************************************************/
 
     @Autowired

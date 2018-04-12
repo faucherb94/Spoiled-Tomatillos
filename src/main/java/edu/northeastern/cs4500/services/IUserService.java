@@ -25,7 +25,4 @@ public interface IUserService {
 
     List<Snippet> getUserActivity(int id);
     
-    List<User> getFriends(int id);
-
-    void followUser(int uID, int fID);
 }
