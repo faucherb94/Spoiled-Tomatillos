@@ -108,11 +108,14 @@ function showActivity(uid) {
                         readonly: true
                     })
                 };
-                // TODO $.getJSON() for movie info
-                var rating = (activity.type == "rating") ? activity.rating : "Not Rated";
-                var review = (activity.type == "review") ? activity.review : "Not reviewed";
-                $("#feed").append(buildActivityCard(activity.movieID, i, rating, review));
-                renderStars();
+                $.getJSON(`/api/movies/${activity.movieID}`)
+                    .done(function(moviedata){
+                        var rating = (activity.type == "rating") ? activity.rating : "Not Rated";
+                        var review = (activity.type == "review") ? activity.review : "Not reviewed";
+                        $("#feed").append(buildActivityCard(moviedata, i, rating, review));
+                        renderStars();
+                    });
+
             });
 
         }).fail(function(jqxhr, err, status) {
@@ -121,16 +124,16 @@ function showActivity(uid) {
 
 }
 
-function buildActivityCard(movieid, i, rating, review) {
+function buildActivityCard(moviedata, i, rating, review) {
     if (rating == "Not Rated") {rating = 0};
-    var card = "<div id='" + movieid + "' class='card border-light cardhdr'>" +
-        "<h5 class='card-header' style='color:white'>" + movieid + "</h5>" +
+    var card = "<div id='" + moviedata.imdbID + "' class='card border-light cardhdr'>" +
+        "<h5 class='card-header' style='color:white'>" + moviedata.title + "</h5>" +
         "<div class='card-body cardbdy'>" +
-        "<div><a href='" + "Poster" + "'>" +
-        "<img class='card-img-left card-float-left' src='" + "Poster" +
+        "<div><a href='" + moviedata.poster + "'>" +
+        "<img class='card-img-left card-float-left' src='" + moviedata.poster +
         "'/></a></div>" +
-        "<div class='card-float-left'><h4 class='card-title'>" + "Year" + "</h4>" +
-        "<p class='card-text'>Description - Coming Soon!!</p>" +
+        "<div class='card-float-left'><h4 class='card-title'>" + moviedata.year + "</h4>" +
+        "<p class='card-text'>" + moviedata.plot + "</p>" +
         "<input id='rating-" + i + "' name='rating-" + i + "' value='" + rating + "'><br>" +
         "<p><strong>Review: </strong> " + review + "</p>" +
         "</div>" +
