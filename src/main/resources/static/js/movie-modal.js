@@ -2,41 +2,7 @@ function getMovie(imdbID) {
     var request = $.getJSON("/api/movies/" + imdbID);
 
     var success = function(json) {
-        setModalHeader(json.title, json.year);
-        setMovieField("#rated", json.rated);
-        setMovieField("#runtime", json.runtime);
-        setMovieField("#genres", generateListString(json.genres));
-        setMovieField("#released", json.released);
-
-        if (json.poster === "Unavailable") {
-            $("#posterImg").attr("src", "img/image_missing.png");
-        } else {
-            $("#posterImg").attr("src", json.poster);
-        }
-
-        setMovieField("#plot", json.plot);
-        setRatings(json.ratings);
-        setMovieField("#directors", generateListString(json.directors));
-        setMovieField("#writers", generateListString(json.writers));
-        setMovieField("#actors", generateListString(json.actors));
-        setMovieField("#boxOffice", json.boxOffice);
-        setMovieField("#production", json.production);
-        setMovieField("#countries", generateListString(json.countries));
-        setMovieField("#languages", generateListString(json.languages));
-        setMovieField("#website", json.website);
-
-        var cloned = $("#rating-" + imdbID).clone();
-        cloned.attr('id', 'rating-' + imdbID + '-modal');
-        cloned.appendTo("#rating-div-modal");
-        $("#rating-" + imdbID + '-modal').rating({
-            theme: 'krajee-svg',
-            size: 'xs',
-            step: '1',
-            showClear: false,
-            showCaption: false
-        }).on('rating:change', updateRating);
-
-        $("#movieModal").modal('show');
+        populateModal(json);
     };
 
     var failure = function(resp) {
@@ -44,6 +10,44 @@ function getMovie(imdbID) {
     };
 
     request.then(success, failure);
+}
+
+function populateModal(json) {
+    setModalHeader(json.title, json.year);
+    setMovieField("#rated", json.rated);
+    setMovieField("#runtime", json.runtime);
+    setMovieField("#genres", generateListString(json.genres));
+    setMovieField("#released", json.released);
+
+    if (json.poster === "Unavailable") {
+        $("#posterImg").attr("src", "img/image_missing.png");
+    } else {
+        $("#posterImg").attr("src", json.poster);
+    }
+
+    setMovieField("#plot", json.plot);
+    setRatings(json.ratings);
+    setMovieField("#directors", generateListString(json.directors));
+    setMovieField("#writers", generateListString(json.writers));
+    setMovieField("#actors", generateListString(json.actors));
+    setMovieField("#boxOffice", json.boxOffice);
+    setMovieField("#production", json.production);
+    setMovieField("#countries", generateListString(json.countries));
+    setMovieField("#languages", generateListString(json.languages));
+    setMovieField("#website", json.website);
+
+    var cloned = $("#rating-" + json.imdbID).clone();
+    cloned.attr('id', 'rating-' + json.imdbID + '-modal');
+    cloned.appendTo("#rating-div-modal");
+    $("#rating-" + json.imdbID + '-modal').rating({
+        theme: 'krajee-svg',
+        size: 'xs',
+        step: '1',
+        showClear: false,
+        showCaption: false
+    }).on('rating:change', updateRating);
+
+    $("#movieModal").modal('show');
 }
 
 function setMovieField(id, json) {
