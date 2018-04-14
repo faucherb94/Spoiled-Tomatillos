@@ -131,3 +131,8 @@ body {
     background-color: #1E1E1E;
     margin-left:10px;
 }
+
+.friendslist {
+    max-height: 100%;
+    overflow: auto;
+}

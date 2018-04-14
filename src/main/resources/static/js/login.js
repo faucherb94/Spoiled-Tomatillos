@@ -12,15 +12,6 @@ function loginClick(user) {
 
 }
 
-/** function showCreate() {
-    $("#create").html(
-    "<input style='margin-bottom:15px;' type='text' placeholder='email' id='new_email'/><br>" +
-    "<input style='margin-bottom:15px;' type='text' placeholder='First name' id='fn'/><br>" +
-    "<input style='margin-bottom:15px;' type='text' placeholder='Last name' id='ln'/><br>" +
-    "<button class='btn btn-secondary btn-sm' onclick='createUser()'>Register</button>"
-    );
-} **/
-
 function createUser(newuser) {
     $.ajax({
         url: "/api/users",
@@ -42,20 +33,16 @@ function createUser(newuser) {
 
 function onSignIn(googleUser) {
     var profile = googleUser.getBasicProfile();
-
     var email = profile.getEmail();
     var username = email.split("@")[0];
     var user = {
         firstName: profile.getGivenName(),
         lastName: profile.getFamilyName(),
-        propic: profile.getImageUrl(),
+        picture: profile.getImageUrl(),
         email: email,
         username: username
     }
-    Cookies.set("googleuser", googleUser)
-    console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-    console.log('Name: ' + profile.getName());
-    console.log('Image URL: ' + profile.getImageUrl());
-    console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
+    Cookies.set("googleuser", googleUser);
+    console.log(googleUser);
     loginClick(user);
 }
