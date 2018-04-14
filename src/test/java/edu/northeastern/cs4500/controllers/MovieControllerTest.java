@@ -21,6 +21,7 @@ import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.OMDBClient;
+import edu.northeastern.cs4500.services.TMDBClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -39,9 +40,13 @@ public class MovieControllerTest {
     @MockBean
     private OMDBClient omdbClient;
 
+    @MockBean
+    private TMDBClient tmdbClient;
+
     private final String URI = "/api/movies";
     private MovieReview review;
     private List<MovieReview> reviewList = new ArrayList<>();
+    private List<Movie> nowPlayingMovies;
 
     @Before
     public void setUp() {
@@ -49,6 +54,8 @@ public class MovieControllerTest {
         review = new MovieReview(movieID, 1, "an amazing review");
         reviewList.add(review);
         reviewList.add(new MovieReview("tt0266543", 10, "a bad review"));
+        nowPlayingMovies = new ArrayList<>();
+        nowPlayingMovies.add(new Movie());
     }
 
     @Test
@@ -90,6 +97,16 @@ public class MovieControllerTest {
 
         ResponseEntity<Movie> response = restTemplate.getForEntity(URI + "/{id}",
                 Movie.class, "tt472389");
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    public void getNowPlaying_HappyPath() throws Exception {
+        when(tmdbClient.getNowPlaying()).thenReturn(nowPlayingMovies);
+
+        ResponseEntity<List<Movie>> response = restTemplate.exchange(URI + "/now-playing",
+                HttpMethod.GET, null, new ParameterizedTypeReference<List<Movie>>() {});
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
