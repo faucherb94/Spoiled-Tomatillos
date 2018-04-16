@@ -1,24 +1,28 @@
-# team-26-spring18
-Project repository for team 26
+# CS4500 Spring 2018, Team 26: Coders Unlimited
 
-### Description Folder
-The description directory holds the project description (as of 1/26/18) and the use cases (as of 1/26/18)
-2/2/18 Adding Usability Study
+## Team members
 
-## Jenkins access ##
-[Jenkins](http://jenkins.codersunltd.me/)
+* Madeline Leger
+* Ben Faucher
+* George Abinader
+* Joseph Donovan
 
-## Deployed app hello world endpoints ##
-[Link to the index page](http://app.codersunltd.me:8080/)
+## Docs Folder
 
-[Link to the string REST endpoint](http://app.codersunltd.me:8080/api/hello/string)
+Contains all documents generated over the course of the project, including planning docs and sprint reviews.
 
-[Link to the object REST endpoint](http://app.codersunltd.me:8080/api/hello/object)
+## Final Folder
 
-## Deployed app MySQL endpoints ##
-[Insert a static hello message](http://app.codersunltd.me:8080/api/hello/insert)
+Contains all materials for the final submission.
 
-[Insert a parameterized hello message](http://app.codersunltd.me:8080/api/hello/insert/Some%20parameterized%20message)
+## App Links
 
-[Retrieve all hello messages](http://app.codersunltd.me:8080/api/hello/select/all)
+* [Deployed App](http://app.codersunltd.me/)
+* [Team Jenkins](http://jenkins.codersunltd.me/)
+* [Team SonarQube Server](http://qube.codersunltd.me/)
 
+## Video Links
+
+* Final Presentation
+* System Demo
+* System Setup
