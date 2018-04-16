@@ -1,7 +1,8 @@
 pipeline {
   environment {
   	DB_PASS       = credentials('spoiled_tomatillos_db_pass')
-  	OMDB_API_KEY  = credentials('omdb_api_key') 
+  	OMDB_API_KEY  = credentials('omdb_api_key')
+  	TMDB_API_KEY  = credentials('tmdb_api_key')
   	VERSION       = "${env.BUILD_NUMBER}"
   }
   

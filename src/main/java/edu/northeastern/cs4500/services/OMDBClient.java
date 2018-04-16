@@ -41,7 +41,7 @@ public class OMDBClient {
         this.apiKey = System.getenv("OMDB_API_KEY");
         initializeDefaultParams();
         this.gson = new Gson();
-        Unirest.setTimeouts(3000, 10000);
+        Unirest.setTimeouts(0, 0);
     }
 
     /**
@@ -107,7 +107,7 @@ public class OMDBClient {
 
         JSONObject obj = getRequest(params);
         if (validResponse(obj)) {
-            return buildMovieObject(obj);
+            return buildMovieObject(movieID, obj);
         } else {
             String error = obj.getString("Error");
             log.error("Error received from OMDB client: {}", error);
@@ -118,14 +118,14 @@ public class OMDBClient {
     /**
      * Builds a Movie object to be returned to the client
      */
-    private Movie buildMovieObject(JSONObject obj) {
+    private Movie buildMovieObject(String movieID, JSONObject obj) {
         Movie movie = new Movie();
 
         try {
             movie.setYear(Integer.parseInt(getString(obj, "Year")));
         } catch (NumberFormatException ex) {
-            log.warn("Year returned by OMDB cannot be parsed into an int: {}",
-                    ex.getLocalizedMessage());
+            log.warn("Year for movie {} cannot be parsed into an int: {}",
+                    movieID, ex.getLocalizedMessage());
         }
 
         String released = getString(obj, "Released");
@@ -133,7 +133,8 @@ public class OMDBClient {
             movie.setReleased(new SimpleDateFormat("dd MMM yyyy")
                     .parse(released));
         } catch (ParseException ex) {
-            log.warn("Released date returned by OMDB cannot be parsed into the date format");
+            log.warn("Released date for movie {} cannot be parsed into the date format: {}",
+                    movieID, released);
             movie.setReleased(null);
         }
 
@@ -167,11 +168,9 @@ public class OMDBClient {
         if (obj.has(str)) {
             jsonStr = obj.getString(str).replace("\\\\", "");
             if (isUnavailableData(jsonStr)) {
-                log.warn("Unavailable data returned for the {} field", str);
                 jsonStr = UNAVAILABLE;
             }
         } else {
-            log.warn("The {} movie field was not returned by OMDB.", str);
             jsonStr = UNAVAILABLE;
         }
 

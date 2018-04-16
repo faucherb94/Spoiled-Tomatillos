@@ -13,58 +13,52 @@ function searchByTitle() {
         for (var i = 0; i < json.length; i++) {
             $("#feed").append(buildMovieCard(json[i], i));
         }
+
+        var fetchExistingData = true;
+        if (!isLoggedIn()) {
+            fetchExistingData = false;
+        }
         $.each(json, function(i, movie) {
-            var existingRating = $.getJSON(
-                `/api/users/${Cookies.get("uid")}/ratings/movies/${movie.imdbID}`);
+            if (fetchExistingData) {
+                var existingRating = $.getJSON(
+                    `/api/users/${Cookies.get("uid")}/ratings/movies/${movie.imdbID}`);
 
-            var existingReview = $.getJSON(
-                `/api/users/${Cookies.get("uid")}/reviews/movies/${movie.imdbID}`);
+                var existingReview = $.getJSON(
+                    `/api/users/${Cookies.get("uid")}/reviews/movies/${movie.imdbID}`);
 
-            var success = function(resp) {
-                return resp.rating;
-            };
+                var success = function(resp) {
+                    return [resp.movieID, resp.rating];
+                };
 
-            var failure = function(req, status, err) {
-                return 0;
-            };
+                var failure = function(req, status, err) {
+                    console.log(err);
+                    return [movie.imdbID, 0];
+                };
 
-            var revsuccess = function(resp) {
-                return resp.review;
-            };
+                var revsuccess = function(resp) {
+                    return resp.review;
+                };
 
-            var revfailure = function(req, status, err) {
-                return 0;
-            };
+                var revfailure = function(req, status, err) {
+                    return 0;
+                };
 
-            var renderStars = function(rating) {
-                var elementId = 'rating-' + movie.imdbID;
-                $('<input>').attr({
-                    id: elementId,
-                    name: elementId,
-                    value: rating
-                }).appendTo('#rating-div-' + movie.imdbID);
-
-                $('#'+elementId).rating({
-                    theme: 'krajee-svg',
-                    size: 'sm',
-                    step: '1',
-                    showClear: false
-                }).on('rating:change', updateRating);
-            };
-
-            var putReview = function(review) {
-                if (review == 0) {
-                    $("#revarea" + i).html("<textarea id='review" + i +"' rows='4' columns='100' placeholder='Leave a review...'>" +
-                        "</textarea><br/>" + "<button onclick='submitReview(this)' class='btn btn-secondary'" +
-                        "id='reviewbtn" + i + "' movieid='" + movie.imdbID + "' iter='" + i + "'>Review</button>");
+                var putReview = function(review) {
+                    if (review == 0) {
+                        $("#revarea" + i).html("<textarea id='review" + i +"' rows='4' columns='100' placeholder='Leave a review...'>" +
+                            "</textarea><br/>" + "<button onclick='submitReview(this)' class='btn btn-secondary'" +
+                            "id='reviewbtn" + i + "' movieid='" + movie.imdbID + "' iter='" + i + "'>Review</button>");
+                    }
+                    else {
+                        $("#revarea" + i).html("<p><strong>Your Review:</strong> " + review + "</p>");
+                    }
                 }
-                else {
-                    $("#revarea" + i).html("<p><strong>Your Review:</strong> " + review + "</p>");
-                }
+
+                existingRating.then(success, failure).always(renderStars);
+                existingReview.then(revsuccess, revfailure).always(putReview);
+            } else {
+                renderStars([movie.imdbID, 0]);
             }
-
-            existingRating.then(success, failure).always(renderStars);
-            existingReview.then(revsuccess, revfailure).always(putReview);
         });
     };
 
@@ -74,6 +68,40 @@ function searchByTitle() {
 
     searchRequest.then(searchSuccess, searchFailure);
 }
+
+function isLoggedIn() {
+    var user = Cookies.get('uid');
+    return (typeof user !== 'undefined');
+}
+
+function setModalHeader(title, year) {
+    var titleAndYear = title + " <span id='year'>(" + year + ")</span>";
+    $("#title-and-year").html(titleAndYear);
+    $("#year").css({"font-weight": "normal", "font-size": "1.5rem"});
+}
+
+var renderStars = function(resp) {
+    var disabled = false;
+    if (!isLoggedIn()) {
+        disabled = true;
+    }
+    var movieID = resp[0];
+    var rating = resp[1];
+    var elementId = 'rating-' + movieID;
+    $('<input>').attr({
+        id: elementId,
+        name: elementId,
+        value: rating
+    }).appendTo('#rating-div-' + movieID);
+
+    $('#'+elementId).rating({
+        theme: 'krajee-svg',
+        size: 'sm',
+        step: '1',
+        disabled: disabled,
+        showClear: false
+    }).on('rating:change', updateRating);
+};
 
 var updateRating = function(event, value, caption) {
     var ratingJSON = {
@@ -126,20 +154,21 @@ function buildMovieCard(movie, i) {
     var existingReview = $.getJSON(
         `/api/users/${Cookies.get("uid")}/reviews/movies/${movie.imdbID}`);
 
-
     var card = "<div id='" + movie.imdbID + "' class='card border-light cardhdr'>" +
-          "<h4 class='card-header'><a style='color:white' class='movie-link' data-id='" +
-          movie.imdbID + "' href=''>" + movie.title + "</a></h4>" +
-          "<div class='card-body cardbdy'>" +
-            "<div><img class='card-img-left card-float-left' src='" + posterImg +
-            "' alt='Poster Unavailable'/></div>" +
-            "<div class='card-float-left'><h4 class='card-title'>" + movie.year + "</h4>" +
-            "<p class='card-text'>Click on the title for more information.</p>" +
-            "<div id='rating-div-" + movie.imdbID + "'></div>" +
-            "<div id='revarea" + i + "'></div>" +
-            "</div>" +
-        "</div>" +
-    "</div>";
+                    "<h4 class='card-header'>" +
+                        "<a style='color:white' class='movie-link' data-id='" + movie.imdbID + "' href=''>" +
+                            movie.title +
+                            " <span style='font-weight: normal; font-size: 1.5rem'>(" + movie.year + ")</span>" +
+                        "</a>" +
+                    "</h4>" +
+                    "<div class='card-body cardbdy'>" +
+                        "<img class='card-img-left card-float-left' src='" + posterImg +"'/>" +
+                        "<div class='card-float-left'>" +
+                            "<div id='rating-div-" + movie.imdbID + "'></div>" +
+                            "<div id='revarea" + i + "'></div>" +
+                        "</div>" +
+                    "</div>" +
+                "</div>";
     return card;
 }
 

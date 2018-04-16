@@ -64,22 +64,15 @@ public class RatingServiceTest {
         assertThat(newRating).isEqualTo(rating);
     }
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void getUserMovieRating_MovieNotFound() throws Exception {
-        String badMovieID = "bad";
-        when(repository.findByMovieIDAndUserID(badMovieID, 1))
+    @Test
+    public void getUserMovieRating_RatingNotCreatedYet() throws Exception {
+        when(repository.findByMovieIDAndUserID(anyString(), anyInt()))
                 .thenReturn(null);
 
-        movieRatingService.getUserMovieRating(badMovieID, 1);
-    }
+        MovieRating rating = movieRatingService.getUserMovieRating("", 1);
+        MovieRating expected = new MovieRating("", 1, 0);
 
-    @Test(expected = ResourceNotFoundException.class)
-    public void getUserMovieRating_UserNotFound() throws Exception {
-        int badUserID = 874923;
-        when(repository.findByMovieIDAndUserID("", badUserID))
-                .thenReturn(null);
-
-        movieRatingService.getUserMovieRating("", badUserID);
+        assertThat(rating).isEqualTo(expected);
     }
 
     @Test

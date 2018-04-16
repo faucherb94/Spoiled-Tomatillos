@@ -30,9 +30,7 @@ public class RatingService implements IRatingService {
         MovieRating rating = repository.findByMovieIDAndUserID(movieID, userID);
         if (rating == null) {
             log.error("user id {} rating for movie id {} not found", userID, movieID);
-            throw new ResourceNotFoundException(MovieRating.class,
-                    "movieID", movieID,
-                    "userID", Integer.toString(userID));
+            return new MovieRating(movieID, userID, 0);
         }
         log.info("retrieved movie rating for user id {} and movie id {}", userID, movieID);
         return rating;

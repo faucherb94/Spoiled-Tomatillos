@@ -15,6 +15,7 @@ import edu.northeastern.cs4500.models.MovieReview;
 import edu.northeastern.cs4500.models.SearchResult;
 import edu.northeastern.cs4500.services.IReviewService;
 import edu.northeastern.cs4500.services.OMDBClient;
+import edu.northeastern.cs4500.services.TMDBClient;
 
 @RestController
 @RequestMapping("/api/movies")
@@ -22,6 +23,9 @@ public class MovieController {
 
     @Autowired
     private OMDBClient omdbClient;
+
+    @Autowired
+    private TMDBClient tmdbClient;
 
     /************************************MOVIE REVIEWS*********************************/
 
@@ -56,5 +60,14 @@ public class MovieController {
     public ResponseEntity<Movie> getMovieByID(@PathVariable(value = "id") String movieID) {
         Movie movie = omdbClient.getMovieByID(movieID);
         return ResponseEntity.ok(movie);
+    }
+
+    /**
+     * Get movies now in theaters
+     */
+    @GetMapping("/now-playing")
+    public ResponseEntity<List<Movie>> getNowPlaying() {
+        List<Movie> movies = tmdbClient.getNowPlaying();
+        return ResponseEntity.ok(movies);
     }
 }
