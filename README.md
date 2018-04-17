@@ -26,3 +26,11 @@ Contains all materials for the final submission.
 * Final Presentation
 * System Demo
 * System Setup
+
+## Development
+
+To develop the app locally:
+
+1. Install a Java development kit on your OS (version 8 or above).
+
+## Deployment
