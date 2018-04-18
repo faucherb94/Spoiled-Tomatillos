@@ -1,0 +1,42 @@
+CS4500 Software Development
+
+------------------------------------------------
+Sprint 4 Group Grade Team 26:
+------------------------------------------------
+
+
+Functionality Expectations Achieved:
+-----------------------------------------------
+
+Use-cases (out of 4): 4
+
+Comments on use-cases: Use cases like login using Google auth; search movie; rate movie; view profile; edit profile; delete profile were implemented and deployed to AWS
+
+Comments on Functionality Expectations: Implemented the functionality on AWS and generated sys logs
+
+
+Stretches Achieved:
+-----------------------------------------------
+
+(2) Stretch: Analysis/tests that look at performance
+Stretch: More use cases demonstrated.
+
+Stretch: System throws a message (email; SNMP trap; etc.) when something bad happens. Examples of bad are: file system full (e.g. the log grows too big); cannot reach the database; wrong login attempt; user changed password; administrator does most anything; and so on. Throwing an exception to the console and having the system go splat does not count as meeting this expectation.
+Stretch: other structural test coverage criteria included manually but expected by team as part of code promotion process.
+
+
+Comments: Had aprrox 70% test coverage
+
+
+Environment Expectations: 
+-----------------------------------------------
+
+Comments: Fully setup github-> genkins. Had JIRA reports for tracking the progress of tasks completed.
+
+------------------------------------------------
+Team GRADE: B-
+------------------------------------------------
+
+Extra Comments: The team did good job implementing the use cases and environmental expectations. Test coverage was pretty good (70%) . However; the UI could have been improved compared to last Sprint. Home page; profile page should have slightly more appealing UI. Overall a decent job for this Sprint. 
+
+Grader: Vikram
