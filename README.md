@@ -24,7 +24,7 @@ Contains all materials for the final submission.
 ## Video Links
 
 * [Final Presentation](https://youtu.be/QfabMusIyvU)
-* System Demo
+* [System Demo](https://youtu.be/ePxkW__SbwY)
 * [System Setup](https://youtu.be/ijBeSTAH_IM)
 
 ## Development
