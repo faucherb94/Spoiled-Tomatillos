@@ -25,7 +25,7 @@ Contains all materials for the final submission.
 
 * Final Presentation
 * System Demo
-* System Setup
+* [System Setup](https://youtu.be/ijBeSTAH_IM)
 
 ## Development
 
