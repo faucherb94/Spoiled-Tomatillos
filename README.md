@@ -57,6 +57,8 @@ In the file `src/main/resources/application.properties` update the `url` and `us
 
 Our method of mitigating this is telling the app to search for an environment variable called `DB_PASS` every time it runs. For this to work, the `DB_PASS` env var must be set in the environment running the app every time it runs. We made this work by editing the `.bashrc` file of every machine that runs this app (both development and deployment) to contain the line `export DB_PASS=<password>`. This isn't a perfect method, but it worked for rapid development.
 
+Once you have a database setup, you'll need to source the sql script spoiled_tomatillos.sql to setup the proper schema the app expects.
+
 ### External APIs
 
 The app also makes API calls to OMDB and TMDB. For these calls to succeed, you must generate API keys for your team:
