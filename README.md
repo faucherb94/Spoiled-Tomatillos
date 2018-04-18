@@ -23,7 +23,7 @@ Contains all materials for the final submission.
 
 ## Video Links
 
-* Final Presentation
+* [Final Presentation](https://youtu.be/QfabMusIyvU)
 * System Demo
 * [System Setup](https://youtu.be/ijBeSTAH_IM)
 
