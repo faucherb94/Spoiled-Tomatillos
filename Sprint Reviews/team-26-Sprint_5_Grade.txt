@@ -1,0 +1,45 @@
+CS4500 Software Development
+
+------------------------------------------------
+Sprint 5 Group Grade Team 26:
+------------------------------------------------
+
+Expectations Achieved:
+-----------------------------------------------
+
+1. Did you have a  vertically integrated prototype/system deployed to AWS that works. 
+   The TA’s and Professors are expecting to use their machines to access the system:
+   
+    Yes
+
+2. Testing coverage minimum:
+
+    100% Statement Coverage AND 85+% Branch Coverage
+
+3. Project report identifying how far the team is from completion. 
+   The metric could be the number of use cases completed versus specified,
+   the number of tasks completed versus specified for a release, and so on. 
+   Jira can produce reports like this for you: 
+   
+   Yes
+
+Comments on Expectations: The system meets the expectations for the Sprint
+
+Stretches Achieved:
+-----------------------------------------------
+
+
+Stretch: other structural test coverage criteria included manually but expected by team as part of code promotion process.
+
+
+
+
+Comments: Application has functionality to create groups and be a part of one.
+
+------------------------------------------------
+Team GRADE: 85
+------------------------------------------------
+
+Extra Comments:  
+
+Grader: Vikram
