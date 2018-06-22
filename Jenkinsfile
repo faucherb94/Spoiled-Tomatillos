@@ -34,7 +34,7 @@ pipeline {
   	
     stage('Build') {
       steps {
-        notifyBuild('STARTED')
+        // notifyBuild('STARTED')
         script {
           properties([
             buildDiscarder(
